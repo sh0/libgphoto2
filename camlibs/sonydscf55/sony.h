@@ -23,36 +23,36 @@
 #define SONY_CAMERA_ID "sonydscf55"
 
 typedef enum {
-	SONY_MODEL_MSAC_SR1 = 0,
-	SONY_MODEL_DCR_PC100,
-	SONY_MODEL_TRV_20E,
-	SONY_MODEL_DSC_F55,
-	SONY_MODEL_SIZEOF
+    SONY_MODEL_MSAC_SR1 = 0,
+    SONY_MODEL_DCR_PC100,
+    SONY_MODEL_TRV_20E,
+    SONY_MODEL_DSC_F55,
+    SONY_MODEL_SIZEOF
 } SonyModel;
 
 #define SONY_FILE_NAME_FMT "dsc%05d.jpg"
 
 typedef struct _tagPacket {
-	int valid;
-	int length;
-	unsigned char buffer[16384];
-	unsigned char checksum;
+    int valid;
+    int length;
+    unsigned char buffer[16384];
+    unsigned char checksum;
 } Packet;
 
 struct _CameraPrivateLibrary {
-	unsigned short int sequence_id;
-	long current_baud_rate;
-	int current_mpeg_mode;
-	SonyModel model;
+    unsigned short int sequence_id;
+    long current_baud_rate;
+    int current_mpeg_mode;
+    SonyModel model;
 };
 
 
 typedef enum
 {
-	SONY_FILE_EXIF=0,
-	SONY_FILE_THUMBNAIL,
-	SONY_FILE_IMAGE,
-	SONY_FILE_MPEG
+    SONY_FILE_EXIF=0,
+    SONY_FILE_THUMBNAIL,
+    SONY_FILE_IMAGE,
+    SONY_FILE_MPEG
 } SonyFileType;
 
 int sony_init(Camera * camera, SonyModel model);

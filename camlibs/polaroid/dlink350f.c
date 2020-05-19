@@ -53,56 +53,56 @@
  * This function correctly adjusts the color and orientation of the image
  */
 int dlink_dsc350f_postprocessing_and_flip_both (int width, int height, unsigned char* rgb) {
-	unsigned char *start, *end, c;
+    unsigned char *start, *end, c;
 
-	int whichcolor = 0;
-	int lowred=255, lowgreen=255, lowblue=255;
-	int hired=0, higreen=0, hiblue=0;
+    int whichcolor = 0;
+    int lowred=255, lowgreen=255, lowblue=255;
+    int hired=0, higreen=0, hiblue=0;
 
-	GP_DEBUG("flipping byte order");
+    GP_DEBUG("flipping byte order");
 
-	/* flip image left/right and top/bottom (actually reverse byte order) */
-	start = rgb;
-	end = start + ((width * height) * 3);
+    /* flip image left/right and top/bottom (actually reverse byte order) */
+    start = rgb;
+    end = start + ((width * height) * 3);
 
-	while (start < end) {
-		c = *start;
+    while (start < end) {
+        c = *start;
 
-		/* validation - debugging info - collect the color range info
-		 * for first half of image.
-		 */
-		switch (whichcolor % 3) {
-			case 0: /* blue */
-				MINMAX((int)c,lowblue,hiblue);
-				break;
-			case 1: /* green */
-				MINMAX((int)c,lowgreen,higreen);
-				break;
-			default: /* red */
-				MINMAX((int)c,lowred,hired);
-				break;
-		}
+        /* validation - debugging info - collect the color range info
+         * for first half of image.
+         */
+        switch (whichcolor % 3) {
+        case 0: /* blue */
+            MINMAX((int)c,lowblue,hiblue);
+            break;
+        case 1: /* green */
+            MINMAX((int)c,lowgreen,higreen);
+            break;
+        default: /* red */
+            MINMAX((int)c,lowred,hired);
+            break;
+        }
 
-		/* adjust color magnitude, since it appears that the 350f only had 7 bits of color info */
-		*start++ = *--end << 1;
-		*end = c << 1;
+        /* adjust color magnitude, since it appears that the 350f only had 7 bits of color info */
+        *start++ = *--end << 1;
+        *end = c << 1;
 
-		whichcolor++;
-	}
+        whichcolor++;
+    }
 
-	/* could do more color processing here
-	GP_DEBUG("adjusting color");
+    /* could do more color processing here
+    GP_DEBUG("adjusting color");
 
-	// adjust image colours
-	start = rgb;
-	end = start + ((width * height) * 3);
+    // adjust image colours
+    start = rgb;
+    end = start + ((width * height) * 3);
 
-	while (start < end) {
-		c = *start++;
-	}
-	*/
+    while (start < end) {
+        c = *start++;
+    }
+    */
 
-	/* show the color range of image in debug mode. */
-	GP_DEBUG("\nred low = %d high = %d\ngreen low = %d high = %d\nblue low = %d high = %d\n", lowred,hired, lowgreen,higreen, lowblue,hiblue);
-	return GP_OK;
+    /* show the color range of image in debug mode. */
+    GP_DEBUG("\nred low = %d high = %d\ngreen low = %d high = %d\nblue low = %d high = %d\n", lowred,hired, lowgreen,higreen, lowblue,hiblue);
+    return GP_OK;
 }

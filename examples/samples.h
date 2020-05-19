@@ -19,8 +19,8 @@ extern int camera_eosviewfinder (Camera *list, GPContext *context, int onoff);
 extern int camera_manual_focus (Camera *list, int tgt, GPContext *context);
 
 #if !defined (O_BINARY)
-	/*To have portable binary open() on *nix and on Windows */
-	#define O_BINARY 0
+/*To have portable binary open() on *nix and on Windows */
+#define O_BINARY 0
 #endif
 
 #ifdef __cplusplus

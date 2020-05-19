@@ -26,27 +26,27 @@
 #include <gphoto2/gphoto2-port.h>
 
 struct _CameraPrivateLibrary {
-	unsigned char *catalog;
-	int num_pics;
-	unsigned char full;
+    unsigned char *catalog;
+    int num_pics;
+    unsigned char full;
 };
 
 
 int clicksmart_init             (GPPort *port, CameraPrivateLibrary *priv);
 int clicksmart_get_res_setting  (CameraPrivateLibrary *priv, int n);
-int clicksmart_read_pic_data 	(CameraPrivateLibrary *priv,
-					GPPort *port, unsigned char **data,
-							    int n);
+int clicksmart_read_pic_data    (CameraPrivateLibrary *priv,
+                                 GPPort *port, unsigned char **data,
+                                 int n);
 int clicksmart_delete_all_pics  (GPPort *port);
 
-int clicksmart_reset      	(GPPort *port);
+int clicksmart_reset        (GPPort *port);
 
-int create_jpeg_from_data 	(unsigned char * dst, unsigned char * src,
-					int qIndex, int w, int h,
-					unsigned char format,
-					int o_size, int *size,
-					int omit_huffman_table,
-					int omit_escape);
+int create_jpeg_from_data   (unsigned char * dst, unsigned char * src,
+                             int qIndex, int w, int h,
+                             unsigned char format,
+                             int o_size, int *size,
+                             int omit_huffman_table,
+                             int omit_escape);
 
 
 #endif

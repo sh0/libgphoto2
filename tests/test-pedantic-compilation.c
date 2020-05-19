@@ -24,9 +24,9 @@ unsigned long stdc_version = __STDC_VERSION__;
 int main()
 {
 #ifdef __STDC_VERSION__
-  printf("stdc_version = %lu\n", stdc_version);
+    printf("stdc_version = %lu\n", stdc_version);
 #else
-  printf("stdc_version = undefined\n");
+    printf("stdc_version = undefined\n");
 #endif
-  return 0;
+    return 0;
 }

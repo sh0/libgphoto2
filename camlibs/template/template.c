@@ -102,7 +102,7 @@ int camera_exit (Camera *camera, GPContext *context);
 int
 camera_exit (Camera *camera, GPContext *context)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -115,11 +115,11 @@ int camera_config_get (Camera *camera, CameraWidget **window, GPContext *context
 int
 camera_config_get (Camera *camera, CameraWidget **window, GPContext *context)
 {
-	gp_widget_new (GP_WIDGET_WINDOW, "Camera Configuration", window);
+    gp_widget_new (GP_WIDGET_WINDOW, "Camera Configuration", window);
 
-	/* Append your sections and widgets here. */
+    /* Append your sections and widgets here. */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -134,11 +134,11 @@ int camera_config_set (Camera *camera, CameraWidget *window, GPContext *context)
 int
 camera_config_set (Camera *camera, CameraWidget *window, GPContext *context)
 {
-	/*
-	 * Check if the widgets' values have changed. If yes, tell the camera.
-	 */
+    /*
+     * Check if the widgets' values have changed. If yes, tell the camera.
+     */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -154,7 +154,7 @@ int camera_capture_preview (Camera *camera, CameraFile *file, GPContext *context
 int
 camera_capture_preview (Camera *camera, CameraFile *file, GPContext *context)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -166,12 +166,12 @@ camera_capture_preview (Camera *camera, CameraFile *file, GPContext *context)
  */
 int
 camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
-		GPContext *context);
+                GPContext *context);
 int
 camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
-		GPContext *context)
+                GPContext *context)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -186,7 +186,7 @@ camera_summary (Camera *camera, CameraText *summary, GPContext *context);
 int
 camera_summary (Camera *camera, CameraText *summary, GPContext *context)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -202,7 +202,7 @@ camera_manual (Camera *camera, CameraText *manual, GPContext *context);
 int
 camera_manual (Camera *camera, CameraText *manual, GPContext *context)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -217,12 +217,12 @@ camera_about (Camera *camera, CameraText *about, GPContext *context);
 int
 camera_about (Camera *camera, CameraText *about, GPContext *context)
 {
-	strcpy (about->text, _("Library Name\n"
-			       "YOUR NAME <email@somewhere.com>\n"
-			       "Quick description of the library.\n"
-			       "No more than 5 lines if possible."));
+    strcpy (about->text, _("Library Name\n"
+                           "YOUR NAME <email@somewhere.com>\n"
+                           "Quick description of the library.\n"
+                           "No more than 5 lines if possible."));
 
-	return GP_OK;
+    return GP_OK;
 }
 
 /*@}*/
@@ -244,21 +244,21 @@ camera_about (Camera *camera, CameraText *about, GPContext *context)
  */
 int
 get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
-	       CameraFileType type, CameraFile *file, void *data,
-	       GPContext *context);
+               CameraFileType type, CameraFile *file, void *data,
+               GPContext *context);
 int
 get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
-	       CameraFileType type, CameraFile *file, void *data,
-	       GPContext *context)
+               CameraFileType type, CameraFile *file, void *data,
+               GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/*
-	 * Get the file from the camera. Use gp_file_set_mime_type,
-	 * gp_file_set_data_and_size, etc.
-	 */
+    /*
+     * Get the file from the camera. Use gp_file_set_mime_type,
+     * gp_file_set_data_and_size, etc.
+     */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -269,18 +269,18 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
  */
 int
 put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
-	       CameraFileType type, CameraFile *file, void *data, GPContext *context);
+               CameraFileType type, CameraFile *file, void *data, GPContext *context);
 int
 put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
-	       CameraFileType type, CameraFile *file, void *data, GPContext *context)
+               CameraFileType type, CameraFile *file, void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/*
-	 * Upload the file to the camera. Use gp_file_get_data_and_size, etc
-	 */
+    /*
+     * Upload the file to the camera. Use gp_file_get_data_and_size, etc
+     */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -291,16 +291,16 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
  */
 int
 delete_file_func (CameraFilesystem *fs, const char *folder,
-		  const char *filename, void *data, GPContext *context);
+                  const char *filename, void *data, GPContext *context);
 int
 delete_file_func (CameraFilesystem *fs, const char *folder,
-		  const char *filename, void *data, GPContext *context)
+                  const char *filename, void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/* Delete the file from the camera. */
+    /* Delete the file from the camera. */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -311,19 +311,19 @@ delete_file_func (CameraFilesystem *fs, const char *folder,
  */
 int
 delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
-		 GPContext *context);
+                 GPContext *context);
 int
 delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
-		 GPContext *context)
+                 GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/*
-	 * Delete all files in the given folder. If your camera doesn't have
-	 * such a functionality, just don't implement this function.
-	 */
+    /*
+     * Delete all files in the given folder. If your camera doesn't have
+     * such a functionality, just don't implement this function.
+     */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -336,14 +336,14 @@ delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
  */
 int
 get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
-	       CameraFileInfo *info, void *data, GPContext *context);
+               CameraFileInfo *info, void *data, GPContext *context);
 int
 get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
-	       CameraFileInfo *info, void *data, GPContext *context)
+               CameraFileInfo *info, void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -354,16 +354,16 @@ get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
  */
 int
 set_info_func (CameraFilesystem *fs, const char *folder, const char *file,
-	       CameraFileInfo info, void *data, GPContext *context);
+               CameraFileInfo info, void *data, GPContext *context);
 int
 set_info_func (CameraFilesystem *fs, const char *folder, const char *file,
-	       CameraFileInfo info, void *data, GPContext *context)
+               CameraFileInfo info, void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/* Set the file info here from <info> */
+    /* Set the file info here from <info> */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -374,16 +374,16 @@ set_info_func (CameraFilesystem *fs, const char *folder, const char *file,
  */
 int
 folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-		  void *data, GPContext *context);
+                  void *data, GPContext *context);
 int
 folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-		  void *data, GPContext *context)
+                  void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/* List your folders here */
+    /* List your folders here */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -394,16 +394,16 @@ folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
  */
 int
 file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-		void *data, GPContext *context);
+                void *data, GPContext *context);
 int
 file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-		void *data, GPContext *context)
+                void *data, GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/* List your files here */
+    /* List your files here */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 /**
@@ -413,20 +413,20 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
  */
 int
 storage_info_func (CameraFilesystem *fs,
-		CameraStorageInformation **storageinformations,
-		int *nrofstorageinformations, void *data,
-		GPContext *context);
+                   CameraStorageInformation **storageinformations,
+                   int *nrofstorageinformations, void *data,
+                   GPContext *context);
 int
 storage_info_func (CameraFilesystem *fs,
-		CameraStorageInformation **storageinformations,
-		int *nrofstorageinformations, void *data,
-		GPContext *context)
+                   CameraStorageInformation **storageinformations,
+                   int *nrofstorageinformations, void *data,
+                   GPContext *context)
 {
-	/*Camera *camera = data;*/
+    /*Camera *camera = data;*/
 
-	/* List your storages here */
+    /* List your storages here */
 
-	return GP_ERROR_NOT_SUPPORTED;
+    return GP_ERROR_NOT_SUPPORTED;
 }
 
 /*@}*/
@@ -452,9 +452,9 @@ storage_info_func (CameraFilesystem *fs,
 int
 camera_id (CameraText *id)
 {
-	strcpy(id->text, "REPLACE WITH UNIQUE LIBRARY ID");
+    strcpy(id->text, "REPLACE WITH UNIQUE LIBRARY ID");
 
-	return GP_OK;
+    return GP_OK;
 }
 
 
@@ -475,22 +475,22 @@ camera_id (CameraText *id)
 int
 camera_abilities (CameraAbilitiesList *list)
 {
-	CameraAbilities a;
+    CameraAbilities a;
 
-	memset(&a, 0, sizeof(a));
-	strcpy(a.model, "CAMERA VENDOR:CAMERA MODEL");
-	a.status = GP_DRIVER_STATUS_PRODUCTION;
-	a.port     = GP_PORT_SERIAL | GP_PORT_USB;
-	a.speed[0] = 0;
-	a.operations        = 	GP_OPERATION_CAPTURE_PREVIEW |
-				GP_CAPTURE_IMAGE;
-	a.file_operations   = 	GP_FILE_OPERATION_DELETE |
-				GP_FILE_OPERATION_PREVIEW;
-	a.folder_operations = 	GP_FOLDER_OPERATION_NONE;
+    memset(&a, 0, sizeof(a));
+    strcpy(a.model, "CAMERA VENDOR:CAMERA MODEL");
+    a.status = GP_DRIVER_STATUS_PRODUCTION;
+    a.port     = GP_PORT_SERIAL | GP_PORT_USB;
+    a.speed[0] = 0;
+    a.operations        =   GP_OPERATION_CAPTURE_PREVIEW |
+                            GP_CAPTURE_IMAGE;
+    a.file_operations   =   GP_FILE_OPERATION_DELETE |
+                            GP_FILE_OPERATION_PREVIEW;
+    a.folder_operations =   GP_FOLDER_OPERATION_NONE;
 
-	gp_abilities_list_append(list, a);
+    gp_abilities_list_append(list, a);
 
-	return GP_OK;
+    return GP_OK;
 }
 
 /**
@@ -502,15 +502,15 @@ camera_abilities (CameraAbilitiesList *list)
  *
  */
 CameraFilesystemFuncs fsfuncs = {
-	.file_list_func = file_list_func,
-	.folder_list_func = folder_list_func,
-	.get_info_func = get_info_func,
-	.set_info_func = set_info_func,
-	.get_file_func = get_file_func,
-	.del_file_func = delete_file_func,
-	.put_file_func = put_file_func,
-	.delete_all_func = delete_all_func,
-	.storage_info_func = storage_info_func
+    .file_list_func = file_list_func,
+    .folder_list_func = folder_list_func,
+    .get_info_func = get_info_func,
+    .set_info_func = set_info_func,
+    .get_file_func = get_file_func,
+    .del_file_func = delete_file_func,
+    .put_file_func = put_file_func,
+    .delete_all_func = delete_all_func,
+    .storage_info_func = storage_info_func
 };
 
 /**
@@ -525,31 +525,31 @@ CameraFilesystemFuncs fsfuncs = {
 int
 camera_init (Camera *camera, GPContext *context)
 {
-        /* First, set up all the function pointers */
-        camera->functions->exit                 = camera_exit;
-        camera->functions->get_config           = camera_config_get;
-        camera->functions->set_config           = camera_config_set;
-        camera->functions->capture              = camera_capture;
-        camera->functions->capture_preview      = camera_capture_preview;
-        camera->functions->summary              = camera_summary;
-        camera->functions->manual               = camera_manual;
-        camera->functions->about                = camera_about;
+    /* First, set up all the function pointers */
+    camera->functions->exit                 = camera_exit;
+    camera->functions->get_config           = camera_config_get;
+    camera->functions->set_config           = camera_config_set;
+    camera->functions->capture              = camera_capture;
+    camera->functions->capture_preview      = camera_capture_preview;
+    camera->functions->summary              = camera_summary;
+    camera->functions->manual               = camera_manual;
+    camera->functions->about                = camera_about;
 
-	/* Now, tell the filesystem where to get lists, files and info */
-	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
+    /* Now, tell the filesystem where to get lists, files and info */
+    gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 
-	/*
-	 * The port is already provided with camera->port (and
-	 * already open). You just have to use functions like
-	 * gp_port_timeout_set, gp_port_settings_get, gp_port_settings_set.
-	 */
+    /*
+     * The port is already provided with camera->port (and
+     * already open). You just have to use functions like
+     * gp_port_timeout_set, gp_port_settings_get, gp_port_settings_set.
+     */
 
-	/*
-	 * Once you have configured the port, you should check if a
-	 * connection to the camera can be established.
-	 */
+    /*
+     * Once you have configured the port, you should check if a
+     * connection to the camera can be established.
+     */
 
-	return GP_OK;
+    return GP_OK;
 }
 
 /*@}*/

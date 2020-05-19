@@ -16,13 +16,13 @@
  *
  ****************************************************************************/
 
-/* #define CANON_CMD_ACK			0x04 */
-/* #define CANON_CMD_PING			0x10 */
+/* #define CANON_CMD_ACK            0x04 */
+/* #define CANON_CMD_PING           0x10 */
 
-/* #define CANON_PCK_SOT			0x05 */
-/* #define CANON_PCK_EOT			0x04 */
-/* #define CANON_PCK_CMD			0x00 */
-/* #define CANON_PCK_IDENT			0x06 */
+/* #define CANON_PCK_SOT            0x05 */
+/* #define CANON_PCK_EOT            0x04 */
+/* #define CANON_PCK_CMD            0x00 */
+/* #define CANON_PCK_IDENT          0x06 */
 
 
 void clear_readiness(Camera *camera);

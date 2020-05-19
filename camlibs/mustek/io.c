@@ -51,26 +51,26 @@
  */
 int mdc800_io_sendCommand_with_retry (GPPort *port,unsigned char* command, unsigned char* buffer, int length, int maxtries,int quiet)
 {
-	int try=0;
-	int ret=GP_OK;
+    int try=0;
+    int ret=GP_OK;
 
-	while (try < maxtries)
-	{
-	        usleep(MDC800_DEFAULT_COMMAND_RETRY_DELAY*1000);
-		if (port->type == GP_PORT_USB)
-			ret=mdc800_usb_sendCommand(port,command, buffer, length );
-		else
-			ret=mdc800_rs232_sendCommand(port, command, buffer, length);
-		if (ret==GP_OK)
-			return GP_OK;
-		try++;
-	}
-	if (!quiet)
-	{
-		printCoreNote ("\nCamera is not responding (Maybe off?)\n");
-		printCoreNote ("giving it up after %i times.\n\n", try);
-	}
-	return GP_ERROR_IO;
+    while (try < maxtries)
+        {
+            usleep(MDC800_DEFAULT_COMMAND_RETRY_DELAY*1000);
+            if (port->type == GP_PORT_USB)
+                ret=mdc800_usb_sendCommand(port,command, buffer, length );
+            else
+                ret=mdc800_rs232_sendCommand(port, command, buffer, length);
+            if (ret==GP_OK)
+                return GP_OK;
+            try++;
+        }
+    if (!quiet)
+    {
+        printCoreNote ("\nCamera is not responding (Maybe off?)\n");
+        printCoreNote ("giving it up after %i times.\n\n", try);
+    }
+    return GP_ERROR_IO;
 }
 
 
@@ -81,16 +81,16 @@ int mdc800_io_sendCommand_with_retry (GPPort *port,unsigned char* command, unsig
  */
 int mdc800_io_sendCommand (GPPort*port,unsigned char commandid,unsigned char par1,unsigned char par2,unsigned char par3, unsigned char* buffer, int length)
 {
-	unsigned char command [8];
-	command[0]=COMMAND_BEGIN;
-	command[1]=commandid;
-	command[2]=par1;
-	command[3]=par2;
-	command[4]=par3;
-	command[5]=COMMAND_END;
-	command[6]=0;
-	command[7]=0;
-	return mdc800_io_sendCommand_with_retry (port,command,buffer,length, MDC800_DEFAULT_COMMAND_RETRY,0);
+    unsigned char command [8];
+    command[0]=COMMAND_BEGIN;
+    command[1]=commandid;
+    command[2]=par1;
+    command[3]=par2;
+    command[4]=par3;
+    command[5]=COMMAND_END;
+    command[6]=0;
+    command[7]=0;
+    return mdc800_io_sendCommand_with_retry (port,command,buffer,length, MDC800_DEFAULT_COMMAND_RETRY,0);
 }
 
 /*
@@ -99,18 +99,18 @@ int mdc800_io_sendCommand (GPPort*port,unsigned char commandid,unsigned char par
  */
 int mdc800_io_getCommandTimeout (unsigned char command)
 {
-	switch (command)
-	{
-		case COMMAND_SET_STORAGE_SOURCE:
-		case COMMAND_SET_TARGET:
-		case COMMAND_SET_CAMERA_MODE:
-		case COMMAND_DELETE_IMAGE:
-			return MDC800_LONG_TIMEOUT;
+    switch (command)
+    {
+    case COMMAND_SET_STORAGE_SOURCE:
+    case COMMAND_SET_TARGET:
+    case COMMAND_SET_CAMERA_MODE:
+    case COMMAND_DELETE_IMAGE:
+        return MDC800_LONG_TIMEOUT;
 
-		case COMMAND_TAKE_PICTURE:
-		case COMMAND_PLAYBACK_IMAGE:
-		case COMMAND_SET_PLAYBACK_MODE:
-			return MDC800_TAKE_PICTURE_TIMEOUT;
-	}
-	return MDC800_DEFAULT_TIMEOUT;
+    case COMMAND_TAKE_PICTURE:
+    case COMMAND_PLAYBACK_IMAGE:
+    case COMMAND_SET_PLAYBACK_MODE:
+        return MDC800_TAKE_PICTURE_TIMEOUT;
+    }
+    return MDC800_DEFAULT_TIMEOUT;
 }

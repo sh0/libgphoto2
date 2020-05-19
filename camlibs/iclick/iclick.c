@@ -41,140 +41,140 @@
 #define SQWRITE gp_port_usb_msg_write
 #define SQREAD  gp_port_usb_msg_read
 
-#define zero 	"\x0"
+#define zero    "\x0"
 
 /*
 static unsigned char *
 icl_read_data (GPPort *port, unsigned char *data, int size)
 {
-	gp_port_read (port, data, size);
-	return GP_OK;
+    gp_port_read (port, data, size);
+    return GP_OK;
 }
 */
 
 int icl_access_reg (GPPort *port, enum icl_cmnd_type reg)
 {
-	SQWRITE (port, 0x0c, reg,
-			(CONFIG == reg) ? CONFIG_I : 0,
-			NULL, 0);	/* Access a register */
-	return GP_OK;
+    SQWRITE (port, 0x0c, reg,
+             (CONFIG == reg) ? CONFIG_I : 0,
+             NULL, 0);   /* Access a register */
+    return GP_OK;
 }
 
 int
 icl_init (GPPort *port, CameraPrivateLibrary *priv)
 {
-	int i;
-	static unsigned char dummy_buf[0x28000];
-	unsigned char *catalog = malloc(0x8000);
-	unsigned char *catalog_tmp;
+    int i;
+    static unsigned char dummy_buf[0x28000];
+    unsigned char *catalog = malloc(0x8000);
+    unsigned char *catalog_tmp;
 
-	priv->model=SQ_MODEL_ICLICK;
-
-
-	if (!catalog) return GP_ERROR_NO_MEMORY;
+    priv->model=SQ_MODEL_ICLICK;
 
 
-	icl_reset (port);
+    if (!catalog) return GP_ERROR_NO_MEMORY;
 
-	icl_access_reg(port, CONFIG);	     /* Access config */
-	gp_port_read(port, (char *)catalog, 0x8000);
-	/* Config data is in lines of 16 bytes. Each photo uses two lines. */
-	icl_read_picture_data(port, dummy_buf, 0x28000);
-	icl_reset (port);
 
-	/* Photo list starts with line 0040. List terminates when we
-	 * the first entry of an even-numbered line is zero. */
-	for (i=0; i< (0x8000 - 64) && catalog[i+64] ; i+=32)
-		;
-	priv->nb_entries = i>>5;
-	if (i) {
-		catalog_tmp = realloc(catalog, i);
-		if (catalog_tmp)
-			priv->catalog = catalog_tmp;
-		else
-			priv->catalog = catalog;
-	} else {
-		free(catalog);
-		priv->catalog = NULL;	/* We just have freed catalog_tmp */
-	}
+    icl_reset (port);
 
-	icl_reset (port);
+    icl_access_reg(port, CONFIG);        /* Access config */
+    gp_port_read(port, (char *)catalog, 0x8000);
+    /* Config data is in lines of 16 bytes. Each photo uses two lines. */
+    icl_read_picture_data(port, dummy_buf, 0x28000);
+    icl_reset (port);
 
-	priv->data_offset = -1;
+    /* Photo list starts with line 0040. List terminates when we
+     * the first entry of an even-numbered line is zero. */
+    for (i=0; i< (0x8000 - 64) && catalog[i+64] ; i+=32)
+        ;
+    priv->nb_entries = i>>5;
+    if (i) {
+        catalog_tmp = realloc(catalog, i);
+        if (catalog_tmp)
+            priv->catalog = catalog_tmp;
+        else
+            priv->catalog = catalog;
+    } else {
+        free(catalog);
+        priv->catalog = NULL;   /* We just have freed catalog_tmp */
+    }
 
-	return GP_OK;
+    icl_reset (port);
+
+    priv->data_offset = -1;
+
+    return GP_OK;
 }
 
 int
 icl_get_start (CameraPrivateLibrary *priv, int entry)
 {
-	int start = 0x4b100 * entry;
-	return start;
+    int start = 0x4b100 * entry;
+    return start;
 }
 
 int
 icl_get_size (CameraPrivateLibrary *priv, int entry)
 {
-	return 0x4b100;
+    return 0x4b100;
 }
 
 
 int
 icl_get_width_height (CameraPrivateLibrary *priv, int entry, int *w, int *h)
 {
-	*w = 640;
-	*h = 480;
-	return GP_OK;
+    *w = 640;
+    *h = 480;
+    return GP_OK;
 }
 
 
 int
 icl_rewind (GPPort *port, CameraPrivateLibrary *priv)
 {
-	static unsigned char dummy_buf[0x30000];
+    static unsigned char dummy_buf[0x30000];
 
-	GP_DEBUG("REWIND cam's data pointer");
+    GP_DEBUG("REWIND cam's data pointer");
 
-	/* One has to read the catalog to rewind the data stream...
-	 * I don't know if it's by design.
-	 * There ought to be something better to do... :-/
-	 */
+    /* One has to read the catalog to rewind the data stream...
+     * I don't know if it's by design.
+     * There ought to be something better to do... :-/
+     */
 
 
-	icl_access_reg(port, CONFIG);		/* Access model */
+    icl_access_reg(port, CONFIG);       /* Access model */
 
-	icl_read_picture_data(port, dummy_buf, 0x30000);
+    icl_read_picture_data(port, dummy_buf, 0x30000);
 
-	icl_reset (port);
-	icl_access_reg(port, DATA);	/* Access photo data */
+    icl_reset (port);
+    icl_access_reg(port, DATA); /* Access photo data */
 
-	priv->data_offset = icl_get_start (priv, 0);
+    priv->data_offset = icl_get_start (priv, 0);
 
-	return GP_OK;
+    return GP_OK;
 }
 
 int
 icl_reset (GPPort *port)
 {
-	icl_access_reg(port, CLEAR);	/* Release current register */
+    icl_access_reg(port, CLEAR);    /* Release current register */
 
-    	return GP_OK;
+    return GP_OK;
 }
 
 int
 icl_read_picture_data (GPPort *port, unsigned char *data, int size )
 {
-	int remainder = size % 0x8000;
-	int offset = 0;
+    int remainder = size % 0x8000;
+    int offset = 0;
 
-	while ((offset + 0x8000) <= size) {
-		gp_port_read (port, (char *)data + offset, 0x8000);
-		offset += 0x8000;
-	}
-	if (remainder)
-		gp_port_read (port, (char *)data + offset, remainder);
+    while ((offset + 0x8000) <= size) {
+        gp_port_read (port, (char *)data + offset, 0x8000);
+        offset += 0x8000;
+    }
+    if (remainder)
+        gp_port_read (port, (char *)data + offset, remainder);
 
-    	return GP_OK;
+    return GP_OK;
 }
 
 

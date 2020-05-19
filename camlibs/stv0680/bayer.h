@@ -22,9 +22,9 @@
 #define BAYER_H
 
 void bayer_unshuffle_preview(int w, int h, int scale,
-			     unsigned char *raw, unsigned char *output);
+                             unsigned char *raw, unsigned char *output);
 void light_enhance(int vw, int vh, int coarse, int fine,
-		   unsigned char avg_pix_val, unsigned char *output);
+                   unsigned char avg_pix_val, unsigned char *output);
 
 #endif
 

@@ -71,11 +71,11 @@ int canon_serial_get_thumbnail (Camera *camera, const char *name, unsigned char 
 #define DATA_BLOCK 1536
 
 /* Defines for error handling */
-/* #define NOERROR		0 */
-/* #define ERROR_RECEIVED	1 */
-/* #define ERROR_ADDRESSED	2 */
-/* #define FATAL_ERROR	3 */
-/* #define ERROR_LOWBATT	4 */
+/* #define NOERROR      0 */
+/* #define ERROR_RECEIVED   1 */
+/* #define ERROR_ADDRESSED  2 */
+/* #define FATAL_ERROR  3 */
+/* #define ERROR_LOWBATT    4 */
 
 /**
  * canonSerialErrorCode:
@@ -90,11 +90,11 @@ int canon_serial_get_thumbnail (Camera *camera, const char *name, unsigned char 
  */
 #undef NOERROR /* happens in windows. is also 0 */
 typedef enum {
-	NOERROR		= 0,
-	ERROR_RECEIVED	= 1,
-	ERROR_ADDRESSED	= 2,
-	FATAL_ERROR	= 3,
-	ERROR_LOWBATT   = 4
+    NOERROR     = 0,
+    ERROR_RECEIVED  = 1,
+    ERROR_ADDRESSED = 2,
+    FATAL_ERROR = 3,
+    ERROR_LOWBATT   = 4
 } canonSerialErrorCode;
 
 /* ------------------------- Frame-level processing ------------------------- */
@@ -114,10 +114,10 @@ typedef enum {
  *
  */
 typedef enum {
-	CANON_FBEG    = 0xc0,		     /* Beginning of frame */
-	CANON_FEND    = 0xc1,		     /* End of frame */
-	CANON_ESC     = 0x7e,		     /* XOR next byte with 0x20 */
-	CANON_XOR     = 0x20
+    CANON_FBEG    = 0xc0,            /* Beginning of frame */
+    CANON_FEND    = 0xc1,            /* End of frame */
+    CANON_ESC     = 0x7e,            /* XOR next byte with 0x20 */
+    CANON_XOR     = 0x20
 } canonSerialFramingByte;
 /* ------------------------ Packet-level processing ------------------------- */
 
@@ -149,11 +149,11 @@ typedef enum {
  *
  */
 typedef enum {
-	PKT_SEQ       = 0,
-	PKT_TYPE      = 1,
-	PKT_LEN_LSB   = 2,
-	PKT_LEN_MSB   = 3,
-	PKT_HDR_LEN   = 4
+    PKT_SEQ       = 0,
+    PKT_TYPE      = 1,
+    PKT_LEN_LSB   = 2,
+    PKT_LEN_MSB   = 3,
+    PKT_HDR_LEN   = 4
 } canonPacketOffset;
 
 /* #define PKT_MSG         0 */
@@ -175,10 +175,10 @@ typedef enum {
  *
  */
 typedef enum {
-	PKT_MSG       = 0,
-	PKT_SPD       = 3,
-	PKT_EOT       = 4,
-	PKT_ACK       = 5
+    PKT_MSG       = 0,
+    PKT_SPD       = 3,
+    PKT_EOT       = 4,
+    PKT_ACK       = 5
 } canonPacketType;
 
 
@@ -199,9 +199,9 @@ typedef enum {
  *
  */
 typedef enum {
-	PKTACK_NACK    = 0x01,
-	PKT_UPLOAD_EOT = 3,
-	PKT_NACK       = 255
+    PKTACK_NACK    = 0x01,
+    PKT_UPLOAD_EOT = 3,
+    PKT_NACK       = 255
 } canonPacketThirdByte;
 
 /* ----------------------- Message-level processing ------------------------ */
@@ -241,13 +241,13 @@ typedef enum {
  *
  */
 typedef enum {
-	MSG_02        = 0,
-	MSG_MTYPE     = 4,
-	MSG_DIR       = 7,
-	MSG_LEN_LSB   = 8,
-	MSG_LEN_MSB   = 9,
-/*	MSG_FFFB      = 12,*/
-	MSG_HDR_LEN   = 16
+    MSG_02        = 0,
+    MSG_MTYPE     = 4,
+    MSG_DIR       = 7,
+    MSG_LEN_LSB   = 8,
+    MSG_LEN_MSB   = 9,
+    /*  MSG_FFFB      = 12,*/
+    MSG_HDR_LEN   = 16
 } canonSerialMsgHeader;
 
 

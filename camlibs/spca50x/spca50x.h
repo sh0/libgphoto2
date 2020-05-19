@@ -21,7 +21,7 @@
 /* You should have received a copy of the GNU Library General   */
 /* Public License along with this library; if not, write to the */
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
-/* Boston, MA  02110-1301  USA					*/
+/* Boston, MA  02110-1301  USA                  */
 /****************************************************************/
 
 #ifndef __SPCA50X_H__
@@ -37,43 +37,43 @@
 
 struct SPCA50xFile
 {
-	char *name;
-	int width;
-	int height;
-	int fat_start;
-	int fat_end;
-	uint8_t *fat;
-	int mime_type;
-	int type; /* not necessarily the same thing as mime_type! */
-	unsigned int size;
-	uint8_t *thumb; /* used to cache the thumbnail data, for some cams */
+    char *name;
+    int width;
+    int height;
+    int fat_start;
+    int fat_end;
+    uint8_t *fat;
+    int mime_type;
+    int type; /* not necessarily the same thing as mime_type! */
+    unsigned int size;
+    uint8_t *thumb; /* used to cache the thumbnail data, for some cams */
 };
 
 typedef enum {
-	BRIDGE_SPCA500,
-	BRIDGE_SPCA504,
-	BRIDGE_SPCA504B_PD    /* with specialized pure digital firmware */
+    BRIDGE_SPCA500,
+    BRIDGE_SPCA504,
+    BRIDGE_SPCA504B_PD    /* with specialized pure digital firmware */
 } SPCA50xBridgeChip;
 
 struct _CameraPrivateLibrary
 {
-	GPPort *gpdev;
-	int dirty_sdram:1;
-	int dirty_flash:1;
-	int storage_media_mask;
-	uint8_t fw_rev;
-	SPCA50xBridgeChip bridge;
-	int num_files_on_flash;
-	int num_files_on_sdram;
-	int num_images;
-	int num_movies;
-	int num_fats;
-	int size_used;
-	int size_free;
-	uint8_t *flash_toc;
-	uint8_t *fats;
-	struct SPCA50xFile *flash_files;
-	struct SPCA50xFile *sdram_files;
+    GPPort *gpdev;
+    int dirty_sdram:1;
+    int dirty_flash:1;
+    int storage_media_mask;
+    uint8_t fw_rev;
+    SPCA50xBridgeChip bridge;
+    int num_files_on_flash;
+    int num_files_on_sdram;
+    int num_images;
+    int num_movies;
+    int num_fats;
+    int size_used;
+    int size_free;
+    uint8_t *flash_toc;
+    uint8_t *fats;
+    struct SPCA50xFile *flash_files;
+    struct SPCA50xFile *sdram_files;
 };
 
 #define SPCA50X_SDRAM 0x01
@@ -87,8 +87,8 @@ int spca50x_reset (CameraPrivateLibrary * lib);
 int spca50x_capture (CameraPrivateLibrary * lib);
 int yuv2rgb (uint32_t y, uint32_t u, uint32_t v, uint32_t *r, uint32_t *g, uint32_t *b);
 int create_jpeg_from_data (uint8_t * dst, uint8_t * src, int qIndex,
-				   int w, int h, uint8_t format,
-				   int original_size, int *size,
-				   int omit_huffman_table, int omit_escape);
+                           int w, int h, uint8_t format,
+                           int original_size, int *size,
+                           int omit_huffman_table, int omit_escape);
 
 #endif /* __SPCA50X_H__ */

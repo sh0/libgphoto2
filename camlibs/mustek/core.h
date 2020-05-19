@@ -23,10 +23,10 @@
 #include "mdc800_spec.h"
 #include "image.h"
 
-#define MDC800_FLASHLIGHT_REDEYE	1
-#define MDC800_FLASHLIGHT_ON 		2
-#define MDC800_FLASHLIGHT_OFF		4
-#define MDC800_FLASHLIGHT_AUTO		0
+#define MDC800_FLASHLIGHT_REDEYE    1
+#define MDC800_FLASHLIGHT_ON        2
+#define MDC800_FLASHLIGHT_OFF       4
+#define MDC800_FLASHLIGHT_AUTO      0
 
 struct _CameraPrivateLibrary {
     unsigned char system_flags[4];
@@ -72,7 +72,7 @@ int mdc800_setStorageSource (Camera *,int);
 int mdc800_setMode (Camera *,int);
 int mdc800_enableLCD (Camera*,int);
 int mdc800_playbackImage (Camera*,int );
-int mdc800_getRemainFreeImageCount (Camera*,int*,int* ,int*);
+int mdc800_getRemainFreeImageCount (Camera*,int*,int*,int*);
 int mdc800_setFlashLight (Camera*,int );
 
 char* mdc800_getFlashLightString (int);

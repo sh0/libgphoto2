@@ -44,7 +44,7 @@
 #define SOUNDVISION_GET_THUMB_SIZE    0x010A
 #define SOUNDVISION_GET_THUMB         0x010B
 
-#define SOUNDVISION_STATUS	      0x0114
+#define SOUNDVISION_STATUS        0x0114
 #define SOUNDVISION_INIT2             0x0115
 
 #define SOUNDVISION_DONE_TRANSACTION  0x01FF
@@ -54,18 +54,18 @@
 #define SOUNDVISION_IXLA              2
 
 struct _CameraPrivateLibrary {
-	GPPort *gpdev;
+    GPPort *gpdev;
 
-        int device_type;
-        int reset_times,odd_command;
-	int num_pictures;
-	char *file_list;
+    int device_type;
+    int reset_times,odd_command;
+    int num_pictures;
+    char *file_list;
 
 };
 
 /* commands.c */
 int32_t soundvision_send_command(uint32_t command, uint32_t argument,
-				                                          CameraPrivateLibrary *dev);
+                                 CameraPrivateLibrary *dev);
 int soundvision_reset(CameraPrivateLibrary *dev, char *revision, char *status);
 
 int soundvision_get_revision(CameraPrivateLibrary *dev,char *revision);
@@ -81,10 +81,10 @@ int soundvision_delete_picture(CameraPrivateLibrary *dev, const char *filename);
 
 int soundvision_get_thumb_size(CameraPrivateLibrary *dev, const char *filename);
 int soundvision_get_thumb(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size);
+                          unsigned char *data,int size);
 int soundvision_get_pic_size(CameraPrivateLibrary *dev, const char *filename);
 int soundvision_get_pic(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size);
+                        unsigned char *data,int size);
 
 /* agfa_cl18.c */
 
@@ -92,10 +92,10 @@ int agfa_capture(CameraPrivateLibrary *dev, CameraFilePath *path);
 int agfa_delete_picture(CameraPrivateLibrary *dev, const char *filename);
 int agfa_get_file_list(CameraPrivateLibrary *dev);
 int agfa_get_pic(CameraPrivateLibrary *dev, const char *filename,
-		                    unsigned char *data,int size);
+                 unsigned char *data,int size);
 int agfa_get_pic_size(CameraPrivateLibrary *dev, const char *filename);
 int agfa_get_thumb(CameraPrivateLibrary *dev, const char *filename,
-		                      unsigned char *data,int size);
+                   unsigned char *data,int size);
 int agfa_get_thumb_size(CameraPrivateLibrary *dev, const char *filename);
 
 
@@ -106,16 +106,16 @@ int agfa_get_thumb_size(CameraPrivateLibrary *dev, const char *filename);
 /* tiger_fastflicks.c */
 int tiger_set_pc_mode(CameraPrivateLibrary *dev);
 int tiger_upload_file(CameraPrivateLibrary *dev, const char *filename,
-		      const char *data, long data_size);
+                      const char *data, long data_size);
 int tiger_delete_picture(CameraPrivateLibrary *dev, const char *filename);
 int tiger_capture(CameraPrivateLibrary *dev, CameraFilePath *path);
 int tiger_get_mem(CameraPrivateLibrary *dev, int *num_pics, int *mem_total, int *mem_free);
 int tiger_get_file_list(CameraPrivateLibrary *dev);
 int tiger_get_pic(CameraPrivateLibrary *dev, const char *filename,
-		                    unsigned char *data,int size);
+                  unsigned char *data,int size);
 int tiger_get_pic_size(CameraPrivateLibrary *dev, const char *filename);
 int tiger_get_thumb(CameraPrivateLibrary *dev, const char *filename,
-		                      unsigned char *data,int size);
+                    unsigned char *data,int size);
 int tiger_get_thumb_size(CameraPrivateLibrary *dev, const char *filename);
 #endif
 

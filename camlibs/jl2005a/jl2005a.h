@@ -27,30 +27,30 @@
 #include <gphoto2/gphoto2-port.h>
 
 struct _CameraPrivateLibrary {
-	unsigned char *catalog;
-	int nb_entries;
-	int last_fetched_entry;
-	int data_reg_accessed;
-	unsigned long data_to_read;
-	unsigned char *data_cache;
-	int data_used_from_block;
+    unsigned char *catalog;
+    int nb_entries;
+    int last_fetched_entry;
+    int data_reg_accessed;
+    unsigned long data_to_read;
+    unsigned char *data_cache;
+    int data_used_from_block;
 };
 
 
 int jl2005a_init              (Camera *camera, GPPort *port,
-					    CameraPrivateLibrary *priv);
+                               CameraPrivateLibrary *priv);
 int jl2005a_get_pic_data_size (GPPort *port, int n);
 int jl2005a_get_pic_width (GPPort *port);
 int jl2005a_get_pic_height (GPPort *port);
-int set_usb_in_endpoint	     (Camera *camera, int inep);
+int set_usb_in_endpoint      (Camera *camera, int inep);
 int jl2005a_read_picture_data ( Camera *camera,
-				GPPort *port, unsigned char *data,
-				unsigned int size);
-int jl2005a_reset	     (Camera *camera, GPPort *port);
+                                GPPort *port, unsigned char *data,
+                                unsigned int size);
+int jl2005a_reset        (Camera *camera, GPPort *port);
 int jl2005a_read_info_byte(GPPort *port, int n);
 int jl2005a_shortquery(GPPort *port, int n);
 int jl2005a_decompress (unsigned char *inp, unsigned char *outp, int width,
-				int height);
+                        int height);
 
 #endif
 

@@ -52,138 +52,138 @@
 #endif
 
 
-int jd350e_postprocessing(int width, int height, unsigned char* rgb){
-	int
-		x,y,
-		red_min=255, red_max=0,
-		blue_min=255, blue_max=0,
-		green_min=255, green_max=0;
-	double
-		min, max, amplify;
+int jd350e_postprocessing(int width, int height, unsigned char* rgb) {
+    int
+    x,y,
+    red_min=255, red_max=0,
+    blue_min=255, blue_max=0,
+    green_min=255, green_max=0;
+    double
+    min, max, amplify;
 
-	/* reverse image row by row... */
+    /* reverse image row by row... */
 
-	for( y=0; y<height; y++){
-		for( x=0; x<width/2; x++ ){
-			SWAP( RED(rgb,x,y,width), RED(rgb,width-x-1,y,width));
-			SWAP( GREEN(rgb,x,y,width), GREEN(rgb,width-x-1,y,width));
-			SWAP( BLUE(rgb,x,y,width), BLUE(rgb,width-x-1,y,width));
-		}
-	}
+    for( y=0; y<height; y++) {
+        for( x=0; x<width/2; x++ ) {
+            SWAP( RED(rgb,x,y,width), RED(rgb,width-x-1,y,width));
+            SWAP( GREEN(rgb,x,y,width), GREEN(rgb,width-x-1,y,width));
+            SWAP( BLUE(rgb,x,y,width), BLUE(rgb,width-x-1,y,width));
+        }
+    }
 
-	/* determine min and max per color... */
+    /* determine min and max per color... */
 
-	for( y=0; y<height; y++){
-		for( x=0; x<width; x++ ){
-			MINMAX( RED(rgb,x,y,width), red_min,   red_max  );
-			MINMAX( GREEN(rgb,x,y,width), green_min, green_max);
-			MINMAX( BLUE(rgb,x,y,width), blue_min,  blue_max );
-		}
-	}
+    for( y=0; y<height; y++) {
+        for( x=0; x<width; x++ ) {
+            MINMAX( RED(rgb,x,y,width), red_min,   red_max  );
+            MINMAX( GREEN(rgb,x,y,width), green_min, green_max);
+            MINMAX( BLUE(rgb,x,y,width), blue_min,  blue_max );
+        }
+    }
 
-	/* white balancing ...                               */
-	/* here is still some work to do: either blue or red */
-	/* pixles need to be emphasized.                     */
-	/* but how can the driver decide?                    */
+    /* white balancing ...                               */
+    /* here is still some work to do: either blue or red */
+    /* pixles need to be emphasized.                     */
+    /* but how can the driver decide?                    */
 
 #if 0
-	if( (green_max+blue_max)/2 > red_max ){
+    if( (green_max+blue_max)/2 > red_max ) {
 #endif
-		/* outdoor daylight : red color correction curve*/
-		GP_DEBUG( "daylight mode");
-		for( y=0; y<height; y++){
-			for( x=0; x<width; x++ ){
-				RED(rgb,x,y,width) = jd350e_red_curve[ RED(rgb,x,y,width) ];
-			/* RED(rgb,x,y,width) = MIN(2*(unsigned)RED(rgb,x,y,width),255); */
-			}
-		}
-		red_min = jd350e_red_curve[ red_min ];
-		red_max = jd350e_red_curve[ red_max ];
-		/* red_min = MIN(2*(unsigned)red_min,255); */
-		/* red_max = MIN(2*(unsigned)red_max,255); */
+        /* outdoor daylight : red color correction curve*/
+        GP_DEBUG( "daylight mode");
+        for( y=0; y<height; y++) {
+            for( x=0; x<width; x++ ) {
+                RED(rgb,x,y,width) = jd350e_red_curve[ RED(rgb,x,y,width) ];
+                /* RED(rgb,x,y,width) = MIN(2*(unsigned)RED(rgb,x,y,width),255); */
+            }
+        }
+        red_min = jd350e_red_curve[ red_min ];
+        red_max = jd350e_red_curve[ red_max ];
+        /* red_min = MIN(2*(unsigned)red_min,255); */
+        /* red_max = MIN(2*(unsigned)red_max,255); */
 #if 0
-	}
-	else if( (green_max+red_max)/2 > blue_max ){
-		/* indoor electric light */
-		GP_DEBUG( "electric light mode");
-		for( y=0; y<height; y++){
-			for( x=0; x<width; x++ ){
-				BLUE(rgb,x,y,width) = MIN(2*(unsigned)BLUE(rgb,x,y,width),255);
-			}
-		}
-		blue_min = MIN(2*(unsigned)blue_min,255);
-		blue_max = MIN(2*(unsigned)blue_max,255);
-	}
+    }
+    else if( (green_max+red_max)/2 > blue_max ) {
+        /* indoor electric light */
+        GP_DEBUG( "electric light mode");
+        for( y=0; y<height; y++) {
+            for( x=0; x<width; x++ ) {
+                BLUE(rgb,x,y,width) = MIN(2*(unsigned)BLUE(rgb,x,y,width),255);
+            }
+        }
+        blue_min = MIN(2*(unsigned)blue_min,255);
+        blue_max = MIN(2*(unsigned)blue_max,255);
+    }
 #endif
 
-	/* Normalize brightness ... */
+    /* Normalize brightness ... */
 
-	max = MAX( MAX( red_max, green_max ), blue_max);
-	min = MIN( MIN( red_min, green_min ), blue_min);
-	amplify = 255.0/(max-min);
+    max = MAX( MAX( red_max, green_max ), blue_max);
+    min = MIN( MIN( red_min, green_min ), blue_min);
+    amplify = 255.0/(max-min);
 
-	for( y=0; y<height; y++){
-		for( x=0; x<width; x++ ){
-			RED(rgb,x,y,width)= MIN(amplify*(double)(RED(rgb,x,y,width)-min),255);
-			GREEN(rgb,x,y,width)= MIN(amplify*(double)(GREEN(rgb,x,y,width)-min),255);
-			BLUE(rgb,x,y,width)= MIN(amplify*(double)(BLUE(rgb,x,y,width)-min),255);
-		}
-	}
+    for( y=0; y<height; y++) {
+        for( x=0; x<width; x++ ) {
+            RED(rgb,x,y,width)= MIN(amplify*(double)(RED(rgb,x,y,width)-min),255);
+            GREEN(rgb,x,y,width)= MIN(amplify*(double)(GREEN(rgb,x,y,width)-min),255);
+            BLUE(rgb,x,y,width)= MIN(amplify*(double)(BLUE(rgb,x,y,width)-min),255);
+        }
+    }
 
-	return GP_OK;
+    return GP_OK;
 }
 
-int jd350e_postprocessing_and_flip(int width, int height, unsigned char* rgb){
-	char *tmpline;
-	int y, ret;
+int jd350e_postprocessing_and_flip(int width, int height, unsigned char* rgb) {
+    char *tmpline;
+    int y, ret;
 
-	ret = jd350e_postprocessing (width,height,rgb);
-	if (ret < GP_OK)
-		return ret;
-	tmpline = malloc(width*3);
-	if (!tmpline)
-		return GP_ERROR_NO_MEMORY;
-	for( y=0; y<height/2; y++){
-		memcpy (tmpline, rgb+y*width*3, width*3);
-		memcpy (rgb+y*width*3, rgb+(height-y-1)*width*3, width*3);
-		memcpy (rgb+(height-y-1)*width*3, tmpline, width*3);
-	}
-	free(tmpline);
-	return GP_OK;
+    ret = jd350e_postprocessing (width,height,rgb);
+    if (ret < GP_OK)
+        return ret;
+    tmpline = malloc(width*3);
+    if (!tmpline)
+        return GP_ERROR_NO_MEMORY;
+    for( y=0; y<height/2; y++) {
+        memcpy (tmpline, rgb+y*width*3, width*3);
+        memcpy (rgb+y*width*3, rgb+(height-y-1)*width*3, width*3);
+        memcpy (rgb+(height-y-1)*width*3, tmpline, width*3);
+    }
+    free(tmpline);
+    return GP_OK;
 }
 
 int trust350fs_postprocessing(int width, int height, unsigned char* rgb) {
-	int		i,x,y,min=255,max=0;
-	double		amplify;
-	unsigned char	*buf;
-	const int	brightness_adjust = 16;
+    int     i,x,y,min=255,max=0;
+    double      amplify;
+    unsigned char   *buf;
+    const int   brightness_adjust = 16;
 
-	/* flip horizontal */
+    /* flip horizontal */
 #define RED(p,x,y,w) *((p)+3*((y)*(w)+(x))  )
 #define GREEN(p,x,y,w) *((p)+3*((y)*(w)+(x))+1)
 #define BLUE(p,x,y,w) *((p)+3*((y)*(w)+(x))+2)
 
 #define SWAP(a,b) {unsigned char t=(a); (a)=(b); (b)=t;}
 
-	for( y=0; y<height; y++){
-		for( x=0; x<width/2; x++ ){
-			SWAP( RED(rgb,x,y,width), RED(rgb,width-x-1,y,width));
-			SWAP( GREEN(rgb,x,y,width), GREEN(rgb,width-x-1,y,width));
-			SWAP( BLUE(rgb,x,y,width), BLUE(rgb,width-x-1,y,width));
-		}
-	}
+    for( y=0; y<height; y++) {
+        for( x=0; x<width/2; x++ ) {
+            SWAP( RED(rgb,x,y,width), RED(rgb,width-x-1,y,width));
+            SWAP( GREEN(rgb,x,y,width), GREEN(rgb,width-x-1,y,width));
+            SWAP( BLUE(rgb,x,y,width), BLUE(rgb,width-x-1,y,width));
+        }
+    }
 
-	/* flip vertical */
-	buf = malloc(width*3);
-	if (!buf) return GP_ERROR_NO_MEMORY;
-	for (i=0;i<height/2;i++) {
-		memcpy(buf,rgb+i*width*3,width*3);
-		memcpy(rgb+i*width*3,rgb+(height-i-1)*width*3,width*3);
-		memcpy(rgb+(height-i-1)*width*3,buf,width*3);
-	}
-	free(buf);
+    /* flip vertical */
+    buf = malloc(width*3);
+    if (!buf) return GP_ERROR_NO_MEMORY;
+    for (i=0; i<height/2; i++) {
+        memcpy(buf,rgb+i*width*3,width*3);
+        memcpy(rgb+i*width*3,rgb+(height-i-1)*width*3,width*3);
+        memcpy(rgb+(height-i-1)*width*3,buf,width*3);
+    }
+    free(buf);
 
-	/* Normalize & adjust brightness ... */
+    /* Normalize & adjust brightness ... */
 #define MINMAX(a,min,max) { (min)=MIN(min,a); (max)=MAX(max,a); }
 
 #ifndef MAX
@@ -193,22 +193,22 @@ int trust350fs_postprocessing(int width, int height, unsigned char* rgb) {
 # define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-	for(i=0; i<(width*height*3); i++)
-			MINMAX( rgb[i], min, max  );
+    for(i=0; i<(width*height*3); i++)
+        MINMAX( rgb[i], min, max  );
 
-	amplify = 255.0/(max-min);
+    amplify = 255.0/(max-min);
 
-	for(i=0; i<(width*height*3); i++)
-	{
-		int val = amplify * (rgb[i] - min);
+    for(i=0; i<(width*height*3); i++)
+    {
+        int val = amplify * (rgb[i] - min);
 
-		if(val < brightness_adjust)
-		   rgb[i] = val * 2;
-		else if (val > (255 - brightness_adjust))
-		   rgb[i] = 255;
-		else
-		   rgb[i] = val + brightness_adjust;
-	}
+        if(val < brightness_adjust)
+            rgb[i] = val * 2;
+        else if (val > (255 - brightness_adjust))
+            rgb[i] = 255;
+        else
+            rgb[i] = val + brightness_adjust;
+    }
 
-	return GP_OK;
+    return GP_OK;
 }

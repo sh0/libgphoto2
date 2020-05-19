@@ -72,9 +72,9 @@
  * The internals of this list are private.
  **/
 struct _GPPortInfoList {
-	GPPortInfo *info;
-	unsigned int count;
-	unsigned int iolib_count;
+    GPPortInfo *info;
+    unsigned int count;
+    unsigned int iolib_count;
 };
 
 #define CR(x)         {int r=(x);if (r<0) return (r);}
@@ -94,7 +94,7 @@ struct _GPPortInfoList {
  */
 const char*
 gp_port_message_codeset (const char *codeset) {
-	return bind_textdomain_codeset (GETTEXT_PACKAGE, codeset);
+    return bind_textdomain_codeset (GETTEXT_PACKAGE, codeset);
 }
 
 /**
@@ -110,17 +110,17 @@ gp_port_message_codeset (const char *codeset) {
 int
 gp_port_info_list_new (GPPortInfoList **list)
 {
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	/*
-	 * We put this in here because everybody needs to call this function
-	 * before accessing ports...
-	 */
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+    /*
+     * We put this in here because everybody needs to call this function
+     * before accessing ports...
+     */
+    bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 
-	C_MEM (*list = calloc (1, sizeof (GPPortInfoList)));
+    C_MEM (*list = calloc (1, sizeof (GPPortInfoList)));
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -134,28 +134,28 @@ gp_port_info_list_new (GPPortInfoList **list)
 int
 gp_port_info_list_free (GPPortInfoList *list)
 {
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	if (list->info) {
-		unsigned int i;
+    if (list->info) {
+        unsigned int i;
 
-		for (i=0;i<list->count;i++) {
-			free (list->info[i]->name);
-			list->info[i]->name = NULL;
-			free (list->info[i]->path);
-			list->info[i]->path = NULL;
-			free (list->info[i]->library_filename);
-			list->info[i]->library_filename = NULL;
-			free (list->info[i]);
-		}
-		free (list->info);
-		list->info = NULL;
-	}
-	list->count = 0;
+        for (i=0; i<list->count; i++) {
+            free (list->info[i]->name);
+            list->info[i]->name = NULL;
+            free (list->info[i]->path);
+            list->info[i]->path = NULL;
+            free (list->info[i]->library_filename);
+            list->info[i]->library_filename = NULL;
+            free (list->info[i]);
+        }
+        free (list->info);
+        list->info = NULL;
+    }
+    list->count = 0;
 
-	free (list);
+    free (list);
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -176,85 +176,85 @@ gp_port_info_list_free (GPPortInfoList *list)
 int
 gp_port_info_list_append (GPPortInfoList *list, GPPortInfo info)
 {
-	int generic, i;
+    int generic, i;
 
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	C_MEM (list->info = realloc (list->info, sizeof (GPPortInfo) * (list->count + 1)));
-	list->count++;
-	list->info[list->count - 1] = info;
+    C_MEM (list->info = realloc (list->info, sizeof (GPPortInfo) * (list->count + 1)));
+    list->count++;
+    list->info[list->count - 1] = info;
 
-	/* Ignore generic entries */
-	for (generic = i = 0; i < list->count; i++)
-		if (!strlen (list->info[i]->name))
-			generic++;
-        return (list->count - 1 - generic);
+    /* Ignore generic entries */
+    for (generic = i = 0; i < list->count; i++)
+        if (!strlen (list->info[i]->name))
+            generic++;
+    return (list->count - 1 - generic);
 }
 
 
 static int
 foreach_func (const char *filename, lt_ptr data)
 {
-	GPPortInfoList *list = data;
-	lt_dlhandle lh;
-	GPPortLibraryType lib_type;
-	GPPortLibraryList lib_list;
-	GPPortType type;
-	unsigned int j, old_size = list->count;
-	int result;
+    GPPortInfoList *list = data;
+    lt_dlhandle lh;
+    GPPortLibraryType lib_type;
+    GPPortLibraryList lib_list;
+    GPPortType type;
+    unsigned int j, old_size = list->count;
+    int result;
 
-	GP_LOG_D ("Called for filename '%s'.", filename );
+    GP_LOG_D ("Called for filename '%s'.", filename );
 
-	lh = lt_dlopenext (filename);
-	if (!lh) {
-		GP_LOG_D ("Could not load '%s': '%s'.", filename, lt_dlerror ());
-		return (0);
-	}
+    lh = lt_dlopenext (filename);
+    if (!lh) {
+        GP_LOG_D ("Could not load '%s': '%s'.", filename, lt_dlerror ());
+        return (0);
+    }
 
-	lib_type = lt_dlsym (lh, "gp_port_library_type");
-	lib_list = lt_dlsym (lh, "gp_port_library_list");
-	if (!lib_type || !lib_list) {
-		GP_LOG_D ("Could not find some functions in '%s': '%s'.",
-			filename, lt_dlerror ());
-		lt_dlclose (lh);
-		return (0);
-	}
+    lib_type = lt_dlsym (lh, "gp_port_library_type");
+    lib_list = lt_dlsym (lh, "gp_port_library_list");
+    if (!lib_type || !lib_list) {
+        GP_LOG_D ("Could not find some functions in '%s': '%s'.",
+                  filename, lt_dlerror ());
+        lt_dlclose (lh);
+        return (0);
+    }
 
-	type = lib_type ();
-	for (j = 0; j < list->count; j++)
-		if (list->info[j]->type == type)
-			break;
-	if (j != list->count) {
-		GP_LOG_D ("'%s' already loaded", filename);
-		lt_dlclose (lh);
-		return (0);
-	}
+    type = lib_type ();
+    for (j = 0; j < list->count; j++)
+        if (list->info[j]->type == type)
+            break;
+    if (j != list->count) {
+        GP_LOG_D ("'%s' already loaded", filename);
+        lt_dlclose (lh);
+        return (0);
+    }
 
-	result = lib_list (list);
+    result = lib_list (list);
 #if !defined(VALGRIND)
-	lt_dlclose (lh);
+    lt_dlclose (lh);
 #endif
-	if (result < 0) {
-		GP_LOG_E ("Error during assembling of port list: '%s' (%d).",
-			gp_port_result_as_string (result), result);
-	}
+    if (result < 0) {
+        GP_LOG_E ("Error during assembling of port list: '%s' (%d).",
+                  gp_port_result_as_string (result), result);
+    }
 
-	if (old_size != list->count) {
-		/*
-		 * It doesn't matter if lib_list returned a failure code,
-		 * at least some entries were added
-		 */
-		list->iolib_count++;
+    if (old_size != list->count) {
+        /*
+         * It doesn't matter if lib_list returned a failure code,
+         * at least some entries were added
+         */
+        list->iolib_count++;
 
-		for (j = old_size; j < list->count; j++){
-			GP_LOG_D ("Loaded '%s' ('%s') from '%s'.",
-				list->info[j]->name, list->info[j]->path,
-				filename);
-			list->info[j]->library_filename = strdup (filename);
-		}
-	}
+        for (j = old_size; j < list->count; j++) {
+            GP_LOG_D ("Loaded '%s' ('%s') from '%s'.",
+                      list->info[j]->name, list->info[j]->path,
+                      filename);
+            list->info[j]->library_filename = strdup (filename);
+        }
+    }
 
-	return (0);
+    return (0);
 }
 
 
@@ -273,24 +273,24 @@ foreach_func (const char *filename, lt_ptr data)
 int
 gp_port_info_list_load (GPPortInfoList *list)
 {
-	const char *iolibs_env = getenv(IOLIBDIR_ENV);
-	const char *iolibs = (iolibs_env != NULL)?iolibs_env:IOLIBS;
-	int result;
+    const char *iolibs_env = getenv(IOLIBDIR_ENV);
+    const char *iolibs = (iolibs_env != NULL)?iolibs_env:IOLIBS;
+    int result;
 
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	GP_LOG_D ("Using ltdl to load io-drivers from '%s'...", iolibs);
-	lt_dlinit ();
-	lt_dladdsearchdir (iolibs);
-	result = lt_dlforeachfile (iolibs, foreach_func, list);
-	lt_dlexit ();
-	if (result < 0)
-		return (result);
-	if (list->iolib_count == 0) {
-		GP_LOG_E ("No iolibs found in '%s'", iolibs);
-		return GP_ERROR_LIBRARY;
-	}
-        return (GP_OK);
+    GP_LOG_D ("Using ltdl to load io-drivers from '%s'...", iolibs);
+    lt_dlinit ();
+    lt_dladdsearchdir (iolibs);
+    result = lt_dlforeachfile (iolibs, foreach_func, list);
+    lt_dlexit ();
+    if (result < 0)
+        return (result);
+    if (list->iolib_count == 0) {
+        GP_LOG_E ("No iolibs found in '%s'", iolibs);
+        return GP_ERROR_LIBRARY;
+    }
+    return (GP_OK);
 }
 
 /**
@@ -304,20 +304,20 @@ gp_port_info_list_load (GPPortInfoList *list)
 int
 gp_port_info_list_count (GPPortInfoList *list)
 {
-	unsigned int count, i;
+    unsigned int count, i;
 
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	GP_LOG_D ("Counting entries (%i available)...", list->count);
+    GP_LOG_D ("Counting entries (%i available)...", list->count);
 
-	/* Ignore generic entries */
-	count = list->count;
-	for (i = 0; i < list->count; i++)
-		if (!strlen (list->info[i]->name))
-			count--;
+    /* Ignore generic entries */
+    count = list->count;
+    for (i = 0; i < list->count; i++)
+        if (!strlen (list->info[i]->name))
+            count--;
 
-	GP_LOG_D ("%i regular entries available.", count);
-	return count;
+    GP_LOG_D ("%i regular entries available.", count);
+    return count;
 }
 
 /**
@@ -335,87 +335,87 @@ gp_port_info_list_count (GPPortInfoList *list)
 int
 gp_port_info_list_lookup_path (GPPortInfoList *list, const char *path)
 {
-	unsigned int i;
-	int result, generic;
+    unsigned int i;
+    int result, generic;
 #ifdef HAVE_REGEX
-	regex_t pattern;
+    regex_t pattern;
 #ifdef HAVE_GNU_REGEX
-	const char *rv;
+    const char *rv;
 #else
-	regmatch_t match;
+    regmatch_t match;
 #endif
 #endif
 
-	C_PARAMS (list && path);
+    C_PARAMS (list && path);
 
-	GP_LOG_D ("Looking for path '%s' (%i entries available)...", path, list->count);
+    GP_LOG_D ("Looking for path '%s' (%i entries available)...", path, list->count);
 
-	/* Exact match? */
-	for (generic = i = 0; i < list->count; i++)
-		if (!strlen (list->info[i]->name))
-			generic++;
-		else if (!strcmp (list->info[i]->path, path))
-			return (i - generic);
+    /* Exact match? */
+    for (generic = i = 0; i < list->count; i++)
+        if (!strlen (list->info[i]->name))
+            generic++;
+        else if (!strcmp (list->info[i]->path, path))
+            return (i - generic);
 
 #ifdef HAVE_REGEX
-	/* Regex match? */
-	GP_LOG_D ("Starting regex search for '%s'...", path);
-	for (i = 0; i < list->count; i++) {
-		GPPortInfo newinfo;
+    /* Regex match? */
+    GP_LOG_D ("Starting regex search for '%s'...", path);
+    for (i = 0; i < list->count; i++) {
+        GPPortInfo newinfo;
 
-		if (strlen (list->info[i]->name))
-			continue;
+        if (strlen (list->info[i]->name))
+            continue;
 
-		GP_LOG_D ("Trying '%s'...", list->info[i]->path);
+        GP_LOG_D ("Trying '%s'...", list->info[i]->path);
 
-		/* Compile the pattern */
+        /* Compile the pattern */
 #ifdef HAVE_GNU_REGEX
-		memset (&pattern, 0, sizeof (pattern));
-		rv = re_compile_pattern (list->info[i]->path,
-					 strlen (list->info[i]->path), &pattern);
-		if (rv) {
-			GP_LOG_D ("%s", rv);
-			continue;
-		}
+        memset (&pattern, 0, sizeof (pattern));
+        rv = re_compile_pattern (list->info[i]->path,
+                                 strlen (list->info[i]->path), &pattern);
+        if (rv) {
+            GP_LOG_D ("%s", rv);
+            continue;
+        }
 #else
-		result = regcomp (&pattern, list->info[i]->path, REG_ICASE);
-		if (result) {
-			char buf[1024];
-			if (regerror (result, &pattern, buf, sizeof (buf)))
-				GP_LOG_E ("%s", buf);
-			else
-				GP_LOG_E ("regcomp failed");
-			return (GP_ERROR_UNKNOWN_PORT);
-		}
+        result = regcomp (&pattern, list->info[i]->path, REG_ICASE);
+        if (result) {
+            char buf[1024];
+            if (regerror (result, &pattern, buf, sizeof (buf)))
+                GP_LOG_E ("%s", buf);
+            else
+                GP_LOG_E ("regcomp failed");
+            return (GP_ERROR_UNKNOWN_PORT);
+        }
 #endif
 
-		/* Try to match */
+        /* Try to match */
 #ifdef HAVE_GNU_REGEX
-		result = re_match (&pattern, path, strlen (path), 0, NULL);
-		regfree (&pattern);
-		if (result < 0) {
-			GP_LOG_D ("re_match failed (%i)", result);
-			continue;
-		}
+        result = re_match (&pattern, path, strlen (path), 0, NULL);
+        regfree (&pattern);
+        if (result < 0) {
+            GP_LOG_D ("re_match failed (%i)", result);
+            continue;
+        }
 #else
-		result = regexec (&pattern, path, 1, &match, 0);
-		regfree (&pattern);
-		if (result) {
-			GP_LOG_D ("regexec failed");
-			continue;
-		}
+        result = regexec (&pattern, path, 1, &match, 0);
+        regfree (&pattern);
+        if (result) {
+            GP_LOG_D ("regexec failed");
+            continue;
+        }
 #endif
-		gp_port_info_new (&newinfo);
-		gp_port_info_set_type (newinfo, list->info[i]->type);
-		newinfo->library_filename = strdup(list->info[i]->library_filename);
-		gp_port_info_set_name (newinfo, _("Generic Port"));
-		gp_port_info_set_path (newinfo, path);
-		CR (result = gp_port_info_list_append (list, newinfo));
-		return result;
-	}
+        gp_port_info_new (&newinfo);
+        gp_port_info_set_type (newinfo, list->info[i]->type);
+        newinfo->library_filename = strdup(list->info[i]->library_filename);
+        gp_port_info_set_name (newinfo, _("Generic Port"));
+        gp_port_info_set_path (newinfo, path);
+        CR (result = gp_port_info_list_append (list, newinfo));
+        return result;
+    }
 #endif /* HAVE_REGEX */
 
-	return (GP_ERROR_UNKNOWN_PORT);
+    return (GP_ERROR_UNKNOWN_PORT);
 }
 
 /**
@@ -430,20 +430,20 @@ gp_port_info_list_lookup_path (GPPortInfoList *list, const char *path)
 int
 gp_port_info_list_lookup_name (GPPortInfoList *list, const char *name)
 {
-	unsigned int i, generic;
+    unsigned int i, generic;
 
-	C_PARAMS (list && name);
+    C_PARAMS (list && name);
 
-	GP_LOG_D ("Looking up entry '%s'...", name);
+    GP_LOG_D ("Looking up entry '%s'...", name);
 
-	/* Ignore generic entries */
-	for (generic = i = 0; i < list->count; i++)
-		if (!strlen (list->info[i]->name))
-			generic++;
-		else if (!strcmp (list->info[i]->name, name))
-			return (i - generic);
+    /* Ignore generic entries */
+    for (generic = i = 0; i < list->count; i++)
+        if (!strlen (list->info[i]->name))
+            generic++;
+        else if (!strcmp (list->info[i]->name, name))
+            return (i - generic);
 
-	return (GP_ERROR_UNKNOWN_PORT);
+    return (GP_ERROR_UNKNOWN_PORT);
 }
 
 /**
@@ -459,23 +459,23 @@ gp_port_info_list_lookup_name (GPPortInfoList *list, const char *name)
 int
 gp_port_info_list_get_info (GPPortInfoList *list, int n, GPPortInfo *info)
 {
-	int i;
+    int i;
 
-	C_PARAMS (list && info);
+    C_PARAMS (list && info);
 
-	GP_LOG_D ("Getting info of entry %i (%i available)...", n, list->count);
+    GP_LOG_D ("Getting info of entry %i (%i available)...", n, list->count);
 
-	C_PARAMS (n >= 0 && n < list->count);
+    C_PARAMS (n >= 0 && n < list->count);
 
-	/* Ignore generic entries */
-	for (i = 0; i <= n; i++)
-		if (!strlen (list->info[i]->name)) {
-			n++;
-			C_PARAMS (n < list->count);
-		}
+    /* Ignore generic entries */
+    for (i = 0; i <= n; i++)
+        if (!strlen (list->info[i]->name)) {
+            n++;
+            C_PARAMS (n < list->count);
+        }
 
-	*info = list->info[n];
-	return GP_OK;
+    *info = list->info[n];
+    return GP_OK;
 }
 
 
@@ -490,8 +490,8 @@ gp_port_info_list_get_info (GPPortInfoList *list, int n, GPPortInfo *info)
  **/
 int
 gp_port_info_get_name (GPPortInfo info, char **name) {
-	*name = info->name;
-	return GP_OK;
+    *name = info->name;
+    return GP_OK;
 }
 
 /**
@@ -506,8 +506,8 @@ gp_port_info_get_name (GPPortInfo info, char **name) {
  **/
 int
 gp_port_info_set_name (GPPortInfo info, const char *name) {
-	C_MEM (info->name = strdup (name));
-	return GP_OK;
+    C_MEM (info->name = strdup (name));
+    return GP_OK;
 }
 
 /**
@@ -521,8 +521,8 @@ gp_port_info_set_name (GPPortInfo info, const char *name) {
  **/
 int
 gp_port_info_get_path (GPPortInfo info, char **path) {
-	*path = info->path;
-	return GP_OK;
+    *path = info->path;
+    return GP_OK;
 }
 
 /**
@@ -537,8 +537,8 @@ gp_port_info_get_path (GPPortInfo info, char **path) {
  **/
 int
 gp_port_info_set_path (GPPortInfo info, const char *path) {
-	C_MEM (info->path = strdup (path));
-	return GP_OK;
+    C_MEM (info->path = strdup (path));
+    return GP_OK;
 }
 
 /**
@@ -552,8 +552,8 @@ gp_port_info_set_path (GPPortInfo info, const char *path) {
  **/
 int
 gp_port_info_get_type (GPPortInfo info, GPPortType *type) {
-	*type = info->type;
-	return GP_OK;
+    *type = info->type;
+    return GP_OK;
 }
 
 /**
@@ -568,8 +568,8 @@ gp_port_info_get_type (GPPortInfo info, GPPortType *type) {
  **/
 int
 gp_port_info_set_type (GPPortInfo info, GPPortType type) {
-	info->type = type;
-	return GP_OK;
+    info->type = type;
+    return GP_OK;
 }
 
 /**
@@ -583,6 +583,6 @@ gp_port_info_set_type (GPPortInfo info, GPPortType type) {
  **/
 int
 gp_port_info_new (GPPortInfo *info) {
-	C_MEM (*info = calloc (1, sizeof(struct _GPPortInfo)));
-	return GP_OK;
+    C_MEM (*info = calloc (1, sizeof(struct _GPPortInfo)));
+    return GP_OK;
 }

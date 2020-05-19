@@ -29,92 +29,92 @@
 
 const char **gp_library_version(GPVersionVerbosity verbose)
 {
-	/* we could also compute/parse the short strings from the long
-	   ones, but the current method is easier for now :-) */
-	static const char *shrt[] =
-		{
-			PACKAGE_VERSION,
+    /* we could also compute/parse the short strings from the long
+       ones, but the current method is easier for now :-) */
+    static const char *shrt[] =
+    {
+        PACKAGE_VERSION,
 #if GP_CAMLIB_SET_IS_NONSTANDARD
-			"NON-STANDARD CAMLIB SET"
-			" ("
-			GP_CAMLIB_SET
+        "NON-STANDARD CAMLIB SET"
+        " ("
+        GP_CAMLIB_SET
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
+        " SKIPPING "
+        GP_CAMLIB_SET_SKIPPING
 #endif
-			")",
+        ")",
 #else
-			"standard camlibs"
+        "standard camlibs"
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" (SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
-			")"
+        " (SKIPPING "
+        GP_CAMLIB_SET_SKIPPING
+        ")"
 #endif
-			,
+        ,
 #endif
 #ifdef HAVE_CC
-			HAVE_CC,
+        HAVE_CC,
 #else
-			"unknown cc",
+        "unknown cc",
 #endif
 #ifdef HAVE_LTDL
-			"ltdl",
+        "ltdl",
 #else
-			"no ltdl",
+        "no ltdl",
 #endif
 #ifdef HAVE_LIBEXIF
-			"EXIF",
+        "EXIF",
 #else
-			"no EXIF",
+        "no EXIF",
 #endif
-			NULL
-		};
-	static const char *verb[] =
-		{
-			PACKAGE_VERSION,
+        NULL
+    };
+    static const char *verb[] =
+    {
+        PACKAGE_VERSION,
 #if GP_CAMLIB_SET_IS_NONSTANDARD
-			"NON-STANDARD CAMLIB SET"
+        "NON-STANDARD CAMLIB SET"
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING SOME"
+        " SKIPPING SOME"
 #endif
-			" ("
-			GP_CAMLIB_SET
+        " ("
+        GP_CAMLIB_SET
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
+        " SKIPPING "
+        GP_CAMLIB_SET_SKIPPING
 #endif
-			")",
+        ")",
 #else
-			"standard camlib set"
+        "standard camlib set"
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING SOME"
+        " SKIPPING SOME"
 #endif
-			" ("
-			GP_CAMLIB_SET
+        " ("
+        GP_CAMLIB_SET
 #ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
+        " SKIPPING "
+        GP_CAMLIB_SET_SKIPPING
 #endif
-			")",
+        ")",
 #endif
 #ifdef HAVE_CC
-			HAVE_CC " (C compiler used)",
+        HAVE_CC " (C compiler used)",
 #else
-			"unknown (C compiler used)",
+        "unknown (C compiler used)",
 #endif
 #ifdef HAVE_LTDL
-			"ltdl (for portable loading of camlibs)",
+        "ltdl (for portable loading of camlibs)",
 #else
-			"no ltdl (for portable loading of camlibs)",
+        "no ltdl (for portable loading of camlibs)",
 #endif
 #ifdef HAVE_LIBEXIF
-			"EXIF (for special handling of EXIF files)",
+        "EXIF (for special handling of EXIF files)",
 #else
-			"no EXIF (for special handling of EXIF files)",
+        "no EXIF (for special handling of EXIF files)",
 #endif
-			NULL
-		};
-	return((verbose == GP_VERSION_VERBOSE)?verb:shrt);
+        NULL
+    };
+    return((verbose == GP_VERSION_VERBOSE)?verb:shrt);
 }
 
 /*

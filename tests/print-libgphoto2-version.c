@@ -38,24 +38,24 @@
 #define ARGV0 "print-libgphoto2-version"
 
 
-#define FATAL(msg...)				\
-	do { \
-		fprintf(stderr, ARGV0 ": Fatal: " msg); \
-		fprintf(stderr, "\n"); \
-		exit(13); \
-	} while (0)
+#define FATAL(msg...)               \
+    do { \
+        fprintf(stderr, ARGV0 ": Fatal: " msg); \
+        fprintf(stderr, "\n"); \
+        exit(13); \
+    } while (0)
 
 
 typedef struct {
-	char *name;
-	GPVersionFunc version_func;
+    char *name;
+    GPVersionFunc version_func;
 } module_version;
 
 
 const module_version module_versions[] = {
-	{ "libgphoto2", gp_library_version },
-	{ "libgphoto2_port", gp_port_library_version },
-	{ NULL, NULL }
+    { "libgphoto2", gp_library_version },
+    { "libgphoto2_port", gp_port_library_version },
+    { NULL, NULL }
 };
 
 
@@ -71,74 +71,112 @@ const module_version module_versions[] = {
 
 static void
 print_version_comment(FILE *out,
-		      const char *startline, const char *endline,
-		      const char *firstline, const char *lastline)
+                      const char *startline, const char *endline,
+                      const char *firstline, const char *lastline)
 {
-	unsigned int n;
-	if (out == NULL) { FATAL("Internal error: NULL out in print_version_comment()"); }
-	if (firstline != NULL) { fputs(firstline, out); }
-	if (startline != NULL) { fputs(startline, out); }
-	fputs("Short runtime version information on the libgphoto2 build:", out);
-	if (endline != NULL) { fputs(endline, out); }
-	for (n=0; (module_versions[n].name != NULL) && (module_versions[n].version_func != NULL); n++) {
-		const char *name = module_versions[n].name;
-		GPVersionFunc func = module_versions[n].version_func;
-		const char **v = func(GP_VERSION_SHORT);
-		unsigned int i;
-		if (!v) { continue; }
-		if (!v[0]) { continue; }
-		if (startline != NULL) { fputs(startline, out); }
-		fputs("  ", out);
-		fprintf(out,"%-15s %-14s ", name, v[0]);
-		for (i=1; v[i] != NULL; i++) {
-			fputs(v[i], out);
-			if (v[i+1] != NULL) {
-				fputs(", ", out);
-			}
-		}
-		if (endline != NULL) { fputs(endline, out); }
-	}
-	if (lastline != NULL) { fputs(lastline, out); }
+    unsigned int n;
+    if (out == NULL) {
+        FATAL("Internal error: NULL out in print_version_comment()");
+    }
+    if (firstline != NULL) {
+        fputs(firstline, out);
+    }
+    if (startline != NULL) {
+        fputs(startline, out);
+    }
+    fputs("Short runtime version information on the libgphoto2 build:", out);
+    if (endline != NULL) {
+        fputs(endline, out);
+    }
+    for (n=0; (module_versions[n].name != NULL) && (module_versions[n].version_func != NULL); n++) {
+        const char *name = module_versions[n].name;
+        GPVersionFunc func = module_versions[n].version_func;
+        const char **v = func(GP_VERSION_SHORT);
+        unsigned int i;
+        if (!v) {
+            continue;
+        }
+        if (!v[0]) {
+            continue;
+        }
+        if (startline != NULL) {
+            fputs(startline, out);
+        }
+        fputs("  ", out);
+        fprintf(out,"%-15s %-14s ", name, v[0]);
+        for (i=1; v[i] != NULL; i++) {
+            fputs(v[i], out);
+            if (v[i+1] != NULL) {
+                fputs(", ", out);
+            }
+        }
+        if (endline != NULL) {
+            fputs(endline, out);
+        }
+    }
+    if (lastline != NULL) {
+        fputs(lastline, out);
+    }
 }
 
 
 static void
 print_version_verbose(FILE *out,
-		      const char *startline, const char *endline,
-		      const char *firstline, const char *lastline)
+                      const char *startline, const char *endline,
+                      const char *firstline, const char *lastline)
 {
-	unsigned int n;
-	if (out == NULL) { FATAL("Internal error: NULL out in print_version_verbose()"); }
-	if (firstline != NULL) { fputs(firstline, out); }
-	if (startline != NULL) { fputs(startline, out); }
-	fputs("Verbose runtime version information on the libgphoto2 build:", out);
-	if (endline != NULL) { fputs(endline, out); }
-	for (n=0; (module_versions[n].name != NULL) && (module_versions[n].version_func != NULL); n++) {
-		const char *name = module_versions[n].name;
-		GPVersionFunc func = module_versions[n].version_func;
-		const char **v = func(GP_VERSION_VERBOSE);
-		unsigned int i;
-		if (!v) { continue; }
-		if (!v[0]) { continue; }
-		if (startline != NULL) { fputs(startline, out); }
-		fputs("  * ", out);
-		fprintf(out,"%s %s", name, v[0]);
-		if (endline != NULL) { fputs(endline, out); }
-		for (i=1; v[i] != NULL; i++) {
-			fprintf(out, "      * %s", v[i]);
-			if (endline != NULL) { fputs(endline, out); }
-		}
-	}
-	if (lastline != NULL) { fputs(lastline, out); }
+    unsigned int n;
+    if (out == NULL) {
+        FATAL("Internal error: NULL out in print_version_verbose()");
+    }
+    if (firstline != NULL) {
+        fputs(firstline, out);
+    }
+    if (startline != NULL) {
+        fputs(startline, out);
+    }
+    fputs("Verbose runtime version information on the libgphoto2 build:", out);
+    if (endline != NULL) {
+        fputs(endline, out);
+    }
+    for (n=0; (module_versions[n].name != NULL) && (module_versions[n].version_func != NULL); n++) {
+        const char *name = module_versions[n].name;
+        GPVersionFunc func = module_versions[n].version_func;
+        const char **v = func(GP_VERSION_VERBOSE);
+        unsigned int i;
+        if (!v) {
+            continue;
+        }
+        if (!v[0]) {
+            continue;
+        }
+        if (startline != NULL) {
+            fputs(startline, out);
+        }
+        fputs("  * ", out);
+        fprintf(out,"%s %s", name, v[0]);
+        if (endline != NULL) {
+            fputs(endline, out);
+        }
+        for (i=1; v[i] != NULL; i++) {
+            fprintf(out, "      * %s", v[i]);
+            if (endline != NULL) {
+                fputs(endline, out);
+            }
+        }
+    }
+    if (lastline != NULL) {
+        fputs(lastline, out);
+    }
 }
 
 
 int main()
 {
-	print_version_comment(stdout, NULL, "\n", NULL, NULL);
-	printf("\n");
-	print_version_verbose(stdout, NULL, "\n", NULL, NULL);
-	return 0;
+    print_version_comment(stdout, NULL, "\n", NULL, NULL);
+    printf("\n");
+    print_version_verbose(stdout, NULL, "\n", NULL, NULL);
+    return 0;
 }
 
 

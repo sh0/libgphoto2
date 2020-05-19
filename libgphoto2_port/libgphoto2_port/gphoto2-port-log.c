@@ -55,10 +55,10 @@
  * Use gp_log_add_func() and gp_log_remove_func() to access it.
  */
 typedef struct {
-	unsigned int id;	/**< Internal id */
-	GPLogLevel   level;	/**< Internal loglevel */
-	GPLogFunc    func;	/**< Internal function pointer to call */
-	void        *data;	/**< Private data supplied by caller */
+    unsigned int id;    /**< Internal id */
+    GPLogLevel   level; /**< Internal loglevel */
+    GPLogFunc    func;  /**< Internal function pointer to call */
+    void        *data;  /**< Private data supplied by caller */
 } LogFunc;
 
 static LogFunc *log_funcs = NULL;
@@ -81,49 +81,49 @@ static unsigned int log_funcs_count = 0;
 int
 gp_log_add_func (GPLogLevel level, GPLogFunc func, void *data)
 {
-	static int logfuncid = 0;
+    static int logfuncid = 0;
 
-	C_PARAMS (func);
-	C_MEM (log_funcs = realloc (log_funcs, sizeof (LogFunc) *
-				(log_funcs_count + 1)));
-	log_funcs_count++;
+    C_PARAMS (func);
+    C_MEM (log_funcs = realloc (log_funcs, sizeof (LogFunc) *
+                                (log_funcs_count + 1)));
+    log_funcs_count++;
 
-	log_funcs[log_funcs_count - 1].id = ++logfuncid;
-	log_funcs[log_funcs_count - 1].level = level;
-	log_funcs[log_funcs_count - 1].func = func;
-	log_funcs[log_funcs_count - 1].data = data;
+    log_funcs[log_funcs_count - 1].id = ++logfuncid;
+    log_funcs[log_funcs_count - 1].level = level;
+    log_funcs[log_funcs_count - 1].func = func;
+    log_funcs[log_funcs_count - 1].data = data;
 
-	return logfuncid;
+    return logfuncid;
 }
 
 
 char*
 gpi_vsnprintf (const char* format, va_list args)
 {
-	va_list xargs;
-	int strsize;
-	char *str;
+    va_list xargs;
+    int strsize;
+    char *str;
 
 #ifdef HAVE_VA_COPY
-	va_copy (xargs, args);
+    va_copy (xargs, args);
 #else
-	/* according to 'the web', the only interesting compiler without va_copy is MSVC
-	 * and there a simple assignment is the way to go */
-	xargs = args;
+    /* according to 'the web', the only interesting compiler without va_copy is MSVC
+     * and there a simple assignment is the way to go */
+    xargs = args;
 #endif
 
-	/* query the size necessary for the string, add the terminating '\0' */
-	strsize = vsnprintf (NULL, 0, format, xargs) + 1;
-	va_end (xargs);
+    /* query the size necessary for the string, add the terminating '\0' */
+    strsize = vsnprintf (NULL, 0, format, xargs) + 1;
+    va_end (xargs);
 
-	str = malloc(strsize);
-	if (!str)
-		return NULL;
+    str = malloc(strsize);
+    if (!str)
+        return NULL;
 
-	/* actually print the string into the buffer */
-	vsnprintf (str, strsize, format, args);
+    /* actually print the string into the buffer */
+    vsnprintf (str, strsize, format, args);
 
-	return str;
+    return str;
 }
 
 /**
@@ -137,16 +137,16 @@ gpi_vsnprintf (const char* format, va_list args)
 int
 gp_log_remove_func (int id)
 {
-	int i;
+    int i;
 
-	for (i=0;i<log_funcs_count;i++) {
-		if (log_funcs[i].id == id) {
-			memmove (log_funcs + i, log_funcs + i + 1, sizeof(LogFunc) * (log_funcs_count - i - 1));
-			log_funcs_count--;
-			return GP_OK;
-		}
-	}
-	return GP_ERROR_BAD_PARAMETERS;
+    for (i=0; i<log_funcs_count; i++) {
+        if (log_funcs[i].id == id) {
+            memmove (log_funcs + i, log_funcs + i + 1, sizeof(LogFunc) * (log_funcs_count - i - 1));
+            log_funcs_count--;
+            return GP_OK;
+        }
+    }
+    return GP_ERROR_BAD_PARAMETERS;
 }
 
 /**
@@ -204,77 +204,77 @@ gp_log_remove_func (int id)
 void
 gp_log_data (const char *domain, const char *data, unsigned int size, const char *format, ...)
 {
-	va_list args;
-	static const char hexchars[16] = "0123456789abcdef";
-	char *curline, *result = 0, *msg = 0;
-	int x = HEXDUMP_INIT_X;
-	int y = HEXDUMP_INIT_Y;
-	unsigned int index, original_size = size;
-	unsigned char value;
+    va_list args;
+    static const char hexchars[16] = "0123456789abcdef";
+    char *curline, *result = 0, *msg = 0;
+    int x = HEXDUMP_INIT_X;
+    int y = HEXDUMP_INIT_Y;
+    unsigned int index, original_size = size;
+    unsigned char value;
 
-	va_start (args, format);
-	msg = gpi_vsnprintf(format, args);
-	va_end (args);
-	if (!msg) {
-		GP_LOG_E ("Malloc for expanding format string '%s' failed.", format);
-		goto exit;
-	}
+    va_start (args, format);
+    msg = gpi_vsnprintf(format, args);
+    va_end (args);
+    if (!msg) {
+        GP_LOG_E ("Malloc for expanding format string '%s' failed.", format);
+        goto exit;
+    }
 
-	if (!data) {
-		gp_log (GP_LOG_DATA, domain, "%s (no hexdump, NULL buffer)", msg);
-		goto exit;
-	}
+    if (!data) {
+        gp_log (GP_LOG_DATA, domain, "%s (no hexdump, NULL buffer)", msg);
+        goto exit;
+    }
 
-	if (!size) {
-		gp_log (GP_LOG_DATA, domain, "%s (empty hexdump of empty buffer)", msg);
-		goto exit;
-	}
+    if (!size) {
+        gp_log (GP_LOG_DATA, domain, "%s (empty hexdump of empty buffer)", msg);
+        goto exit;
+    }
 
-	if (size > 1024*1024) {
-		/* Does not make sense for 200 MB movies */
-		size = 1024*1024;
-	}
+    if (size > 1024*1024) {
+        /* Does not make sense for 200 MB movies */
+        size = 1024*1024;
+    }
 
-	curline = result = malloc ((HEXDUMP_LINE_WIDTH+1)*(((size-1)/16)+1)+1);
-	if (!result) {
-		GP_LOG_E ("Malloc for %i bytes failed", (HEXDUMP_LINE_WIDTH+1)*(((size-1)/16)+1)+1);
-		goto exit;
-	}
+    curline = result = malloc ((HEXDUMP_LINE_WIDTH+1)*(((size-1)/16)+1)+1);
+    if (!result) {
+        GP_LOG_E ("Malloc for %i bytes failed", (HEXDUMP_LINE_WIDTH+1)*(((size-1)/16)+1)+1);
+        goto exit;
+    }
 
-	for (index = 0; index < size; ++index) {
-                value = (unsigned char)data[index];
-                curline[x] = hexchars[value >> 4];
-                curline[x+1] = hexchars[value & 0xf];
-                curline[x+2] = ' ';
-                curline[y++] = ((value>=32)&&(value<127))?value:'.';
-                x += 3;
-                if ((index & 0xf) == 0xf) { /* end of line */
-                        x = HEXDUMP_INIT_X;
-                        y = HEXDUMP_INIT_Y;
-                        HEXDUMP_COMPLETE_LINE;
-                }
+    for (index = 0; index < size; ++index) {
+        value = (unsigned char)data[index];
+        curline[x] = hexchars[value >> 4];
+        curline[x+1] = hexchars[value & 0xf];
+        curline[x+2] = ' ';
+        curline[y++] = ((value>=32)&&(value<127))?value:'.';
+        x += 3;
+        if ((index & 0xf) == 0xf) { /* end of line */
+            x = HEXDUMP_INIT_X;
+            y = HEXDUMP_INIT_Y;
+            HEXDUMP_COMPLETE_LINE;
         }
-        if ((index & 0xf) != 0) { /* not at end of line yet? */
-                /* if so, complete this line */
-                while (y < HEXDUMP_INIT_Y + 16) {
-                        curline[x+0] = ' ';
-                        curline[x+1] = ' ';
-                        curline[x+2] = ' ';
-                        curline[y++] = ' ';
-                        x += 3;
-                }
-                HEXDUMP_COMPLETE_LINE;
+    }
+    if ((index & 0xf) != 0) { /* not at end of line yet? */
+        /* if so, complete this line */
+        while (y < HEXDUMP_INIT_Y + 16) {
+            curline[x+0] = ' ';
+            curline[x+1] = ' ';
+            curline[x+2] = ' ';
+            curline[y++] = ' ';
+            x += 3;
         }
-        curline[0] = '\0';
+        HEXDUMP_COMPLETE_LINE;
+    }
+    curline[0] = '\0';
 
-        if (size == original_size)
-                gp_log (GP_LOG_DATA, domain, "%s (hexdump of %d bytes)\n%s", msg, size, result);
-        else
-                gp_log (GP_LOG_DATA, domain, "%s (hexdump of the first %d of %d bytes)\n%s", msg, size, original_size, result);
+    if (size == original_size)
+        gp_log (GP_LOG_DATA, domain, "%s (hexdump of %d bytes)\n%s", msg, size, result);
+    else
+        gp_log (GP_LOG_DATA, domain, "%s (hexdump of the first %d of %d bytes)\n%s", msg, size, original_size, result);
 
 exit:
-	free (msg);
-	free (result);
+    free (msg);
+    free (result);
 }
 
 #undef HEXDUMP_COMPLETE_LINE
@@ -297,24 +297,24 @@ exit:
  **/
 void
 gp_logv (GPLogLevel level, const char *domain, const char *format,
-	 va_list args)
+         va_list args)
 {
-	unsigned int i;
-	char *str = 0;
+    unsigned int i;
+    char *str = 0;
 
-	if (!log_funcs_count)
-		return;
+    if (!log_funcs_count)
+        return;
 
-	str = gpi_vsnprintf(format, args);
-	if (!str) {
-		GP_LOG_E ("Malloc for expanding format string '%s' failed.", format);
-		return;
-	}
+    str = gpi_vsnprintf(format, args);
+    if (!str) {
+        GP_LOG_E ("Malloc for expanding format string '%s' failed.", format);
+        return;
+    }
 
-	for (i = 0; i < log_funcs_count; i++)
-		if (log_funcs[i].level >= level)
-			log_funcs[i].func (level, domain, str, log_funcs[i].data);
-	free (str);
+    for (i = 0; i < log_funcs_count; i++)
+        if (log_funcs[i].level >= level)
+            log_funcs[i].func (level, domain, str, log_funcs[i].data);
+    free (str);
 }
 
 /**
@@ -330,26 +330,26 @@ gp_logv (GPLogLevel level, const char *domain, const char *format,
 void
 gp_log (GPLogLevel level, const char *domain, const char *format, ...)
 {
-	va_list args;
+    va_list args;
 
-	va_start (args, format);
-	gp_logv (level, domain, format, args);
-	va_end (args);
+    va_start (args, format);
+    gp_logv (level, domain, format, args);
+    va_end (args);
 }
 
 void
 gp_log_with_source_location(GPLogLevel level, const char *file, int line, const char *func, const char *format, ...)
 {
-	va_list args;
-        char domain[100];
+    va_list args;
+    char domain[100];
 
-        /* Only display filename without any path/directory part */
-        file = strrchr(file, '/') ? strrchr(file, '/') + 1 : file;
-        snprintf(domain, sizeof(domain), "%s [%s:%d]", func, file, line);
+    /* Only display filename without any path/directory part */
+    file = strrchr(file, '/') ? strrchr(file, '/') + 1 : file;
+    snprintf(domain, sizeof(domain), "%s [%s:%d]", func, file, line);
 
-	va_start (args, format);
-	gp_logv (level, domain, format, args);
-	va_end (args);
+    va_start (args, format);
+    gp_logv (level, domain, format, args);
+    va_end (args);
 }
 
 #else /* DISABLE_DEBUGGING */
@@ -382,13 +382,13 @@ gp_log_with_source_location(GPLogLevel level, const char *file, int line, const 
 int
 gp_log_add_func (GPLogLevel level, GPLogFunc func, void *data)
 {
-	return 0;
+    return 0;
 }
 
 int
 gp_log_remove_func (int id)
 {
-	return 0;
+    return 0;
 }
 
 void
@@ -398,7 +398,7 @@ gp_log_data (const char *domain, const char *data, unsigned int size, const char
 
 void
 gp_logv (GPLogLevel level, const char *domain, const char *format,
-	 va_list args)
+         va_list args)
 {
 }
 
@@ -421,16 +421,16 @@ gp_log_with_source_location(GPLogLevel level, const char *file, int line, const 
  */
 const char *
 gpi_enum_to_string(unsigned int _enum,
-		   const StringFlagItem *map)
+                   const StringFlagItem *map)
 {
-	int i;
-	for (i=0; map[i].str != NULL; i++) {
-		if (_enum == map[i].flag) {
-			return(map[i].str);
-			break;
-		}
-	}
-	return NULL;
+    int i;
+    for (i=0; map[i].str != NULL; i++) {
+        if (_enum == map[i].flag) {
+            return(map[i].str);
+            break;
+        }
+    }
+    return NULL;
 }
 
 /**
@@ -438,78 +438,78 @@ gpi_enum_to_string(unsigned int _enum,
  */
 int
 gpi_string_to_enum(const char *str,
-		   unsigned int *result,
-		   const StringFlagItem *map)
+                   unsigned int *result,
+                   const StringFlagItem *map)
 {
-	int i;
-	for (i=0; map[i].str != NULL; i++) {
-		if (0==strcmp(map[i].str, str)) {
-			(*result) = map[i].flag;
-			return 0;
-		}
-	}
-	return 1;
+    int i;
+    for (i=0; map[i].str != NULL; i++) {
+        if (0==strcmp(map[i].str, str)) {
+            (*result) = map[i].flag;
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void
 gpi_flags_to_string_list(unsigned int flags,
-			 const StringFlagItem *map,
-			 string_item_func func, void *data)
+                         const StringFlagItem *map,
+                         string_item_func func, void *data)
 {
-	int i;
-	for (i=0; map[i].str != NULL; i++) {
-		if ((flags == 0) && (map[i].flag == 0)) {
-			func(map[i].str, data);
-			break;
-		} else if (0 != (flags & map[i].flag)) {
-			func(map[i].str, data);
-		}
-	}
+    int i;
+    for (i=0; map[i].str != NULL; i++) {
+        if ((flags == 0) && (map[i].flag == 0)) {
+            func(map[i].str, data);
+            break;
+        } else if (0 != (flags & map[i].flag)) {
+            func(map[i].str, data);
+        }
+    }
 }
 
 unsigned int
 gpi_string_to_flag(const char *str,
-	       const StringFlagItem *map)
+                   const StringFlagItem *map)
 {
-	int i;
-	for (i=0; map[i].str != NULL; i++) {
-		if (0==strcmp(map[i].str, str)) {
-			return map[i].flag;
-		}
-	}
-  return 0;
+    int i;
+    for (i=0; map[i].str != NULL; i++) {
+        if (0==strcmp(map[i].str, str)) {
+            return map[i].flag;
+        }
+    }
+    return 0;
 }
 
 int
 gpi_string_or_to_flags(const char *str,
-		       unsigned int *flags,
-		       const StringFlagItem *map)
+                       unsigned int *flags,
+                       const StringFlagItem *map)
 {
-	int i;
-	int found = 0;
-	for (i=0; map[i].str != NULL; i++) {
-		if (0==strcmp(map[i].str, str)) {
-			(*flags) |= map[i].flag;
-			found = 1;
-		}
-	}
-	if (found) {
-		return 0;
-	} else {
-		return 1;
-	}
+    int i;
+    int found = 0;
+    for (i=0; map[i].str != NULL; i++) {
+        if (0==strcmp(map[i].str, str)) {
+            (*flags) |= map[i].flag;
+            found = 1;
+        }
+    }
+    if (found) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 unsigned int
 gpi_string_list_to_flags(const char *str[],
-		     const StringFlagItem *map)
+                         const StringFlagItem *map)
 {
-	int i;
-	unsigned int flags = 0;
-	for (i=0; str[i] != NULL; i++) {
-		flags |= gpi_string_to_flag(str[i], map);
-	}
-	return flags;
+    int i;
+    unsigned int flags = 0;
+    for (i=0; str[i] != NULL; i++) {
+        flags |= gpi_string_to_flag(str[i], map);
+    }
+    return flags;
 }
 
 #endif /* _GPHOTO2_INTERNAL_CODE */

@@ -59,30 +59,30 @@
 
 /* Digita protocol primitives */
 struct digita_command {
-	unsigned int length;
-	unsigned char version;
-	unsigned char reserved[3];
-	unsigned short command;
-	unsigned short result;
+    unsigned int length;
+    unsigned char version;
+    unsigned char reserved[3];
+    unsigned short command;
+    unsigned short result;
 };
 
 struct partial_tag {
-	unsigned int offset;
-	unsigned int length;
-	unsigned int filesize;
+    unsigned int offset;
+    unsigned int length;
+    unsigned int filesize;
 };
 
 struct filename {
-	unsigned int driveno;
-	char path[32];
-	char dosname[16];
+    unsigned int driveno;
+    char path[32];
+    char dosname[16];
 };
 
 struct file_item {
-	struct filename fn;
+    struct filename fn;
 
-	int length;
-	unsigned int filestatus;
+    int length;
+    unsigned int filestatus;
 };
 
 /* Digita protocol commands */
@@ -97,19 +97,19 @@ struct file_item {
  *             data
  */
 struct get_file_data_send {
-	struct digita_command cmd;
+    struct digita_command cmd;
 
-	struct filename fn;
+    struct filename fn;
 
-	unsigned int dataselector;
+    unsigned int dataselector;
 
-	struct partial_tag tag;
+    struct partial_tag tag;
 };
 
 struct get_file_data_receive {
-	struct digita_command cmd;
+    struct digita_command cmd;
 
-	struct partial_tag tag;
+    struct partial_tag tag;
 };
 
 /* DIGITA_GET_FILE_LIST */
@@ -119,44 +119,44 @@ struct get_file_data_receive {
  *             data
  */
 struct get_file_list {
-	struct digita_command cmd;
+    struct digita_command cmd;
 
-	unsigned int listorder;
+    unsigned int listorder;
 };
 
 /* DIGITA_ERASE_FILE */
 /*  sent - erase_file */
 /*  received - nothing */
 struct erase_file {
-	struct digita_command cmd;
+    struct digita_command cmd;
 
-	struct filename fn;
+    struct filename fn;
 
-	unsigned int zero;
+    unsigned int zero;
 };
 
 /* gphoto2 header magic. this is also CameraPrivateLibrary */
 struct _CameraPrivateLibrary {
-	GPPort *gpdev;
+    GPPort *gpdev;
 
-	int num_pictures;
-	struct file_item *file_list;
+    int num_pictures;
+    struct file_item *file_list;
 
-	/* These parameters are only significant for serial support */
-	int portspeed;
+    /* These parameters are only significant for serial support */
+    int portspeed;
 
-	int deviceframesize;
+    int deviceframesize;
 
-	int (*send)(CameraPrivateLibrary *dev, void *buffer, int buflen);
-	int (*read)(CameraPrivateLibrary *dev, void *buffer, int buflen);
+    int (*send)(CameraPrivateLibrary *dev, void *buffer, int buflen);
+    int (*read)(CameraPrivateLibrary *dev, void *buffer, int buflen);
 };
 
 /* commands.c */
 int digita_get_storage_status(CameraPrivateLibrary *dev, int *taken,
-	int *available, int *rawcount);
+                              int *available, int *rawcount);
 int digita_get_file_list(CameraPrivateLibrary *dev);
 int digita_get_file_data(CameraPrivateLibrary *dev, int thumbnail,
-	struct filename *filename, struct partial_tag *tag, void *buffer);
+                         struct filename *filename, struct partial_tag *tag, void *buffer);
 int digita_delete_picture(CameraPrivateLibrary *dev, struct filename *filename);
 
 /* serial.c */

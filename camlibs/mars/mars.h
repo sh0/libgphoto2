@@ -31,24 +31,24 @@ typedef unsigned char Info;
 /* Huffman table for decompressing the compressed mode */
 
 typedef struct {
-	int is_abs;
-	int len;
-	int val;
+    int is_abs;
+    int len;
+    int val;
 } code_table_t;
 
-#define MARS_SLEEP	10000
+#define MARS_SLEEP  10000
 
 int mars_init              (Camera *camera, GPPort *port, Info *info);
-int mars_reset	     (GPPort *port);
+int mars_reset       (GPPort *port);
 int mars_get_num_pics   (Info *info);
 int mars_get_pic_data_size (Info *info, int n);
 int mars_read_picture_data (Camera *camera, Info *info,
-				GPPort *port, char *data, int size, int n);
+                            GPPort *port, char *data, int size, int n);
 
-int mars_decompress (unsigned char *inp ,unsigned char *outp, int w, int h);
+int mars_decompress (unsigned char *inp,unsigned char *outp, int w, int h);
 int histogram (unsigned char *data, unsigned int size, int *htable_r,
-                                        int *htable_g, int *htable_b);
+               int *htable_g, int *htable_b);
 int mars_white_balance (unsigned char *data, unsigned int size, float saturation,
-                                        float image_gamma);
+                        float image_gamma);
 #endif
 

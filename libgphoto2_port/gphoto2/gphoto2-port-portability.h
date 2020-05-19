@@ -38,11 +38,11 @@
 # include <direct.h>
 
 # ifndef IOLIBS
-#  define IOLIBS			"."
+#  define IOLIBS            "."
 # endif
-# define strcasecmp		_stricmp
+# define strcasecmp     _stricmp
 # ifndef snprintf
-#  define snprintf		_snprintf
+#  define snprintf      _snprintf
 # endif
 
 #define __func__ __FUNCTION__
@@ -51,20 +51,20 @@ typedef SSIZE_T ssize_t;
 
 /* Work-around for readdir() */
 typedef struct {
-	HANDLE handle;
-	int got_first;
-	WIN32_FIND_DATA search;
-	char dir[1024];
-	char drive[32][2];
-	int  drive_count;
-	int  drive_index;
+    HANDLE handle;
+    int got_first;
+    WIN32_FIND_DATA search;
+    char dir[1024];
+    char drive[32][2];
+    int  drive_count;
+    int  drive_index;
 } GPPORTWINDIR;
 
 
 /* Directory-oriented functions */
-# define gp_system_dir		  GPPORTWINDIR *
-# define gp_system_dirent	  WIN32_FIND_DATA *
-# define gp_system_dir_delim	  '\\'
+# define gp_system_dir          GPPORTWINDIR *
+# define gp_system_dirent       WIN32_FIND_DATA *
+# define gp_system_dir_delim    '\\'
 
 # define sleep(x) usleep((x) * 1000 * 1000)
 
@@ -81,7 +81,7 @@ typedef struct {
  ************************************************************************/
 
 # define strcasecmp(foo,bar) stricmp(foo,bar)
-# define gp_system_dir_delim		'\\'
+# define gp_system_dir_delim        '\\'
 
 # ifndef GPIO_OS2_INCLUDED
 #  define GPIO_OS2_INCLUDED
@@ -92,8 +92,8 @@ typedef struct {
 
 #  ifndef HAVE_TERMIOS_H
 #   define  INCL_DOSDEVIOCTL   /* DosDevIOCtl values */
-#   define IOCTL_ASYNC                        0x0001
-#   define ASYNC_SETBAUDRATE                  0x0041
+#   define IOCTL_ASYNC          0x0001
+#   define ASYNC_SETBAUDRATE    0x0041
 /* c_cflag bit meaning */
 #   define CBAUD   0x0000100f
 #   define  B0     0x00000000      /* hang up */
@@ -209,9 +209,9 @@ typedef struct {
 /** A system directory handle */
 # define gp_system_dir           DIR *
 /** A system directory entry */
-# define gp_system_dirent	 struct dirent *
+# define gp_system_dirent    struct dirent *
 /** The directory delimiter character on this platform. */
-# define gp_system_dir_delim	 '/'
+# define gp_system_dir_delim     '/'
 
 /************************************************************************
  * End POSIX/XOPEN definitions
@@ -224,14 +224,14 @@ typedef struct {
  * Begin platform independent portability functions
  ************************************************************************/
 
-int		 gp_system_mkdir	(const char *dirname);
+int      gp_system_mkdir    (const char *dirname);
 int              gp_system_rmdir        (const char *dirname);
-gp_system_dir	 gp_system_opendir	(const char *dirname);
-gp_system_dirent gp_system_readdir	(gp_system_dir d);
-const char*	 gp_system_filename	(gp_system_dirent de);
-int		 gp_system_closedir	(gp_system_dir dir);
-int		 gp_system_is_file	(const char *filename);
-int		 gp_system_is_dir	(const char *dirname);
+gp_system_dir    gp_system_opendir  (const char *dirname);
+gp_system_dirent gp_system_readdir  (gp_system_dir d);
+const char*  gp_system_filename (gp_system_dirent de);
+int      gp_system_closedir (gp_system_dir dir);
+int      gp_system_is_file  (const char *filename);
+int      gp_system_is_dir   (const char *dirname);
 
 /************************************************************************
  * End platform independent portability functions

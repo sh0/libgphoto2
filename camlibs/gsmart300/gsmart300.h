@@ -22,7 +22,7 @@
 /* You should have received a copy of the GNU Library General   */
 /* Public License along with this library; if not, write to the */
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
-/* Boston, MA  02110-1301  USA					*/
+/* Boston, MA  02110-1301  USA                  */
 /****************************************************************/
 
 #ifndef __GSMART300_H__
@@ -37,21 +37,21 @@
 
 struct GsmartFile
 {
-	char *name;
-	int width;
-	int height;
-	int index;
-	uint8_t *fat;
-	int mime_type;
+    char *name;
+    int width;
+    int height;
+    int index;
+    uint8_t *fat;
+    int mime_type;
 };
 
 struct _CameraPrivateLibrary
 {
-	GPPort *gpdev;
-	int dirty;
-	int num_files;
-	uint8_t *fats;
-	struct GsmartFile *files;
+    GPPort *gpdev;
+    int dirty;
+    int num_files;
+    uint8_t *fats;
+    struct GsmartFile *files;
 };
 
 int gsmart300_reset (CameraPrivateLibrary * lib);
@@ -59,10 +59,10 @@ int gsmart300_get_info (CameraPrivateLibrary * lib);
 int gsmart300_delete_file (CameraPrivateLibrary * lib, unsigned int index);
 int gsmart300_delete_all (CameraPrivateLibrary * lib);
 int gsmart300_get_file_info (CameraPrivateLibrary * lib, unsigned int index,
-			  struct GsmartFile **file);
+                             struct GsmartFile **file);
 int gsmart300_request_file (CameraPrivateLibrary * lib, CameraFile *file,
-			 unsigned int number);
+                            unsigned int number);
 int gsmart300_request_thumbnail (CameraPrivateLibrary * lib, CameraFile *file,
-			      unsigned int number, int *type);
+                                 unsigned int number, int *type);
 
 #endif /* __GSMART300_H__ */

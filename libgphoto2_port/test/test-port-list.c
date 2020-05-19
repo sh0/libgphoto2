@@ -39,97 +39,116 @@
 
 static void
 log_func (GPLogLevel level, const char *domain __unused__,
-	  const char *str, void *data __unused__)
+          const char *str, void *data __unused__)
 {
-	if (level <= GP_LOG_ERROR) {
-		fprintf (stdout, "%s\n", str);
-		fflush (stdout);
-	}
+    if (level <= GP_LOG_ERROR) {
+        fprintf (stdout, "%s\n", str);
+        fflush (stdout);
+    }
 }
 
 
 static int
 run_test ()
 {
-	int i;
-	int ret;
-	GPPortInfoList *il;
+    int i;
+    int ret;
+    GPPortInfoList *il;
 
-	int count;
+    int count;
 
-	ret = gp_port_info_list_new (&il);
-	if (ret < 0) {
-		printf ("Could not create list of ports: %s\n",
-			gp_port_result_as_string (ret));
-		return (1);
-	}
+    ret = gp_port_info_list_new (&il);
+    if (ret < 0) {
+        printf ("Could not create list of ports: %s\n",
+                gp_port_result_as_string (ret));
+        return (1);
+    }
 
-	ret = gp_port_info_list_load (il);
-	if (ret < 0) {
-		printf ("Could not load list of ports: %s\n",
-			gp_port_result_as_string (ret));
-		return (2);
-	}
+    ret = gp_port_info_list_load (il);
+    if (ret < 0) {
+        printf ("Could not load list of ports: %s\n",
+                gp_port_result_as_string (ret));
+        return (2);
+    }
 
-	count = gp_port_info_list_count (il);
-	if (count < 0) {
-		printf("gp_port_info_list_count error: %d\n", count);
-		return 1;
-	} else if (count == 0) {
-		/* Unlike gphoto2-abilities-list,
-		 * gphoto2-port-info-list.c does not just load
-		 * the driver libs, but also scans for
-		 * ports. Thus 0 ports are a valid results.
-		 */
-	}
-	/* Non-empty list */
-	printf ("%i ports found on your system.\n", count);
+    count = gp_port_info_list_count (il);
+    if (count < 0) {
+        printf("gp_port_info_list_count error: %d\n", count);
+        return 1;
+    } else if (count == 0) {
+        /* Unlike gphoto2-abilities-list,
+         * gphoto2-port-info-list.c does not just load
+         * the driver libs, but also scans for
+         * ports. Thus 0 ports are a valid results.
+         */
+    }
+    /* Non-empty list */
+    printf ("%i ports found on your system.\n", count);
 
-	for (i = 0; i < count; i++) {
-		const char *port_type_str;
-		char *name, *path;
-		GPPortInfo	info;
-		GPPortType	type;
-		ret = gp_port_info_list_get_info (il, i, &info);
-		if (ret < 0) {
-		  	printf ("ERROR getting iolib info: %s\n",
-				gp_port_result_as_string (ret));
-			return (1);
-		}
-		gp_port_info_get_type (info, &type);
-		gp_port_info_get_name (info, &name);
-		gp_port_info_get_path (info, &path);
-		switch (type) {
-		case GP_PORT_NONE:   port_type_str = "NONE"; break;
-		case GP_PORT_SERIAL: port_type_str = "SERIAL"; break;
-		case GP_PORT_USB:    port_type_str = "USB"; break;
-		case GP_PORT_USB_DISK_DIRECT:    port_type_str = "USBDISKDIRECT"; break;
-		case GP_PORT_USB_SCSI:    port_type_str = "USBSCSI"; break;
-		case GP_PORT_DISK:   port_type_str = "DISK"; break;
-		case GP_PORT_PTPIP:  port_type_str = "PTPIP"; break;
-		case GP_PORT_IP:     port_type_str = "IP"; break;
-		default:             port_type_str = "UNKNOWN"; return 3; break;
-		}
-		printf ("No:    %d\n"
-			"Type:  %s\n"
-			"Name:  %s\n"
-			"Path:  %s\n",
-			i,
-			port_type_str,
-			name,
-			path
-			);
-	}
+    for (i = 0; i < count; i++) {
+        const char *port_type_str;
+        char *name, *path;
+        GPPortInfo  info;
+        GPPortType  type;
+        ret = gp_port_info_list_get_info (il, i, &info);
+        if (ret < 0) {
+            printf ("ERROR getting iolib info: %s\n",
+                    gp_port_result_as_string (ret));
+            return (1);
+        }
+        gp_port_info_get_type (info, &type);
+        gp_port_info_get_name (info, &name);
+        gp_port_info_get_path (info, &path);
+        switch (type) {
+        case GP_PORT_NONE:
+            port_type_str = "NONE";
+            break;
+        case GP_PORT_SERIAL:
+            port_type_str = "SERIAL";
+            break;
+        case GP_PORT_USB:
+            port_type_str = "USB";
+            break;
+        case GP_PORT_USB_DISK_DIRECT:
+            port_type_str = "USBDISKDIRECT";
+            break;
+        case GP_PORT_USB_SCSI:
+            port_type_str = "USBSCSI";
+            break;
+        case GP_PORT_DISK:
+            port_type_str = "DISK";
+            break;
+        case GP_PORT_PTPIP:
+            port_type_str = "PTPIP";
+            break;
+        case GP_PORT_IP:
+            port_type_str = "IP";
+            break;
+        default:
+            port_type_str = "UNKNOWN";
+            return 3;
+            break;
+        }
+        printf ("No:    %d\n"
+                "Type:  %s\n"
+                "Name:  %s\n"
+                "Path:  %s\n",
+                i,
+                port_type_str,
+                name,
+                path
+               );
+    }
 
 
-	gp_port_info_list_free (il);
-	return 0;
+    gp_port_info_list_free (il);
+    return 0;
 }
 
 
 int
 main ()
 {
-	gp_log_add_func (GP_LOG_DATA, log_func, NULL);
-	return run_test();
+    gp_log_add_func (GP_LOG_DATA, log_func, NULL);
+    return run_test();
 }

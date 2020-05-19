@@ -38,4 +38,4 @@
 #  define N_(String) (String)
 #endif
 
-#endif				/* NLS_H */
+#endif              /* NLS_H */

@@ -22,99 +22,99 @@
 #define _DC210_H_
 
 typedef enum {
-	DC210_TOGGLE_OFF = 0,
-	DC210_TOGGLE_ON = 1
+    DC210_TOGGLE_OFF = 0,
+    DC210_TOGGLE_ON = 1
 } dc210_toggle_type;
 
 typedef enum {
-	DC210_FULL_PICTURE = 0,
-	DC210_CFA_THUMB = 1,
-	DC210_RGB_THUMB = 2
+    DC210_FULL_PICTURE = 0,
+    DC210_CFA_THUMB = 1,
+    DC210_RGB_THUMB = 2
 } dc210_picture_type;
 
 typedef enum {
-	DC210_FILE_TYPE_JPEG = 3,
-	DC210_FILE_TYPE_FPX = 4
+    DC210_FILE_TYPE_JPEG = 3,
+    DC210_FILE_TYPE_FPX = 4
 } dc210_file_type_type;
 
 typedef enum {
-	DC210_FLASH_AUTO = 0,
-	DC210_FLASH_FORCE = 1,
-	DC210_FLASH_NONE = 2
+    DC210_FLASH_AUTO = 0,
+    DC210_FLASH_FORCE = 1,
+    DC210_FLASH_NONE = 2
 } dc210_flash_type;
 
 typedef enum {
-	DC210_FILE_640 = 0,
-	DC210_FILE_1152 = 1
+    DC210_FILE_640 = 0,
+    DC210_FILE_1152 = 1
 } dc210_resolution_type;
 
 typedef enum {
-	DC210_LOW_COMPRESSION = 1,
-	DC210_MEDIUM_COMPRESSION = 2,
-	DC210_HIGH_COMPRESSION = 3
+    DC210_LOW_COMPRESSION = 1,
+    DC210_MEDIUM_COMPRESSION = 2,
+    DC210_HIGH_COMPRESSION = 3
 
 } dc210_compression_type;
 
 typedef enum {
-	DC210_ZOOM_58 = 0,
-	DC210_ZOOM_51 = 1,
-	DC210_ZOOM_41 = 2,
-	DC210_ZOOM_34 = 3,
-	DC210_ZOOM_29 = 4,
-	DC210_ZOOM_MACRO = 37
+    DC210_ZOOM_58 = 0,
+    DC210_ZOOM_51 = 1,
+    DC210_ZOOM_41 = 2,
+    DC210_ZOOM_34 = 3,
+    DC210_ZOOM_29 = 4,
+    DC210_ZOOM_MACRO = 37
 } dc210_zoom_type;
 
 typedef struct {
 
-	unsigned char           open;
-	int                     program;
-	int                     space;
+    unsigned char           open;
+    int                     program;
+    int                     space;
 
 } dc210_card_status;
 
 typedef struct {
-	char                    camera_type_id;
-	char                    firmwareMajor;
-	char                    firmwareMinor;
-	char                    battery;
-	char                    acstatus;
-	long int                time;
-	dc210_zoom_type         zoom;
-	char                    flash_charged;
-	dc210_compression_type  compression_type;
-        signed char             exp_compensation;
-	dc210_flash_type        flash;
-	char                    preflash;
-	dc210_resolution_type   resolution;
-        dc210_file_type_type    file_type;
-	int                     totalPicturesTaken;
-	int                     totalFlashesFired;
-	int                     numPicturesInCamera;
-	dc210_card_status       card_status;
-	int                     remainingLow;
-	int                     remainingMedium;
-	int                     remainingHigh;
-	int                     card_space;
-	char                    album_name[12];
+    char                    camera_type_id;
+    char                    firmwareMajor;
+    char                    firmwareMinor;
+    char                    battery;
+    char                    acstatus;
+    long int                time;
+    dc210_zoom_type         zoom;
+    char                    flash_charged;
+    dc210_compression_type  compression_type;
+    signed char             exp_compensation;
+    dc210_flash_type        flash;
+    char                    preflash;
+    dc210_resolution_type   resolution;
+    dc210_file_type_type    file_type;
+    int                     totalPicturesTaken;
+    int                     totalFlashesFired;
+    int                     numPicturesInCamera;
+    dc210_card_status       card_status;
+    int                     remainingLow;
+    int                     remainingMedium;
+    int                     remainingHigh;
+    int                     card_space;
+    char                    album_name[12];
 } dc210_status;
 
 typedef struct {
-	char                    camera_type;
-	dc210_file_type_type    file_type;
-	dc210_resolution_type   resolution;
-	dc210_compression_type  compression;
-	int                     picture_number;
-	int                     picture_size;
-	int                     preview_size;
-	int                     picture_time;
-	char                    flash_used;
-	dc210_flash_type        flash;
-	char                    preflash;
-	dc210_zoom_type         zoom;
-	char                    f_number;
-	char                    battery;
-	int                     exposure_time;
-	char                    image_name[13];
+    char                    camera_type;
+    dc210_file_type_type    file_type;
+    dc210_resolution_type   resolution;
+    dc210_compression_type  compression;
+    int                     picture_number;
+    int                     picture_size;
+    int                     preview_size;
+    int                     picture_time;
+    char                    flash_used;
+    dc210_flash_type        flash;
+    char                    preflash;
+    dc210_zoom_type         zoom;
+    char                    f_number;
+    char                    battery;
+    int                     exposure_time;
+    char                    image_name[13];
 } dc210_picture_info ;
 
 #undef DEBUG
@@ -149,14 +149,14 @@ typedef struct {
 #define DC210_SET_FILE_TYPE         0x37 /* implemented */
 #define DC210_SET_SPEED             0x41 /* implemented */
 #define DC210_GET_ALBUM_FILENAMES   0x4A /* returns information on all files in packets of size 256 */
-#define DC210_GET_PICTURE	    0x64 /* implemented */
+#define DC210_GET_PICTURE       0x64 /* implemented */
 #define DC210_GET_PICINFO           0x65 /* implemented */
 #define DC210_GET_THUMB             0x66 /* implemented */
 #define DC210_SET_QUALITY           0x71 /* implemented */
 #define DC210_SET_FLASH             0x72 /* implemented */
-#define DC210_SET_FOCUS		    0x73 /* not acknowledged */
-#define DC210_SET_DELAY		    0x74 /* implemented, but effect unknown */
-#define DC210_SET_TIME		    0x75 /* implemented, but probably with timezone bug */
+#define DC210_SET_FOCUS         0x73 /* not acknowledged */
+#define DC210_SET_DELAY         0x74 /* implemented, but effect unknown */
+#define DC210_SET_TIME          0x75 /* implemented, but probably with timezone bug */
 #define DC210_SET_ZOOM              0x78 /* implemented */
 #define DC210_DELETE_PICTURE        0x7B /* implemented */
 #define DC210_TAKE_PICTURE          0x7C /* implemented */
@@ -164,21 +164,21 @@ typedef struct {
 #define DC210_GET_STATUS            0x7F /* implemented */
 
 #define DC210_SET_EXPOSURE          0x80 /* implemented */
-#define DC210_RESET		    0x8A /* working, but not yet implemented */
-#define DC210_FIRMWARE_MODE_SET	    0x8D /* working, but not yet implemented */
+#define DC210_RESET         0x8A /* working, but not yet implemented */
+#define DC210_FIRMWARE_MODE_SET     0x8D /* working, but not yet implemented */
 
 /* Filename commands */
-#define DC210_CARD_GET_PICINFO	    0x91 /* implemented */
-#define DC210_CARD_GET_SUMMARY	    0x92 /* not implemented */
-#define DC210_CARD_READ_THUMB	    0x93 /* implemented */
-#define DC210_CARD_FORMAT	    0x95 /* implemented */
-#define DC210_OPEN_CARD		    0x96 /* implemented */
-#define DC210_CLOSE_CARD	    0x97 /* implemented */
-#define DC210_CARD_STATUS	    0x98 /* is working, returns packet of size 16 */
+#define DC210_CARD_GET_PICINFO      0x91 /* implemented */
+#define DC210_CARD_GET_SUMMARY      0x92 /* not implemented */
+#define DC210_CARD_READ_THUMB       0x93 /* implemented */
+#define DC210_CARD_FORMAT       0x95 /* implemented */
+#define DC210_OPEN_CARD         0x96 /* implemented */
+#define DC210_CLOSE_CARD        0x97 /* implemented */
+#define DC210_CARD_STATUS       0x98 /* is working, returns packet of size 16 */
 #define DC210_CARD_GET_DIRECTORY    0x99 /* not implemented */
-#define DC210_CARD_READ_FILE	    0x9A /* implemented */
+#define DC210_CARD_READ_FILE        0x9A /* implemented */
 #define DC210_CARD_UNKNOWN_COMMAND1 0x9C /* not implemented */
-#define DC210_CARD_FILE_DEL	    0x9D /* implemented */
+#define DC210_CARD_FILE_DEL     0x9D /* implemented */
 #define DC210_CARD_UNKNOWN_COMMAND2 0x9E /* not implemented */
 
 /* Responses */
@@ -191,7 +191,7 @@ typedef struct {
 #define DC210_COMMAND_NAK           0xE1
 #define DC210_EXECUTION_ERROR       0xE2
 #define DC210_ILLEGAL_PACKET        0xE3
-#define DC210_CANCEL		    0xE4
+#define DC210_CANCEL            0xE4
 #define DC210_BUSY                  0xF0
 
 /* initialization */

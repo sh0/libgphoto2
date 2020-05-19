@@ -28,10 +28,10 @@
  * Specifies the logging severity level.
  */
 typedef enum {
-	GP_LOG_ERROR = 0,	/**< \brief Log message is an error infomation. */
-	GP_LOG_VERBOSE = 1,	/**< \brief Log message is an verbose debug infomation. */
-	GP_LOG_DEBUG = 2,	/**< \brief Log message is an debug infomation. */
-	GP_LOG_DATA = 3		/**< \brief Log message is a data hex dump. */
+    GP_LOG_ERROR = 0,   /**< \brief Log message is an error infomation. */
+    GP_LOG_VERBOSE = 1, /**< \brief Log message is an verbose debug infomation. */
+    GP_LOG_DEBUG = 2,   /**< \brief Log message is an debug infomation. */
+    GP_LOG_DATA = 3     /**< \brief Log message is a data hex dump. */
 } GPLogLevel;
 
 /**
@@ -67,26 +67,26 @@ int  gp_log_remove_func (int id);
 
 /* Logging */
 void gp_log      (GPLogLevel level, const char *domain,
-		  const char *format, ...)
+                  const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,3,4)))
+__attribute__((__format__(printf,3,4)))
 #endif
 ;
 void gp_log_with_source_location(
-		  GPLogLevel level, const char *file, int line, const char *func,
-		  const char *format, ...)
+    GPLogLevel level, const char *file, int line, const char *func,
+    const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,5,6)))
+__attribute__((__format__(printf,5,6)))
 #endif
 ;
 void gp_logv     (GPLogLevel level, const char *domain, const char *format,
-		  va_list args)
+                  va_list args)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,3,0)))
+__attribute__((__format__(printf,3,0)))
 #endif
 ;
 void gp_log_data (const char *domain, const char *data, unsigned int size,
-		  const char *format, ...)
+                  const char *format, ...)
 #ifdef __GNUC__
 __attribute__((__format__(printf,4,5)))
 #endif
@@ -174,65 +174,65 @@ __attribute__((__format__(printf,4,5)))
 
 #ifdef _GPHOTO2_INTERNAL_CODE
 
-  typedef struct StringFlagItem {
+typedef struct StringFlagItem {
     char *str;
     unsigned int flag;
-  } StringFlagItem;
+} StringFlagItem;
 
-  typedef void (*string_item_func) (const char *str, void *data);
+typedef void (*string_item_func) (const char *str, void *data);
 
-  const char *
-  gpi_enum_to_string(const unsigned int _enum,
-		     const StringFlagItem *map);
+const char *
+gpi_enum_to_string(const unsigned int _enum,
+                   const StringFlagItem *map);
 
-  int
-  gpi_string_to_enum(const char *str,
-		     unsigned int *result,
-		     const StringFlagItem *map);
+int
+gpi_string_to_enum(const char *str,
+                   unsigned int *result,
+                   const StringFlagItem *map);
 
-  void
-  gpi_flags_to_string_list(const unsigned int flags,
-			   const StringFlagItem *map,
-			   string_item_func func, void *data);
+void
+gpi_flags_to_string_list(const unsigned int flags,
+                         const StringFlagItem *map,
+                         string_item_func func, void *data);
 
-  int
-  gpi_string_or_to_flags(const char *str,
-			 unsigned int *flags,
-			 const StringFlagItem *map);
+int
+gpi_string_or_to_flags(const char *str,
+                       unsigned int *flags,
+                       const StringFlagItem *map);
 
-  unsigned int
-  gpi_string_to_flag(const char *str,
-		     const StringFlagItem *map);
+unsigned int
+gpi_string_to_flag(const char *str,
+                   const StringFlagItem *map);
 
-  unsigned int
-  gpi_string_list_to_flags(const char *str[],
-			   const StringFlagItem *map);
+unsigned int
+gpi_string_list_to_flags(const char *str[],
+                         const StringFlagItem *map);
 
-  /* Allocates a sufficiently large buffer and interpolates the format
-   * string with the proveded va_list args. The returned memory has to
-   * be freed by the caller. */
-  char*
-  gpi_vsnprintf (const char* format, va_list args);
+/* Allocates a sufficiently large buffer and interpolates the format
+ * string with the proveded va_list args. The returned memory has to
+ * be freed by the caller. */
+char*
+gpi_vsnprintf (const char* format, va_list args);
 
 #define C_MEM(MEM) do {\
-	if ((MEM) == NULL) {\
-		GP_LOG_E ("Out of memory: '%s' failed.", #MEM);\
-		return GP_ERROR_NO_MEMORY;\
-	}\
+    if ((MEM) == NULL) {\
+        GP_LOG_E ("Out of memory: '%s' failed.", #MEM);\
+        return GP_ERROR_NO_MEMORY;\
+    }\
 } while(0)
 
 #define C_PARAMS(PARAMS) do {\
-	if (!(PARAMS)) {\
-		GP_LOG_E ("Invalid parameters: '%s' is NULL/FALSE.", #PARAMS);\
-		return GP_ERROR_BAD_PARAMETERS;\
-	}\
+    if (!(PARAMS)) {\
+        GP_LOG_E ("Invalid parameters: '%s' is NULL/FALSE.", #PARAMS);\
+        return GP_ERROR_BAD_PARAMETERS;\
+    }\
 } while(0)
 
 #define C_PARAMS_MSG(PARAMS, MSG, ...) do {\
-	if (!(PARAMS)) {\
-		GP_LOG_E ("Invalid parameters: " #MSG " ('%s' is NULL/FALSE.)", ##__VA_ARGS__, #PARAMS);\
-		return GP_ERROR_BAD_PARAMETERS;\
-	}\
+    if (!(PARAMS)) {\
+        GP_LOG_E ("Invalid parameters: " #MSG " ('%s' is NULL/FALSE.)", ##__VA_ARGS__, #PARAMS);\
+        return GP_ERROR_BAD_PARAMETERS;\
+    }\
 } while(0)
 
 #endif /* _GPHOTO2_INTERNAL_CODE */

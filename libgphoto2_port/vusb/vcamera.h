@@ -1,4 +1,3 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /* vcamera.h
  *
  * Copyright (c) 2015,2016 Marcus Meissner <marcus@jet.franken.de>
@@ -27,51 +26,51 @@
 #include <stdio.h>
 
 typedef struct ptpcontainer {
-	unsigned int size;
-	unsigned int type;
-	unsigned int code;
-	unsigned int seqnr;
-	unsigned int nparams;
-	unsigned int params[6];
+    unsigned int size;
+    unsigned int type;
+    unsigned int code;
+    unsigned int seqnr;
+    unsigned int nparams;
+    unsigned int params[6];
 } ptpcontainer;
 
 typedef enum vcameratype {
-	GENERIC_PTP,
-	NIKON_D750
+    GENERIC_PTP,
+    NIKON_D750
 } vcameratype;
 
 typedef struct vcamera {
-	int (*init)(struct vcamera*);
-	int (*exit)(struct vcamera*);
-	int (*open)(struct vcamera*, const char*port);
-	int (*close)(struct vcamera*);
+    int (*init)(struct vcamera*);
+    int (*exit)(struct vcamera*);
+    int (*open)(struct vcamera*, const char*port);
+    int (*close)(struct vcamera*);
 
-	int (*read)(struct vcamera*,  int ep, unsigned char *data, int bytes);
-	int (*readint)(struct vcamera*,  unsigned char *data, int bytes, int timeout);
-	int (*write)(struct vcamera*, int ep, const unsigned char *data, int bytes);
+    int (*read)(struct vcamera*,  int ep, unsigned char *data, int bytes);
+    int (*readint)(struct vcamera*,  unsigned char *data, int bytes, int timeout);
+    int (*write)(struct vcamera*, int ep, const unsigned char *data, int bytes);
 
-	unsigned short	vendor, product;	/* for generic fuzzing */
+    unsigned short  vendor, product;    /* for generic fuzzing */
 
-	vcameratype	type;
-	unsigned char	*inbulk;
-	int		nrinbulk;
-	unsigned char	*outbulk;
-	int		nroutbulk;
+    vcameratype     type;
+    unsigned char   *inbulk;
+    int             nrinbulk;
+    unsigned char   *outbulk;
+    int             nroutbulk;
 
-	unsigned int	seqnr;
+    unsigned int    seqnr;
 
-	unsigned int	session;
-	ptpcontainer	ptpcmd;
+    unsigned int    session;
+    ptpcontainer    ptpcmd;
 
-	int		exposurebias;
-	unsigned int	shutterspeed;
-	unsigned int	fnumber;
+    int             exposurebias;
+    unsigned int    shutterspeed;
+    unsigned int    fnumber;
 
-	int		fuzzmode;
-#define FUZZMODE_PROTOCOL	0
-#define FUZZMODE_NORMAL		1
-	FILE*		fuzzf;
-	unsigned int	fuzzpending;
+    int             fuzzmode;
+#define FUZZMODE_PROTOCOL   0
+#define FUZZMODE_NORMAL     1
+    FILE*           fuzzf;
+    unsigned int    fuzzpending;
 } vcamera;
 
 vcamera *vcamera_new(vcameratype);

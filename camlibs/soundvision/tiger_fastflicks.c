@@ -55,8 +55,8 @@
 #define GP_MODULE "soundvision"
 
 
-    /* Used at start of most tiger commands.  Also */
-    /* Seems to set the camera into "PC" mode      */
+/* Used at start of most tiger commands.  Also */
+/* Seems to set the camera into "PC" mode      */
 int tiger_set_pc_mode(CameraPrivateLibrary *dev) {
 
     int result;
@@ -84,25 +84,25 @@ set_pc_error:
 
 
 
-    /* This is packet-for-packet what windows does */
-    /* The camera takes it all in stride.          */
-    /* Yet uploaded file never appears.  Why??     */
+/* This is packet-for-packet what windows does */
+/* The camera takes it all in stride.          */
+/* Yet uploaded file never appears.  Why??     */
 int tiger_upload_file(CameraPrivateLibrary *dev,
-		      const char *filename,
-		      const char *data,
-		      long size) {
+                      const char *filename,
+                      const char *data,
+                      long size) {
     int result=0;
     char return_value[4];
 
     uint32_t our_size;
     char *our_data=NULL;
 
-       /* When we upload, the first 3 bytes are little-endian */
-       /* File-size followed by the actual file               */
+    /* When we upload, the first 3 bytes are little-endian */
+    /* File-size followed by the actual file               */
     our_size=size+4;
     our_data=calloc(our_size,sizeof(char));
     if (our_data==NULL) {
-       goto upload_error;
+        goto upload_error;
     }
 
     htole32a(&our_data[0],size);
@@ -110,10 +110,10 @@ int tiger_upload_file(CameraPrivateLibrary *dev,
 
 
     GP_DEBUG("File: %s Size=%ld\n",filename,size);
-/*  for(result=0;result<our_size;result++) {
-       printf("%x ",our_data[result]);
-    }
-*/
+    /*  for(result=0;result<our_size;result++) {
+           printf("%x ",our_data[result]);
+        }
+    */
 
     result=tiger_set_pc_mode(dev);
     if (result<0) goto upload_error;
@@ -154,7 +154,7 @@ int tiger_upload_file(CameraPrivateLibrary *dev,
 
     result=soundvision_send_file_command("000VINCE.JPG",dev);
 
-   result=soundvision_read(dev, &return_value, sizeof(return_value));
+    result=soundvision_read(dev, &return_value, sizeof(return_value));
     if (result<0) goto upload_error;
 
     result=soundvision_send_command(SOUNDVISION_DONE_TRANSACTION,0,dev);
@@ -178,7 +178,7 @@ int tiger_delete_picture(CameraPrivateLibrary *dev, const char *filename) {
     ret = soundvision_send_command(SOUNDVISION_DELETE,0,dev);
     if (ret<0) goto delete_pic_error;
 
-       /* should get fff if all is well */
+    /* should get fff if all is well */
     ret = soundvision_read(dev, &temp, sizeof(temp));
     if (ret<0) goto delete_pic_error;
 
@@ -257,9 +257,9 @@ int tiger_capture(CameraPrivateLibrary *dev, CameraFilePath *path) {
     if (result<0) goto tiger_capture_error;
 
     while(num_pics==start_pics) {
-       sleep(4);
-       result=tiger_get_mem(dev,&num_pics,&mem_total,&mem_free);
-       if (result<0) goto tiger_capture_error;
+        sleep(4);
+        result=tiger_get_mem(dev,&num_pics,&mem_total,&mem_free);
+        if (result<0) goto tiger_capture_error;
     }
 
     result=tiger_get_mem(dev,&num_pics,&mem_total,&mem_free);
@@ -284,56 +284,56 @@ int tiger_get_file_list(CameraPrivateLibrary *dev) {
     if (ret<0) goto list_files_error;
 
     if ( (taken=soundvision_photos_taken(dev)) < 0) {
-       ret=taken;
-       goto list_files_error;
+        ret=taken;
+        goto list_files_error;
     }
 
     dev->num_pictures = taken;
 
     if (taken>0) {
 
-       buflen = (taken * 13)+1;  /* 12 char filenames and space for each */
-                                 /* plus trailing NULL */
+        buflen = (taken * 13)+1;  /* 12 char filenames and space for each */
+        /* plus trailing NULL */
 
-       buffer = malloc(buflen);
+        buffer = malloc(buflen);
 
-       if (!buffer) {
-          GP_DEBUG("Could not allocate %i bytes!",buflen);
-	  ret=GP_ERROR_NO_MEMORY;
-	  goto list_files_error;
-       }
+        if (!buffer) {
+            GP_DEBUG("Could not allocate %i bytes!",buflen);
+            ret=GP_ERROR_NO_MEMORY;
+            goto list_files_error;
+        }
 
-       ret=soundvision_send_command(SOUNDVISION_GET_NAMES, buflen, dev);
-       if (ret < 0) {
-          goto list_files_error;
-       }
-
-
-       ret = soundvision_read(dev, (void *)buffer, buflen);
-       if (ret < 0) {
-          goto list_files_error;
-       }
-       if (ret < buflen) {
-          GP_DEBUG("Read only %i instead of %i!", buflen, ret);
-          ret=GP_ERROR_NO_MEMORY;
-          goto list_files_error;
-       }
+        ret=soundvision_send_command(SOUNDVISION_GET_NAMES, buflen, dev);
+        if (ret < 0) {
+            goto list_files_error;
+        }
 
 
-       if (dev->file_list) free(dev->file_list);
+        ret = soundvision_read(dev, (void *)buffer, buflen);
+        if (ret < 0) {
+            goto list_files_error;
+        }
+        if (ret < buflen) {
+            GP_DEBUG("Read only %i instead of %i!", buflen, ret);
+            ret=GP_ERROR_NO_MEMORY;
+            goto list_files_error;
+        }
 
-       dev->file_list = malloc(taken * 13);
 
-       if (!dev->file_list) {
-          GP_DEBUG("Could not allocate %i bytes!",taken*13);
-          ret=GP_ERROR_NO_MEMORY;
-	  goto list_files_error;
-       }
+        if (dev->file_list) free(dev->file_list);
 
-       for(i=0;i<taken*13;i++) if (buffer[i]==' ') buffer[i]='\0';
-       memcpy(dev->file_list, buffer, taken * 13);
-       free(buffer);
-       buffer=NULL;
+        dev->file_list = malloc(taken * 13);
+
+        if (!dev->file_list) {
+            GP_DEBUG("Could not allocate %i bytes!",taken*13);
+            ret=GP_ERROR_NO_MEMORY;
+            goto list_files_error;
+        }
+
+        for(i=0; i<taken*13; i++) if (buffer[i]==' ') buffer[i]='\0';
+        memcpy(dev->file_list, buffer, taken * 13);
+        free(buffer);
+        buffer=NULL;
 
 
 
@@ -343,11 +343,11 @@ int tiger_get_file_list(CameraPrivateLibrary *dev) {
     ret=soundvision_send_command(SOUNDVISION_DONE_TRANSACTION, 0, dev);
     if (ret<0) goto list_files_error;
 
-          /* If we have >1 pics we should stat a file?*/
-          /* Some traces do, some don't...            */
-/*    if (taken>0)
-       soundvision_get_pic_size(dev,dev->file_list);
-  */
+    /* If we have >1 pics we should stat a file?*/
+    /* Some traces do, some don't...            */
+    /*    if (taken>0)
+           soundvision_get_pic_size(dev,dev->file_list);
+      */
 
     return GP_OK;
 
@@ -358,7 +358,7 @@ list_files_error:
 }
 
 int tiger_get_pic(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size) {
+                  unsigned char *data,int size) {
 
     int32_t ret,temp;
 
@@ -401,7 +401,7 @@ int tiger_get_pic_size(CameraPrivateLibrary *dev, const char *filename) {
     ret=soundvision_send_command(SOUNDVISION_GET_PIC_SIZE,0,dev);
     if (ret<0) goto pic_size_error;
 
-       /* should check that we get 0x0fff */
+    /* should check that we get 0x0fff */
     ret = soundvision_read(dev, &temp, sizeof(temp));
     if (ret<0) goto pic_size_error;
 
@@ -446,7 +446,7 @@ thumb_size_error:
 }
 
 int tiger_get_thumb(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size) {
+                    unsigned char *data,int size) {
 
     int32_t ret,temp;
 

@@ -52,12 +52,12 @@ int stv0674_ping(GPPort *port)
 
     ret = gp_port_usb_msg_read (port, CMDID_PING, 0, 0, (char *)reply, 1);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
     if(reply[0] != 0)
     {
-	printf("CMDID_PING successful, but returned bad values?\n");
-	return GP_ERROR_IO;
+        printf("CMDID_PING successful, but returned bad values?\n");
+        return GP_ERROR_IO;
     }
 
     return GP_OK;
@@ -71,7 +71,7 @@ int stv0674_file_count(GPPort *port, int *count)
 
     ret = gp_port_usb_msg_read (port, CMDID_ENUMERATE_IMAGES, 0, 0, (char *)reply, 4);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
 
     *count= ((reply[3]) | (reply[2]<<8) | (reply[1]<<16) | (reply[0]<<24));
@@ -120,22 +120,22 @@ int stv0674_get_image(GPPort *port, int image_no, CameraFile *file)
 
     ret = gp_port_usb_msg_write (port, CMDID_SET_IMAGE, 0, 0, (char *)imagno, 4);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
     ret = gp_port_usb_msg_read (port, CMDID_IHAVENOIDEA, 0, 0, (char *)reply, 2);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
     setval(&imagno[4],0x200);/* we want 512 bytes */
 
     ret = gp_port_usb_msg_write (port,
-				 CMDID_READ_IMAGE,
-				 READ_IMAGE_VALUE_RESET,
-				 0,
-				 (char *)imagno,
-				 8);
+                                 CMDID_READ_IMAGE,
+                                 READ_IMAGE_VALUE_RESET,
+                                 0,
+                                 (char *)imagno,
+                                 8);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
     gp_port_read(port, (char *)header, 0x200);
 
@@ -144,7 +144,7 @@ int stv0674_get_image(GPPort *port, int image_no, CameraFile *file)
     /*create data block */
     data=malloc(size);
     if (!data)
-	return GP_ERROR_NO_MEMORY;
+        return GP_ERROR_NO_MEMORY;
 
     setval(&imagno[4],0x1000);/* we want 4096 bytes */
 
@@ -152,39 +152,39 @@ int stv0674_get_image(GPPort *port, int image_no, CameraFile *file)
     remain=size % 0x1000;
 
 
-    for(current=0;current<whole;current+=1)
+    for(current=0; current<whole; current+=1)
     {
 
 
-	ret = gp_port_usb_msg_write (port,
-				     CMDID_READ_IMAGE,
-				     READ_IMAGE_VALUE_READ,
-				     0,
-				     (char *)imagno,
-				     8);
-	if (ret < GP_OK) {
-	    free (data);
-	    return ret;
-	}
+        ret = gp_port_usb_msg_write (port,
+                                     CMDID_READ_IMAGE,
+                                     READ_IMAGE_VALUE_READ,
+                                     0,
+                                     (char *)imagno,
+                                     8);
+        if (ret < GP_OK) {
+            free (data);
+            return ret;
+        }
 
-	gp_port_read(port, (char *)&data[current*0x1000], 0x1000);
+        gp_port_read(port, (char *)&data[current*0x1000], 0x1000);
     }
 
     if(remain)
     {
-	setval(&imagno[4],remain);/* we want remaining bytes */
-	ret = gp_port_usb_msg_write (port,
-				     CMDID_READ_IMAGE,
-				     READ_IMAGE_VALUE_READ,
-				     0,
-				     (char *)imagno,
-				     8);
-	if (ret < GP_OK) {
-	    free (data);
-	    return ret;
-	}
+        setval(&imagno[4],remain);/* we want remaining bytes */
+        ret = gp_port_usb_msg_write (port,
+                                     CMDID_READ_IMAGE,
+                                     READ_IMAGE_VALUE_READ,
+                                     0,
+                                     (char *)imagno,
+                                     8);
+        if (ret < GP_OK) {
+            free (data);
+            return ret;
+        }
 
-	gp_port_read(port, (char *)&data[current*0x1000], remain);
+        gp_port_read(port, (char *)&data[current*0x1000], remain);
 
     }
 
@@ -194,31 +194,31 @@ int stv0674_get_image(GPPort *port, int image_no, CameraFile *file)
 
     ret = gp_port_usb_msg_write (port, CMDID_FINISH_READ, 0, 0, (char *)imagno, 4);
     if (ret < GP_OK)
-	return ret;
+        return ret;
 
     return GP_OK;
 }
 
 int stv0674_get_image_preview(GPPort *port, int image_no, CameraFile *file)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 int stv0674_capture(GPPort *port)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
 int stv0674_capture_preview(GPPort *port, char **data, int *size)
 {
-	return GP_OK;
+    return GP_OK;
 }
 
 
 int stv0674_delete_all(GPPort *port) {
     /*    return stv0674_try_cmd(port,CMDID_SET_IMAGE_INDEX,0,NULL,0);*/
-	return GP_OK;
+    return GP_OK;
 }
 
 int stv0674_summary(GPPort *port, char *txt)

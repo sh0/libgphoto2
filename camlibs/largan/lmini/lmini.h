@@ -28,17 +28,17 @@
 
 
 typedef enum {
-	LARGAN_NONPICT = 0,
-	LARGAN_PICT,
-	LARGAN_THUMBNAIL
+    LARGAN_NONPICT = 0,
+    LARGAN_PICT,
+    LARGAN_THUMBNAIL
 } largan_pict_type;
 
 
 typedef struct {
-	largan_pict_type	type;
-	uint8_t			quality;
-	uint32_t		data_size;
-	char * 			data;
+    largan_pict_type    type;
+    uint8_t         quality;
+    uint32_t        data_size;
+    char *          data;
 } largan_pict_info;
 
 
@@ -50,7 +50,7 @@ void largan_pict_free (largan_pict_info *);
 int largan_open (Camera * camera);
 int largan_get_num_pict (Camera * camera);
 int largan_get_pict (Camera * camera, largan_pict_type type,
-		uint8_t index, largan_pict_info * pict);
+                     uint8_t index, largan_pict_info * pict);
 int largan_erase (Camera *camera, int all);
 int largan_capture (Camera *camera);
 #endif

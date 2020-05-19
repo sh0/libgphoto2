@@ -34,7 +34,11 @@
  *
  * No longer provided, use libexif directly please.
  */
-unsigned char *gpi_exif_get_thumbnail_and_size(void *exifdat, long *size) { return NULL; }
+unsigned char *gpi_exif_get_thumbnail_and_size(void *exifdat, long *size) {
+    return NULL;
+}
 
 /* No longer provided */
-int gpi_exif_stat(void *exifdata) { return -1; }
+int gpi_exif_stat(void *exifdata) {
+    return -1;
+}

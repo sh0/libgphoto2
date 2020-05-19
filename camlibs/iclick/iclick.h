@@ -38,48 +38,48 @@
 
 
 typedef enum {
-	SQ_MODEL_POCK_CAM,
-	SQ_MODEL_PRECISION,
-	SQ_MODEL_MAGPIX,
-	SQ_MODEL_ICLICK,
-	SQ_MODEL_DEFAULT
+    SQ_MODEL_POCK_CAM,
+    SQ_MODEL_PRECISION,
+    SQ_MODEL_MAGPIX,
+    SQ_MODEL_ICLICK,
+    SQ_MODEL_DEFAULT
 } SQModel;
 
 
 
 struct _CameraPrivateLibrary {
-	SQModel model;
-	unsigned char *catalog;
-	int nb_entries;
-	int data_offset;
+    SQModel model;
+    unsigned char *catalog;
+    int nb_entries;
+    int data_offset;
 };
 
 
-/* #define ID	0xf0 */
+/* #define ID   0xf0 */
 enum icl_cmnd_type {
-	CONFIG =0x20,
-	DATA   =0x30,
-	CLEAR  =0xa0,
-	CAPTURE=0x61,
+    CONFIG =0x20,
+    DATA   =0x30,
+    CLEAR  =0xa0,
+    CAPTURE=0x61,
 };
 
 enum icl_index_type {
-	CONFIG_I =0x300,
-	DATA_I   =0x000,
-	CLEAR_I  =0x000,
-	CAPTURE_I=0x000,
+    CONFIG_I =0x300,
+    DATA_I   =0x000,
+    CLEAR_I  =0x000,
+    CAPTURE_I=0x000,
 };
 
 
-int icl_access_reg 		     (GPPort *, enum icl_cmnd_type);
+int icl_access_reg           (GPPort *, enum icl_cmnd_type);
 
 #if 0
 #define icl_access_reg(iar_port, iar_kind) do { \
-	SQWRITE (iar_port, 0x0c, iar_kind, iar_kind##_I, NULL, 0); \
-	} while (0)
+    SQWRITE (iar_port, 0x0c, iar_kind, iar_kind##_I, NULL, 0); \
+    } while (0)
 #endif
 
-int icl_reset             		(GPPort *);
+int icl_reset                   (GPPort *);
 int icl_rewind                        (GPPort *, CameraPrivateLibrary *);
 int icl_init                          (GPPort *, CameraPrivateLibrary *);
 int icl_read_picture_data  (GPPort *, unsigned char *data, int size);

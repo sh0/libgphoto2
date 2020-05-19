@@ -666,21 +666,21 @@ void ipslr_status_parse_k70(ipslr_handle_t *p, pslr_status *status) {
     status->focused_af_point = get_uint32_le(&buf[0x16c]); // ?
 
     switch ( status->af_point_select) {
-        case 0:
-            status->af_point_select=PSLR_AF_POINT_SEL_SPOT;
-            break;
-        case 1:
-            status->af_point_select=PSLR_AF_POINT_SEL_SELECT;
-            break;
-        case 2:
-            status->af_point_select=PSLR_AF_POINT_SEL_EXPANDED;
-            break;
-        case 5:
-            status->af_point_select=PSLR_AF_POINT_SEL_AUTO_5;
-            break;
-        case 6:
-            status->af_point_select=PSLR_AF_POINT_SEL_AUTO_11;
-            break;
+    case 0:
+        status->af_point_select=PSLR_AF_POINT_SEL_SPOT;
+        break;
+    case 1:
+        status->af_point_select=PSLR_AF_POINT_SEL_SELECT;
+        break;
+    case 2:
+        status->af_point_select=PSLR_AF_POINT_SEL_EXPANDED;
+        break;
+    case 5:
+        status->af_point_select=PSLR_AF_POINT_SEL_AUTO_5;
+        break;
+    case 6:
+        status->af_point_select=PSLR_AF_POINT_SEL_AUTO_11;
+        break;
     }
 
     status->battery_1 = get_uint32_le(&buf[0x174]);

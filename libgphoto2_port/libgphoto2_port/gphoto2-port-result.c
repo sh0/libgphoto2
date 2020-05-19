@@ -53,52 +53,52 @@
 const char *
 gp_port_result_as_string (int result)
 {
-	switch (result) {
-	case GP_OK:
-		return _("No error");
-	case GP_ERROR:
-		return _("Unspecified error");
-	case GP_ERROR_IO:
-		return _("I/O problem");
-	case GP_ERROR_BAD_PARAMETERS:
-		return _("Bad parameters");
-	case GP_ERROR_NOT_SUPPORTED:
-		return _("Unsupported operation");
-	case  GP_ERROR_FIXED_LIMIT_EXCEEDED:
-		return _("Fixed limit exceeded");
-	case GP_ERROR_TIMEOUT:
-		return _("Timeout reading from or writing to the port");
-	case GP_ERROR_IO_SUPPORTED_SERIAL:
-		return _("Serial port not supported");
-	case GP_ERROR_IO_SUPPORTED_USB:
-		return _("USB port not supported");
-	case GP_ERROR_UNKNOWN_PORT:
-		return _("Unknown port");
-	case GP_ERROR_NO_MEMORY:
-		return _("Out of memory");
-	case GP_ERROR_LIBRARY:
-		return _("Error loading a library");
-	case GP_ERROR_IO_INIT:
-		return _("Error initializing the port");
-	case GP_ERROR_IO_READ:
-		return _("Error reading from the port");
-	case GP_ERROR_IO_WRITE:
-		return _("Error writing to the port");
-	case GP_ERROR_IO_UPDATE:
-		return _("Error updating the port settings");
-	case GP_ERROR_IO_SERIAL_SPEED:
-		return _("Error setting the serial port speed");
-	case GP_ERROR_IO_USB_CLEAR_HALT:
-		return _("Error clearing a halt condition on the USB port");
-	case GP_ERROR_IO_USB_FIND:
-		return _("Could not find the requested device on the USB port");
-	case GP_ERROR_IO_USB_CLAIM:
-		return _("Could not claim the USB device");
-	case GP_ERROR_IO_LOCK:
-		return _("Could not lock the device");
-	case GP_ERROR_HAL:
-		return _("libhal error");
-	default:
-		return _("Unknown error");
-	}
+    switch (result) {
+    case GP_OK:
+        return _("No error");
+    case GP_ERROR:
+        return _("Unspecified error");
+    case GP_ERROR_IO:
+        return _("I/O problem");
+    case GP_ERROR_BAD_PARAMETERS:
+        return _("Bad parameters");
+    case GP_ERROR_NOT_SUPPORTED:
+        return _("Unsupported operation");
+    case  GP_ERROR_FIXED_LIMIT_EXCEEDED:
+        return _("Fixed limit exceeded");
+    case GP_ERROR_TIMEOUT:
+        return _("Timeout reading from or writing to the port");
+    case GP_ERROR_IO_SUPPORTED_SERIAL:
+        return _("Serial port not supported");
+    case GP_ERROR_IO_SUPPORTED_USB:
+        return _("USB port not supported");
+    case GP_ERROR_UNKNOWN_PORT:
+        return _("Unknown port");
+    case GP_ERROR_NO_MEMORY:
+        return _("Out of memory");
+    case GP_ERROR_LIBRARY:
+        return _("Error loading a library");
+    case GP_ERROR_IO_INIT:
+        return _("Error initializing the port");
+    case GP_ERROR_IO_READ:
+        return _("Error reading from the port");
+    case GP_ERROR_IO_WRITE:
+        return _("Error writing to the port");
+    case GP_ERROR_IO_UPDATE:
+        return _("Error updating the port settings");
+    case GP_ERROR_IO_SERIAL_SPEED:
+        return _("Error setting the serial port speed");
+    case GP_ERROR_IO_USB_CLEAR_HALT:
+        return _("Error clearing a halt condition on the USB port");
+    case GP_ERROR_IO_USB_FIND:
+        return _("Could not find the requested device on the USB port");
+    case GP_ERROR_IO_USB_CLAIM:
+        return _("Could not claim the USB device");
+    case GP_ERROR_IO_LOCK:
+        return _("Could not lock the device");
+    case GP_ERROR_HAL:
+        return _("libhal error");
+    default:
+        return _("Unknown error");
+    }
 }

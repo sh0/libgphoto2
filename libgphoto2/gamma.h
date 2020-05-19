@@ -26,6 +26,6 @@
 
 int gp_gamma_fill_table     (unsigned char *table, double g);
 int gp_gamma_correct_single (unsigned char *table, unsigned char *data,
-			     unsigned int data_size);
+                             unsigned int data_size);
 
 #endif /* __GAMMA_H__ */

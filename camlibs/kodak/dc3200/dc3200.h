@@ -34,19 +34,19 @@
 
 #include <gphoto2/gphoto2-camera.h>
 
-#define CMD_LIST_FILES		0
-#define CMD_GET_PREVIEW		1
-#define CMD_GET_FILE		2
+#define CMD_LIST_FILES      0
+#define CMD_GET_PREVIEW     1
+#define CMD_GET_FILE        2
 
-#define TIMEOUT	        	750
+#define TIMEOUT             750
 
 struct _CameraPrivateLibrary {
-	int			pkt_seqnum;	/* sequence number */
-	int			cmd_seqnum;	/* command seqnum */
-	int			rec_seqnum;	/* last received seqnum */
-	int			debug;
-	time_t			last;		/* remember last recv time */
-	GPContext		*context;	/* for progress updates */
+    int         pkt_seqnum; /* sequence number */
+    int         cmd_seqnum; /* command seqnum */
+    int         rec_seqnum; /* last received seqnum */
+    int         debug;
+    time_t          last;       /* remember last recv time */
+    GPContext       *context;   /* for progress updates */
 };
 
 int check_last_use(Camera *camera);

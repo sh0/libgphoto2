@@ -22,8 +22,8 @@
 #define __GPHOTO2_PORT_VERSION_H__
 
 typedef enum {
-  GP_VERSION_SHORT = 0,
-  GP_VERSION_VERBOSE = 1
+    GP_VERSION_SHORT = 0,
+    GP_VERSION_VERBOSE = 1
 } GPVersionVerbosity;
 
 

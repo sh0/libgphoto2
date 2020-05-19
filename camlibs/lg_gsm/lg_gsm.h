@@ -26,7 +26,7 @@
 typedef unsigned char Info;
 
 typedef enum {
-	MODEL_LG_T5100
+    MODEL_LG_T5100
 } Model;
 
 int lg_gsm_init              (GPPort *port, Model *model, Info *info);

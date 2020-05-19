@@ -42,7 +42,7 @@
  * the name/value union, and so it is the default value initialized.
  *
  * To init to a range, use:
- *	{ .range = { 100.1, 2000.0, 10 } }, NULL
+ *  { .range = { 100.1, 2000.0, 10 } }, NULL
  *
  * Casts are used to avoid warnings about using a const.
  *
@@ -74,35 +74,35 @@
  * Register 1: resolution/size.
  */
 static const ValueNameType ep3000z_reg_01_val_names[] = {
-	{ { 0x01 }, "Standard 640x480" },
-	{ { 0x02 }, "Fine 2048x1536" },
-	{ { 0x03 }, "SuperFine 2048x1536" },
-	{ { 0x04 }, "HyPict 2544x1904" },
+    { { 0x01 }, "Standard 640x480" },
+    { { 0x02 }, "Fine 2048x1536" },
+    { { 0x03 }, "SuperFine 2048x1536" },
+    { { 0x04 }, "HyPict 2544x1904" },
 };
 static const RegisterDescriptorType ep3000z_reg_01[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"resolution", N_("Resolution plus Size"),
-		VAL_NAME_INIT (ep3000z_reg_01_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "resolution", N_("Resolution plus Size"),
+        VAL_NAME_INIT (ep3000z_reg_01_val_names)
+    }
 };
 
 /*
  * Register 2: Date and time.
  */
 static const ValueNameType ep3000z_reg_02_val_names[] = {
-	/*
-	 * Dummy value, since we need at least one of these to
-	 * display anything.
-	 */
-	{ { 0x00 }, "Dummy" },
+    /*
+     * Dummy value, since we need at least one of these to
+     * display anything.
+     */
+    { { 0x00 }, "Dummy" },
 };
 static const RegisterDescriptorType ep3000z_reg_02[] = {
-	{
-		GP_WIDGET_DATE, GP_REG_NO_MASK,
-		"date-time", N_("Date and time (GMT)"),
-		VAL_NAME_INIT (ep3000z_reg_02_val_names)
-	}
+    {
+        GP_WIDGET_DATE, GP_REG_NO_MASK,
+        "date-time", N_("Date and time (GMT)"),
+        VAL_NAME_INIT (ep3000z_reg_02_val_names)
+    }
 };
 
 /*
@@ -113,69 +113,69 @@ static const RegisterDescriptorType ep3000z_reg_02[] = {
  * Register 5: aperture settings.
  */
 static const ValueNameType ep3000z_reg_05_val_names[] = {
-	{ { 6 }, N_("auto") },
-	{ { 0 }, "F2.0" },
-	{ { 1 }, "F2.3" },
-	{ { 2 }, "F2.8" },
-	{ { 3 }, "F4.0" },
-	{ { 4 }, "F5.6" },
-	{ { 5 }, "F8.0" },
+    { { 6 }, N_("auto") },
+    { { 0 }, "F2.0" },
+    { { 1 }, "F2.3" },
+    { { 2 }, "F2.8" },
+    { { 3 }, "F4.0" },
+    { { 4 }, "F5.6" },
+    { { 5 }, "F8.0" },
 };
 static const RegisterDescriptorType ep3000z_reg_05[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"aperture", N_("Aperture Settings"),
-		VAL_NAME_INIT (ep3000z_reg_05_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "aperture", N_("Aperture Settings"),
+        VAL_NAME_INIT (ep3000z_reg_05_val_names)
+    }
 };
 
 /*
  * Register 6: color mode
  */
 static const ValueNameType ep3000z_reg_06_val_names[] = {
-	{ { 1 }, N_("Color") },
-	{ { 2 }, N_("Black & White") },
+    { { 1 }, N_("Color") },
+    { { 2 }, N_("Black & White") },
 };
 static const RegisterDescriptorType ep3000z_reg_06[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"color", N_("Color Mode"),
-		VAL_NAME_INIT (ep3000z_reg_06_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "color", N_("Color Mode"),
+        VAL_NAME_INIT (ep3000z_reg_06_val_names)
+    }
 };
 
 /*
  * Register 7: flash settings
  */
 static const ValueNameType ep3000z_reg_07_val_names[] = {
-	{ { 0 }, N_("Auto") },
-	{ { 1 }, N_("Force") },
-	{ { 2 }, N_("Off") },
-	{ { 3 }, N_("Red-eye Reduction") },
-	{ { 4 }, N_("Slow Sync") },
+    { { 0 }, N_("Auto") },
+    { { 1 }, N_("Force") },
+    { { 2 }, N_("Off") },
+    { { 3 }, N_("Red-eye Reduction") },
+    { { 4 }, N_("Slow Sync") },
 };
 static const RegisterDescriptorType ep3000z_reg_07[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"flash", N_("Flash Settings"),
-		VAL_NAME_INIT (ep3000z_reg_07_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "flash", N_("Flash Settings"),
+        VAL_NAME_INIT (ep3000z_reg_07_val_names)
+    }
 };
 
 /*
  * Register 20: white balance.
  */
 static const ValueNameType ep3000z_reg_20_val_names[] = {
-	{ { 0x00 }, N_("Auto") },
-	{ { 0x01 }, N_("Fixed") },
-	{ { 0xFF }, N_("Custom") },
+    { { 0x00 }, N_("Auto") },
+    { { 0x01 }, N_("Fixed") },
+    { { 0xFF }, N_("Custom") },
 };
 static const RegisterDescriptorType ep3000z_reg_20[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"whitebalance", N_("White Balance"),
-		VAL_NAME_INIT (ep3000z_reg_20_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "whitebalance", N_("White Balance"),
+        VAL_NAME_INIT (ep3000z_reg_20_val_names)
+    }
 };
 
 /*
@@ -185,14 +185,14 @@ static const RegisterDescriptorType ep3000z_reg_20[] = {
  * I have previously set 0,255,1 is old camera_get_config_epson()
  */
 static const ValueNameType ep3000z_reg_23_val_names[] = {
-	{ { .range = { 30, 600, 30  } }, NULL },
+    { { .range = { 30, 600, 30  } }, NULL },
 };
 static const RegisterDescriptorType ep3000z_reg_23[] = {
-	{
-		GP_WIDGET_RANGE, GP_REG_NO_MASK,
-		"host-power-save", N_("Host power save (seconds)"),
-		VAL_NAME_INIT (ep3000z_reg_23_val_names)
-	}
+    {
+        GP_WIDGET_RANGE, GP_REG_NO_MASK,
+        "host-power-save", N_("Host power save (seconds)"),
+        VAL_NAME_INIT (ep3000z_reg_23_val_names)
+    }
 };
 
 /*
@@ -201,51 +201,51 @@ static const RegisterDescriptorType ep3000z_reg_23[] = {
  * I have previously set 0,255,1 is old camera_get_config_epson()
  */
 static const ValueNameType ep3000z_reg_24_val_names[] = {
-	{ { .range = { 30, 600, 30  } }, NULL },
+    { { .range = { 30, 600, 30  } }, NULL },
 };
 static const RegisterDescriptorType ep3000z_reg_24[] = {
-	{
-		GP_WIDGET_RANGE, GP_REG_NO_MASK,
-		"camera-power-save", N_("Camera power save (seconds)"),
-		VAL_NAME_INIT (ep3000z_reg_24_val_names)
-	}
+    {
+        GP_WIDGET_RANGE, GP_REG_NO_MASK,
+        "camera-power-save", N_("Camera power save (seconds)"),
+        VAL_NAME_INIT (ep3000z_reg_24_val_names)
+    }
 };
 
 /*
  * Register 33: Lens mode.
  */
 static const ValueNameType ep3000z_reg_33_val_names[] = {
-	{ { 0x01 }, N_("Macro") },
-	{ { 0x02 }, N_("Normal") },
+    { { 0x01 }, N_("Macro") },
+    { { 0x02 }, N_("Normal") },
 };
 static const RegisterDescriptorType ep3000z_reg_33[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"lens-mode", N_("Lens Mode"),
-		VAL_NAME_INIT (ep3000z_reg_33_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "lens-mode", N_("Lens Mode"),
+        VAL_NAME_INIT (ep3000z_reg_33_val_names)
+    }
 };
 
 /*
  * Register 53: language setting.
  */
 static const ValueNameType ep3000z_reg_53_val_names[] = {
-	{ { 0x01 }, N_("Korean") },
-	{ { 0x03 }, N_("English") },
-	{ { 0x04 }, N_("French") },
-	{ { 0x05 }, N_("German") },
-	{ { 0x06 }, N_("Italian") },
-	{ { 0x07 }, N_("Japanese") },
-	{ { 0x08 }, N_("Spanish") },
-	{ { 0x09 }, N_("Portuguese") },
+    { { 0x01 }, N_("Korean") },
+    { { 0x03 }, N_("English") },
+    { { 0x04 }, N_("French") },
+    { { 0x05 }, N_("German") },
+    { { 0x06 }, N_("Italian") },
+    { { 0x07 }, N_("Japanese") },
+    { { 0x08 }, N_("Spanish") },
+    { { 0x09 }, N_("Portuguese") },
 
 };
 static const RegisterDescriptorType ep3000z_reg_53[] = {
-	{
-		GP_WIDGET_RADIO, GP_REG_NO_MASK,
-		"language", N_("Language"),
-		VAL_NAME_INIT (ep3000z_reg_53_val_names)
-	}
+    {
+        GP_WIDGET_RADIO, GP_REG_NO_MASK,
+        "language", N_("Language"),
+        VAL_NAME_INIT (ep3000z_reg_53_val_names)
+    }
 };
 
 /*
@@ -254,47 +254,48 @@ static const RegisterDescriptorType ep3000z_reg_53[] = {
  * a const.
  */
 static CameraRegisterType ep3000z_pic_regs[] =  {
-	/* camera prefix, register number, size of register */
-	CAM_REG_TYPE_INIT (ep3000z, 01, 4, CAM_DESC_DEFAULT, 0), /* resolution/size */
-	CAM_REG_TYPE_INIT (ep3000z, 05, 4, CAM_DESC_DEFAULT, 0), /* aperture (f-stop) */
-	CAM_REG_TYPE_INIT (ep3000z, 06, 4, CAM_DESC_DEFAULT, 0), /* color mode */
-	CAM_REG_TYPE_INIT (ep3000z, 07, 4, CAM_DESC_DEFAULT, 0), /* flash */
-	CAM_REG_TYPE_INIT (ep3000z, 20, 4, CAM_DESC_DEFAULT, 0), /* white balance */
-	CAM_REG_TYPE_INIT (ep3000z, 33, 4, CAM_DESC_DEFAULT, 0), /* focus mode */
+    /* camera prefix, register number, size of register */
+    CAM_REG_TYPE_INIT (ep3000z, 01, 4, CAM_DESC_DEFAULT, 0), /* resolution/size */
+    CAM_REG_TYPE_INIT (ep3000z, 05, 4, CAM_DESC_DEFAULT, 0), /* aperture (f-stop) */
+    CAM_REG_TYPE_INIT (ep3000z, 06, 4, CAM_DESC_DEFAULT, 0), /* color mode */
+    CAM_REG_TYPE_INIT (ep3000z, 07, 4, CAM_DESC_DEFAULT, 0), /* flash */
+    CAM_REG_TYPE_INIT (ep3000z, 20, 4, CAM_DESC_DEFAULT, 0), /* white balance */
+    CAM_REG_TYPE_INIT (ep3000z, 33, 4, CAM_DESC_DEFAULT, 0), /* focus mode */
 };
 
 /*
  * All of the register used to modify camera settings.
  */
 static CameraRegisterType ep3000z_cam_regs[] = {
-	CAM_REG_TYPE_INIT (ep3000z, 53, 4, CAM_DESC_DEFAULT, 0), /* date-time */
-	CAM_REG_TYPE_INIT (ep3000z, 02, 4, CAM_DESC_DEFAULT, 0), /* date-time */
-	CAM_REG_TYPE_INIT (ep3000z, 24, 4, CAM_DESC_DEFAULT, 0), /* Camera power save */
-	CAM_REG_TYPE_INIT (ep3000z, 23, 4, CAM_DESC_DEFAULT, 0), /* Host power save */
+    CAM_REG_TYPE_INIT (ep3000z, 53, 4, CAM_DESC_DEFAULT, 0), /* date-time */
+    CAM_REG_TYPE_INIT (ep3000z, 02, 4, CAM_DESC_DEFAULT, 0), /* date-time */
+    CAM_REG_TYPE_INIT (ep3000z, 24, 4, CAM_DESC_DEFAULT, 0), /* Camera power save */
+    CAM_REG_TYPE_INIT (ep3000z, 23, 4, CAM_DESC_DEFAULT, 0), /* Host power save */
 };
 
 static const CameraRegisterSetType ep3000z_desc[] = {
-		{
-			N_("Picture Settings"),
-			SIZE_ADDR (CameraRegisterType, ep3000z_pic_regs)
-		},
-		{
-			N_("Camera Settings"),
-			SIZE_ADDR (CameraRegisterType, ep3000z_cam_regs)
-		},
+    {
+        N_("Picture Settings"),
+        SIZE_ADDR (CameraRegisterType, ep3000z_pic_regs)
+    },
+    {
+        N_("Camera Settings"),
+        SIZE_ADDR (CameraRegisterType, ep3000z_cam_regs)
+    },
 };
 
 static const char ep3000z_manual[] =
-N_(
-"Some notes about Epson cameras:\n"
-"- Some parameters are not controllable remotely:\n"
-"  * zoom\n"
-"  * focus\n"
-"  * custom white balance setup\n"
-"- Configuration has been reverse-engineered with\n"
-"  a PhotoPC 3000z, if your camera acts differently\n"
-"  please send a mail to the gphoto developer mailing list (in English)\n"
-);
+    N_(
+        "Some notes about Epson cameras:\n"
+        "- Some parameters are not controllable remotely:\n"
+        "  * zoom\n"
+        "  * focus\n"
+        "  * custom white balance setup\n"
+        "- Configuration has been reverse-engineered with\n"
+        "  a PhotoPC 3000z, if your camera acts differently\n"
+        "  please send a mail to the gphoto developer mailing list (in English)\n"
+    );
 
 const CameraDescType ep3000z_cam_desc = { ep3000z_desc, ep3000z_manual,
-	SIERRA_EXT_PROTO, };
+                                          SIERRA_EXT_PROTO,
+                                        };

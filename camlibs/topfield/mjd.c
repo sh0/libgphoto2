@@ -82,7 +82,7 @@ void time_to_tfdt(time_t t, struct tf_datetime *dt)
     }
 
     mjd = 14956 + d +
-        ((int) ((y - k) * 365.25)) + ((int) ((m + 1 + k * 12) * 30.6001));
+          ((int) ((y - k) * 365.25)) + ((int) ((m + 1 + k * 12) * 30.6001));
     put_u16(&dt->mjd, mjd);
     dt->hour = tm->tm_hour;
     dt->minute = tm->tm_min;

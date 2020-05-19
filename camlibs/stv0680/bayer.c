@@ -28,24 +28,27 @@ void bayer_unshuffle_preview(int w, int h, int scale, unsigned char *raw, unsign
 {
 
     int x, y, nx, ny;
-    int colour; int rgb[3];
+    int colour;
+    int rgb[3];
     int nw = w >> scale;
     int nh = h >> scale;
     int incr = 1<<scale;
 
     for (ny = 0; ny < nh; ++ny, raw += w<<scale) {
-	for (nx = 0; nx < nw; ++nx, output += 3) {
-	    rgb[0] = 0; rgb[1] = 0; rgb[2] = 0;
-	    for (y = 0; y < incr; ++y) {
-		for (x = 0; x < incr; ++x) {
-		    colour = 1 - (x&1) + (y&1);
-		    rgb[colour] += raw[y*w + (nx<<(scale-1))+(x>>1) + ((x&1)? 0: (w>>1))];
-		}
-	    }
-	    output[0] = rgb[0]>>(2*scale-2);
-	    output[1] = rgb[1]>>(2*scale-1);
-	    output[2] = rgb[2]>>(2*scale-2);
-	}
+        for (nx = 0; nx < nw; ++nx, output += 3) {
+            rgb[0] = 0;
+            rgb[1] = 0;
+            rgb[2] = 0;
+            for (y = 0; y < incr; ++y) {
+                for (x = 0; x < incr; ++x) {
+                    colour = 1 - (x&1) + (y&1);
+                    rgb[colour] += raw[y*w + (nx<<(scale-1))+(x>>1) + ((x&1)? 0: (w>>1))];
+                }
+            }
+            output[0] = rgb[0]>>(2*scale-2);
+            output[1] = rgb[1]>>(2*scale-1);
+            output[2] = rgb[2]>>(2*scale-2);
+        }
     }
 }
 
@@ -62,7 +65,7 @@ void bayer_unshuffle_preview(int w, int h, int scale, unsigned char *raw, unsign
 #define ZERO1 17 /* 14--16 mapped to 1 */
 
 typedef struct _rgbgamma {
-	float ampl, gamma;
+    float ampl, gamma;
 } rgbgamma;
 
 
@@ -88,16 +91,16 @@ typedef struct _rgbgamma {
  *   and the one doing the readout.
  */
 static const rgbgamma gampar[6][3] = {
-	{ { 1.02, 0.56 }, { 1.00, 0.61 }, { 0.99, 0.65 } }, /* cold */
-	{ { 1.01, 0.56 }, { 1.00, 0.58 }, { 1.00, 0.61 } }, /* coldish */
-	{ { 1.00, 0.55 }, { 1.00, 0.57 }, { 1.00, 0.59 } }, /* mid */
-	{ { 1.00, 0.55 }, { 1.00, 0.56 }, { 1.01, 0.55 } }, /* warmish */
-	{ { 1.01, 0.56 }, { 0.99, 0.57 }, { 1.03, 0.50 } }, /* warm */
-	{ { 1.03, 0.52 }, { 0.97, 0.57 }, { 1.04, 0.49 } }  /* warm bright */
+    { { 1.02, 0.56 }, { 1.00, 0.61 }, { 0.99, 0.65 } }, /* cold */
+    { { 1.01, 0.56 }, { 1.00, 0.58 }, { 1.00, 0.61 } }, /* coldish */
+    { { 1.00, 0.55 }, { 1.00, 0.57 }, { 1.00, 0.59 } }, /* mid */
+    { { 1.00, 0.55 }, { 1.00, 0.56 }, { 1.01, 0.55 } }, /* warmish */
+    { { 1.01, 0.56 }, { 0.99, 0.57 }, { 1.03, 0.50 } }, /* warm */
+    { { 1.03, 0.52 }, { 0.97, 0.57 }, { 1.04, 0.49 } }  /* warm bright */
 };
 
 void light_enhance(int vw, int vh, int coarse, int fine,
-		   unsigned char avg_pix, unsigned char *output)
+                   unsigned char avg_pix, unsigned char *output)
 {
     unsigned long int i;
     int lt=3; /* 3 is auto */
@@ -112,88 +115,95 @@ void light_enhance(int vw, int vh, int coarse, int fine,
 
 #if 0
     if (fine >= (coarse<<1)) {
-	lt = 0;
-	/* fprintf(stderr, "natural)\n"); */
+        lt = 0;
+        /* fprintf(stderr, "natural)\n"); */
     } else if (((fine<<1) < coarse) && (coarse < 400)) {
-	lt = 2;
-	/* fprintf(stderr, "incandescent)\n"); */
+        lt = 2;
+        /* fprintf(stderr, "incandescent)\n"); */
     } else {
-	lt = 1;
-	/* fprintf(stderr, "fluorescent)\n"); */
+        lt = 1;
+        /* fprintf(stderr, "fluorescent)\n"); */
     }
-    wb[0][0] = 1.08 * x;  wb[0][1] = 1.00 * x;  wb[0][2] = 0.95 * x; /* natural */
-    wb[1][0] = 1.00 * x;  wb[1][1] = 1.00 * x;  wb[1][2] = 1.00 * x; /* fluorescent */
-    wb[2][0] = 0.90 * x;  wb[2][1] = 1.00 * x;  wb[2][2] = 1.11 * x; /* incandescent */
+    wb[0][0] = 1.08 * x;
+    wb[0][1] = 1.00 * x;
+    wb[0][2] = 0.95 * x; /* natural */
+    wb[1][0] = 1.00 * x;
+    wb[1][1] = 1.00 * x;
+    wb[1][2] = 1.00 * x; /* fluorescent */
+    wb[2][0] = 0.90 * x;
+    wb[2][1] = 1.00 * x;
+    wb[2][2] = 1.11 * x; /* incandescent */
 #else
     if (fine > coarse) {
-	lt = 0; /* fprintf (stderr, "cold)\n"); */
+        lt = 0; /* fprintf (stderr, "cold)\n"); */
     } else if (coarse < 100) {
-	lt = 1; /* fprintf (stderr, "coldish)\n"); */
+        lt = 1; /* fprintf (stderr, "coldish)\n"); */
     } else if (coarse < 200) {
-	lt = 2; /* fprintf (stderr, "mid)\n"); */
+        lt = 2; /* fprintf (stderr, "mid)\n"); */
     } else if (coarse < 400) {
-	lt = 3; /* fprintf (stderr, "warmish)\n"); */
+        lt = 3; /* fprintf (stderr, "warmish)\n"); */
     } else if (avg_pix < 94) {
-	lt = 4; /* fprintf (stderr, "warm)\n"); */
+        lt = 4; /* fprintf (stderr, "warm)\n"); */
     } else {
-	lt = 5; /* fprintf (stderr, "warm, bright)\n"); */
+        lt = 5; /* fprintf (stderr, "warm, bright)\n"); */
     }
 #endif
 
 #if 0
     /* find white pixel */
-    for (j=0;j<vh;j++)
+    for (j=0; j<vh; j++)
     {
-	for (k=0; k<vw; k++)
-	{
-	    i = (j*vw + k)*3;
-	    tmp1 = abs(*(output+i) - *(output+i+1));
-	    tmp2 = abs(*(output+i) - *(output+i+2));
-	    tmp3 = abs(*(output+i+1) - *(output+i+2));
-	    if ((tmp1<16) && (tmp2<16) && (tmp3<16) && (*(output+i)>=160)) {
-		whitex = k;  whitey = j;
-		break;
-	    }
-	}
+        for (k=0; k<vw; k++)
+        {
+            i = (j*vw + k)*3;
+            tmp1 = abs(*(output+i) - *(output+i+1));
+            tmp2 = abs(*(output+i) - *(output+i+2));
+            tmp3 = abs(*(output+i+1) - *(output+i+2));
+            if ((tmp1<16) && (tmp2<16) && (tmp3<16) && (*(output+i)>=160)) {
+                whitex = k;
+                whitey = j;
+                break;
+            }
+        }
     }
 #endif
 
     for (col = 0; col < 3; col++) {
-	double y;
-	const rgbgamma *gp = gampar[lt] + col;
-	for(i=0; i<256; ++i) {
-		if (i < ZERO0)
-			y = 0;
-		else if (i < ZERO1)
-			y = 1;
-		else
-			y = brightness * gp->ampl * (2 + pow((i-ZERO1)/((double)254-ZERO1),gp->gamma) * 253.5);
-		if (y > 255.0)
-			y = 255.0;
-		trans[col][i] = (unsigned char) y;
-	}
+        double y;
+        const rgbgamma *gp = gampar[lt] + col;
+        for(i=0; i<256; ++i) {
+            if (i < ZERO0)
+                y = 0;
+            else if (i < ZERO1)
+                y = 1;
+            else
+                y = brightness * gp->ampl * (2 + pow((i-ZERO1)/((double)254-ZERO1),gp->gamma) * 253.5);
+            if (y > 255.0)
+                y = 255.0;
+            trans[col][i] = (unsigned char) y;
+        }
     }
 
-    for (i=0;i<(vw*vh*3);i+=3)
+    for (i=0; i<(vw*vh*3); i+=3)
     {
-	int r,g,b;
-	r = *(output+i);
-	g = *(output+i+1);
-	b = *(output+i+2);
-	/* this (adjusting white) isn't quite right yet, so I turned it off */
-	if ( 0 && (abs(r-g) < 8) &&
-	          (abs(r-b) < 8) &&
-	          (abs(b-g) < 8)) {
-		int v = trans[1][(r+b+g+1)/3];
-		*(output+i) =   (unsigned char) (v);
-		*(output+i+1) = (unsigned char) (v);
-		*(output+i+2) = (unsigned char) (v);
-		fprintf(stderr,"Adjusting white\n");
-	} else {          /* this is OK */
-		*(output+i)   = trans[0][r];
-		*(output+i+1) = trans[1][g];
-		*(output+i+2) = trans[2][b];
-	}
+        int r,g,b;
+        r = *(output+i);
+        g = *(output+i+1);
+        b = *(output+i+2);
+        /* this (adjusting white) isn't quite right yet, so I turned it off */
+        if ( 0 && (abs(r-g) < 8) &&
+                (abs(r-b) < 8) &&
+                (abs(b-g) < 8)) {
+            int v = trans[1][(r+b+g+1)/3];
+            *(output+i) =   (unsigned char) (v);
+            *(output+i+1) = (unsigned char) (v);
+            *(output+i+2) = (unsigned char) (v);
+            fprintf(stderr,"Adjusting white\n");
+        } else {          /* this is OK */
+            *(output+i)   = trans[0][r];
+            *(output+i+1) = trans[1][g];
+            *(output+i+2) = trans[2][b];
+        }
     }  /* for */
 
 }  /* light_enhance */

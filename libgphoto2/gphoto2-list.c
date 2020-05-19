@@ -40,15 +40,15 @@
  **/
 
 struct _entry {
-	char *name;
-	char *value;
+    char *name;
+    char *value;
 };
 
 struct _CameraList {
-	int	used;	/* used entries */
-	int	max;	/* allocated entries */
-	struct _entry *entry;
-	int	ref_count;
+    int used;   /* used entries */
+    int max;    /* allocated entries */
+    struct _entry *entry;
+    int ref_count;
 };
 
 
@@ -62,13 +62,13 @@ struct _CameraList {
 int
 gp_list_new (CameraList **list)
 {
-	C_PARAMS (list);
+    C_PARAMS (list);
 
-	C_MEM (*list = calloc (1, sizeof (CameraList)));
+    C_MEM (*list = calloc (1, sizeof (CameraList)));
 
-	(*list)->ref_count = 1;
+    (*list)->ref_count = 1;
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -81,11 +81,11 @@ gp_list_new (CameraList **list)
 int
 gp_list_ref (CameraList *list)
 {
-	C_PARAMS (list && list->ref_count);
+    C_PARAMS (list && list->ref_count);
 
-	list->ref_count++;
+    list->ref_count++;
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -100,13 +100,13 @@ gp_list_ref (CameraList *list)
 int
 gp_list_unref (CameraList *list)
 {
-	C_PARAMS (list && list->ref_count);
+    C_PARAMS (list && list->ref_count);
 
-	if (list->ref_count == 1) /* time to free */
-		gp_list_free (list);
-	else
-		list->ref_count--;
-	return (GP_OK);
+    if (list->ref_count == 1) /* time to free */
+        gp_list_free (list);
+    else
+        list->ref_count--;
+    return (GP_OK);
 }
 
 /**
@@ -119,22 +119,22 @@ gp_list_unref (CameraList *list)
 int
 gp_list_free (CameraList *list)
 {
-	int	i;
-	C_PARAMS (list && list->ref_count);
+    int i;
+    C_PARAMS (list && list->ref_count);
 
-	for (i=0;i<list->used;i++) {
-		free (list->entry[i].name);
-		list->entry[i].name = NULL;
-		free (list->entry[i].value);
-		list->entry[i].value = NULL;
-	}
-	free (list->entry);
-	/* Mark this list as having been freed. That may help us
-	 * prevent access to already freed lists.
-	 */
-	list->ref_count = 0;
-	free (list);
-        return (GP_OK);
+    for (i=0; i<list->used; i++) {
+        free (list->entry[i].name);
+        list->entry[i].name = NULL;
+        free (list->entry[i].value);
+        list->entry[i].value = NULL;
+    }
+    free (list->entry);
+    /* Mark this list as having been freed. That may help us
+     * prevent access to already freed lists.
+     */
+    list->ref_count = 0;
+    free (list);
+    return (GP_OK);
 }
 
 /**
@@ -147,18 +147,18 @@ gp_list_free (CameraList *list)
 int
 gp_list_reset (CameraList *list)
 {
-	int i;
-	C_PARAMS (list && list->ref_count);
+    int i;
+    C_PARAMS (list && list->ref_count);
 
-	for (i=0;i<list->used;i++) {
-		free (list->entry[i].name);
-		list->entry[i].name = NULL;
-		free (list->entry[i].value);
-		list->entry[i].value = NULL;
-	}
-	/* keeps -> entry allocated for reuse. */
-	list->used = 0;
-	return (GP_OK);
+    for (i=0; i<list->used; i++) {
+        free (list->entry[i].name);
+        list->entry[i].name = NULL;
+        free (list->entry[i].value);
+        list->entry[i].value = NULL;
+    }
+    /* keeps -> entry allocated for reuse. */
+    list->used = 0;
+    return (GP_OK);
 }
 
 /**
@@ -173,33 +173,33 @@ gp_list_reset (CameraList *list)
 int
 gp_list_append (CameraList *list, const char *name, const char *value)
 {
-	C_PARAMS (list && list->ref_count);
+    C_PARAMS (list && list->ref_count);
 
-	if (list->used == list->max) {
-		C_MEM (list->entry = realloc(list->entry,(list->max+100)*sizeof(struct _entry)));
-		list->max += 100;
-	}
+    if (list->used == list->max) {
+        C_MEM (list->entry = realloc(list->entry,(list->max+100)*sizeof(struct _entry)));
+        list->max += 100;
+    }
 
-	if (name) {
-		C_MEM (list->entry[list->used].name = strdup (name));
-	} else {
-		list->entry[list->used].name = NULL;
-	}
-	if (value) {
-		C_MEM (list->entry[list->used].value = strdup (value));
-	} else {
-		list->entry[list->used].value = NULL;
-	}
-        list->used++;
-        return (GP_OK);
+    if (name) {
+        C_MEM (list->entry[list->used].name = strdup (name));
+    } else {
+        list->entry[list->used].name = NULL;
+    }
+    if (value) {
+        C_MEM (list->entry[list->used].value = strdup (value));
+    } else {
+        list->entry[list->used].value = NULL;
+    }
+    list->used++;
+    return (GP_OK);
 }
 
 static int
 cmp_list (const void *a, const void *b) {
-        const struct _entry *ca = a;
-        const struct _entry *cb = b;
+    const struct _entry *ca = a;
+    const struct _entry *cb = b;
 
-        return strcmp (ca->name, cb->name);
+    return strcmp (ca->name, cb->name);
 }
 
 /**
@@ -212,10 +212,10 @@ cmp_list (const void *a, const void *b) {
 int
 gp_list_sort (CameraList *list)
 {
-	C_PARAMS (list && list->ref_count);
+    C_PARAMS (list && list->ref_count);
 
-	qsort (list->entry, list->used, sizeof(list->entry[0]), cmp_list);
-	return GP_OK;
+    qsort (list->entry, list->used, sizeof(list->entry[0]), cmp_list);
+    return GP_OK;
 }
 
 /**
@@ -228,9 +228,9 @@ gp_list_sort (CameraList *list)
 int
 gp_list_count (CameraList *list)
 {
-	C_PARAMS (list && list->ref_count);
+    C_PARAMS (list && list->ref_count);
 
-        return (list->used);
+    return (list->used);
 }
 
 /**
@@ -248,23 +248,23 @@ gp_list_count (CameraList *list)
 int
 gp_list_find_by_name (CameraList *list, int *index, const char *name)
 {
-	int i;
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (name);
+    int i;
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (name);
 
-	/* We search backwards because our only known user
-	 * camlibs/ptp2/library.c thinks this is faster
-	 */
-	for (i=list->used-1; i >= 0; i--) {
-	  if (0==strcmp(list->entry[i].name, name)) {
-	    if (index) {
-	      (*index) = i;
-	    }
-	    return (GP_OK);
-	  }
-	}
+    /* We search backwards because our only known user
+     * camlibs/ptp2/library.c thinks this is faster
+     */
+    for (i=list->used-1; i >= 0; i--) {
+        if (0==strcmp(list->entry[i].name, name)) {
+            if (index) {
+                (*index) = i;
+            }
+            return (GP_OK);
+        }
+    }
 
-	return (GP_ERROR);
+    return (GP_ERROR);
 }
 
 /**
@@ -279,13 +279,13 @@ gp_list_find_by_name (CameraList *list, int *index, const char *name)
 int
 gp_list_get_name (CameraList *list, int index, const char **name)
 {
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (name);
-	C_PARAMS (0 <= index && index < list->used);
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (name);
+    C_PARAMS (0 <= index && index < list->used);
 
-	*name = list->entry[index].name;
+    *name = list->entry[index].name;
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -300,13 +300,13 @@ gp_list_get_name (CameraList *list, int index, const char **name)
 int
 gp_list_get_value (CameraList *list, int index, const char **value)
 {
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (value);
-	C_PARAMS (0 <= index && index < list->used);
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (value);
+    C_PARAMS (0 <= index && index < list->used);
 
-	*value = list->entry[index].value;
+    *value = list->entry[index].value;
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -321,15 +321,15 @@ gp_list_get_value (CameraList *list, int index, const char **value)
 int
 gp_list_set_value (CameraList *list, int index, const char *value)
 {
-	char *newval;
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (value);
-	C_PARAMS (0 <= index && index < list->used);
+    char *newval;
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (value);
+    C_PARAMS (0 <= index && index < list->used);
 
-	C_MEM (newval = strdup(value));
-	free (list->entry[index].value);
-	list->entry[index].value = newval;
-	return (GP_OK);
+    C_MEM (newval = strdup(value));
+    free (list->entry[index].value);
+    list->entry[index].value = newval;
+    return (GP_OK);
 }
 
 /**
@@ -344,15 +344,15 @@ gp_list_set_value (CameraList *list, int index, const char *value)
 int
 gp_list_set_name (CameraList *list, int index, const char *name)
 {
-	char *newname;
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (name);
-	C_PARAMS (0 <= index && index < list->used);
+    char *newname;
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (name);
+    C_PARAMS (0 <= index && index < list->used);
 
-	C_MEM (newname = strdup(name));
-	free (list->entry[index].name);
-	list->entry[index].name = newname;
-	return (GP_OK);
+    C_MEM (newname = strdup(name));
+    free (list->entry[index].name);
+    list->entry[index].name = newname;
+    return (GP_OK);
 }
 
 /**
@@ -372,19 +372,19 @@ gp_list_set_name (CameraList *list, int index, const char *name)
 int
 gp_list_populate  (CameraList *list, const char *format, int count)
 {
-	int x;
-	char buf[1024];
+    int x;
+    char buf[1024];
 
-	C_PARAMS (list && list->ref_count);
-	C_PARAMS (format);
+    C_PARAMS (list && list->ref_count);
+    C_PARAMS (format);
 
-	gp_list_reset (list);
-	for (x = 0; x < count; x++) {
-		snprintf (buf, sizeof (buf), format, x + 1);
-		CHECK_RESULT (gp_list_append (list, buf, NULL));
-	}
+    gp_list_reset (list);
+    for (x = 0; x < count; x++) {
+        snprintf (buf, sizeof (buf), format, x + 1);
+        CHECK_RESULT (gp_list_append (list, buf, NULL));
+    }
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 

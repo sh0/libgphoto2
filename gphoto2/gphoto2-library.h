@@ -69,9 +69,9 @@ typedef int (* CameraLibraryInitFunc)      (Camera *camera, GPContext *context);
  * the following three functions. Everything else should be declared
  * as static.
  */
-int camera_id		(CameraText *id);
-int camera_abilities 	(CameraAbilitiesList *list);
-int camera_init 	(Camera *camera, GPContext *context);
+int camera_id       (CameraText *id);
+int camera_abilities    (CameraAbilitiesList *list);
+int camera_init     (Camera *camera, GPContext *context);
 
 #ifdef __cplusplus
 }

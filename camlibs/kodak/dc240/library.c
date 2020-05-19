@@ -67,17 +67,17 @@
 
 /* legacy from dc240.h */
 /*
-  #define COMM1	0x00
-  #define READY	0x10
-  #define ACK	0xd1
-  #define PACK1	0xd2
+  #define COMM1 0x00
+  #define READY 0x10
+  #define ACK   0xd1
+  #define PACK1 0xd2
 */
 /* nice. errors all have upper nibble of 'e' */
 /*
-  #define NAK	0xe1
-  #define COMM0	0xe2
-  #define PACK0	0xe3
-  #define CANCL	0xe4
+  #define NAK   0xe1
+  #define COMM0 0xe2
+  #define PACK0 0xe3
+  #define CANCL 0xe4
 */
 
 /* system codes */
@@ -95,7 +95,7 @@ enum {
 
 static unsigned char *dc240_packet_new   (int command_byte);
 static int   dc240_packet_write (Camera *camera, unsigned char *packet, int size,
-				 int read_response);
+                                 int read_response);
 static int   dc240_packet_read  (Camera *camera, unsigned char *packet, int size);
 
 
@@ -169,12 +169,12 @@ write_again:
 
     /* Read in the response from the camera if requested */
     while (read_response) {
-	int ret;
+        int ret;
         if ((ret=gp_port_read(camera->port, in, 1)) >= GP_OK) {
             /* On error, read again */
-	    read_response = 0;
+            read_response = 0;
             break;
-	}
+        }
         if (ret == GP_ERROR_IO_READ) return ret; /* e.g. device detached? */
     }
 
@@ -194,12 +194,12 @@ dc240_packet_read (Camera *camera, unsigned char *packet, int size)
      * DC240_SC_ERROR error, return failure
      */
     if ((size > 1) && (retval == 1) && (packet[0] == DC240_SC_ERROR))
-	return GP_ERROR_NOT_SUPPORTED;
+        return GP_ERROR_NOT_SUPPORTED;
 
     if (retval < GP_OK)
-	return retval;
+        return retval;
     else
-	return GP_OK;
+        return GP_OK;
 }
 
 static int dc240_packet_write_ack (Camera *camera)
@@ -210,7 +210,7 @@ static int dc240_packet_write_ack (Camera *camera)
     c = DC240_SC_CORRECT;
     retval = gp_port_write(camera->port, (char*)&c, 1);
     if (retval < GP_OK)
-	return retval;
+        return retval;
     return GP_OK;
 }
 
@@ -222,7 +222,7 @@ static int dc240_packet_write_nak (Camera *camera)
     c = DC240_SC_ILLEGAL;
     retval = gp_port_write(camera->port, (char*)&c, 1);
     if (retval < GP_OK)
-	return retval;
+        return retval;
     return GP_OK;
 }
 
@@ -233,23 +233,23 @@ static int dc240_wait_for_completion (Camera *camera) {
 
     /* Wait for command completion */
     while ((x++ < 25)&&(!done)) {
-	retval = dc240_packet_read(camera, p, 1);
-	switch (retval) {
-	case GP_ERROR:
-	    GP_DEBUG ("GP_ERROR\n");
-	    return (GP_ERROR);
-	    break;
-	case GP_ERROR_TIMEOUT:
-	    GP_DEBUG ("GP_ERROR_TIMEOUT\n");
-	    /* in busy state, GP_ERROR_IO_READ can happend */
-	    break;
-	default:
-	    done = 1;
-	}
+        retval = dc240_packet_read(camera, p, 1);
+        switch (retval) {
+        case GP_ERROR:
+            GP_DEBUG ("GP_ERROR\n");
+            return (GP_ERROR);
+            break;
+        case GP_ERROR_TIMEOUT:
+            GP_DEBUG ("GP_ERROR_TIMEOUT\n");
+            /* in busy state, GP_ERROR_IO_READ can happend */
+            break;
+        default:
+            done = 1;
+        }
     }
 
     if (x==25) {
-	return (GP_ERROR_TIMEOUT);
+        return (GP_ERROR_TIMEOUT);
     }
 
     return GP_OK;
@@ -262,7 +262,7 @@ static int dc240_wait_for_completion (Camera *camera) {
 static int dc240_wait_for_busy_completion (Camera *camera)
 {
     enum {
-	BUSY_RETRIES = 100
+        BUSY_RETRIES = 100
     };
     unsigned char p[8];
     int retval = 0;
@@ -270,30 +270,30 @@ static int dc240_wait_for_busy_completion (Camera *camera)
 
     /* Wait for command completion */
     while ((x++ < BUSY_RETRIES)&&(!done)) {
-	retval = dc240_packet_read(camera, p, 1);
-	switch (retval) {
-	case GP_ERROR:
-	    return retval;
-	    break;
-	case GP_ERROR_IO_READ:
-	case GP_ERROR_TIMEOUT:
-	    /* in busy state, GP_ERROR_IO_READ can happend */
-	    break;
-	default:
-	    if (*p != DC240_SC_BUSY) {
-		done = 1;
-	    }
-	}
+        retval = dc240_packet_read(camera, p, 1);
+        switch (retval) {
+        case GP_ERROR:
+            return retval;
+            break;
+        case GP_ERROR_IO_READ:
+        case GP_ERROR_TIMEOUT:
+            /* in busy state, GP_ERROR_IO_READ can happend */
+            break;
+        default:
+            if (*p != DC240_SC_BUSY) {
+                done = 1;
+            }
+        }
     }
     if (x == BUSY_RETRIES)
-	return (GP_ERROR);
+        return (GP_ERROR);
     return retval;
 }
 
 
 static int dc240_packet_exchange (Camera *camera, CameraFile *file,
-                           unsigned char *cmd_packet, unsigned char *path_packet,
-                           int *size, int block_size, GPContext *context)
+                                  unsigned char *cmd_packet, unsigned char *path_packet,
+                                  int *size, int block_size, GPContext *context)
 {
     /* Reads in multi-packet data, appending it to the "file". */
     unsigned char check_sum;
@@ -310,7 +310,7 @@ static int dc240_packet_exchange (Camera *camera, CameraFile *file,
         num_packets = (int)t;
         if (t - (float)num_packets > 0) {
             num_packets++;
-	}
+        }
     } else {
         /* Calculate size in 1st packet */
         num_packets = 2;
@@ -319,13 +319,13 @@ static int dc240_packet_exchange (Camera *camera, CameraFile *file,
 read_data_write_again:
     /* Write command/path packets */
     if (cmd_packet) {
-	retval = dc240_packet_write(camera, cmd_packet, 8, 1);
+        retval = dc240_packet_write(camera, cmd_packet, 8, 1);
         if (retval < GP_OK)
             return retval;
     }
 
     if (path_packet) {
-	retval = dc240_packet_write(camera, path_packet, 60, 1);
+        retval = dc240_packet_write(camera, path_packet, 60, 1);
         if (retval < GP_OK)
             return retval;
     }
@@ -333,20 +333,20 @@ read_data_write_again:
     id = gp_context_progress_start (context, num_packets, _("Getting data..."));
     while (x < num_packets) {
 read_data_read_again:
-	gp_context_progress_update (context, id, x);
+        gp_context_progress_update (context, id, x);
 
         /* Read the response/data */
         retval = dc240_packet_read(camera, packet, block_size+2);
 
-	if (retval == GP_ERROR_NOT_SUPPORTED)
-	    return retval;
+        if (retval == GP_ERROR_NOT_SUPPORTED)
+            return retval;
 
         if ((retval == GP_ERROR) || (retval == GP_ERROR_TIMEOUT)) {
             /* ERROR reading response/data */
             if (retries++ > RETRIES) {
-		gp_context_progress_stop (context, id);
+                gp_context_progress_stop (context, id);
                 return (GP_ERROR_TIMEOUT);
-	    }
+            }
 
             if (x==0) {
                 /* If first packet didn't come, write command again */
@@ -358,27 +358,27 @@ read_data_read_again:
             }
         }
 
-	/* Validate checksum */
-	check_sum = 0;
-	for (i = 1; i < block_size + 1; i++) {
-	    check_sum ^= packet [i];
-	}
-	if ( block_size > 1 && check_sum != packet [i]) {
-	    dc240_packet_write_nak (camera);
-	    goto read_data_read_again;
-	}
+        /* Validate checksum */
+        check_sum = 0;
+        for (i = 1; i < block_size + 1; i++) {
+            check_sum ^= packet [i];
+        }
+        if ( block_size > 1 && check_sum != packet [i]) {
+            dc240_packet_write_nak (camera);
+            goto read_data_read_again;
+        }
 
         /* Check for error in command/path */
         if (packet[0] > DC240_SC_FIRST_ERROR) {
-	    gp_context_progress_stop (context, id);
+            gp_context_progress_stop (context, id);
             return GP_ERROR;
-	}
+        }
 
         /* Check for end of data */
         if (packet[0] == DC240_SC_COMPLETE) {
-	    gp_context_progress_stop (context, id);
+            gp_context_progress_stop (context, id);
             return GP_OK;
-	}
+        }
 
         /* Write packet was OK */
         if (dc240_packet_write_ack(camera) < GP_OK)
@@ -423,17 +423,17 @@ int dc240_open (Camera *camera)
 
     retval = dc240_packet_write(camera, p, 8, 1);
     if (retval != GP_OK) {
-	GP_DEBUG ("dc240_open: write returned %d\n", retval);
-	goto fail;
+        GP_DEBUG ("dc240_open: write returned %d\n", retval);
+        goto fail;
     }
 
     retval = dc240_wait_for_completion(camera);
     if (retval < GP_OK) {
-	GP_DEBUG ("dc240_open: wait returned %d\n", retval);
-	goto fail;
+        GP_DEBUG ("dc240_open: wait returned %d\n", retval);
+        goto fail;
     }
 
- fail:
+fail:
     free(p);
     return retval;
 }
@@ -465,10 +465,10 @@ static int dc240_get_file_size (Camera *camera, const char *folder, const char *
     if (dc240_packet_exchange(camera, f, p1, p2, &size, 256, context) < 0)
         size = 0;
     else {
-	int ret;
-	ret = gp_file_get_data_and_size (f, (const char**)&fdata, &fsize);
-	if (ret < GP_OK) return ret;
-	if (!fdata || (fsize < 4)) return GP_ERROR;
+        int ret;
+        ret = gp_file_get_data_and_size (f, (const char**)&fdata, &fsize);
+        if (ret < GP_OK) return ret;
+        if (!fdata || (fsize < 4)) return GP_ERROR;
         size = (fdata[offset]   << 24) |
                (fdata[offset+1] << 16) |
                (fdata[offset+2] << 8 ) |
@@ -528,12 +528,12 @@ int dc240_set_speed (Camera *camera, int speed)
     */
     default:
         retval = GP_ERROR;
-	goto fail;
+        goto fail;
     }
 
     retval = dc240_packet_write(camera, p, 8, 1);
     if (retval != GP_OK)
-	goto fail;
+        goto fail;
 
     retval = gp_port_set_settings (camera->port, settings);
     if (retval != GP_OK)
@@ -542,9 +542,9 @@ int dc240_set_speed (Camera *camera, int speed)
     usleep(300 * 1000);
     retval = dc240_wait_for_completion(camera);
     if (retval != GP_OK)
-	goto fail;
+        goto fail;
     /* Speed change went OK. */
- fail:
+fail:
     free (p);
     return retval;
 }
@@ -568,9 +568,9 @@ const char *dc240_convert_type_to_camera (uint16_t type)
     int i = 0;
 
     while (type_to_camera[i].status_type != 0) {
-	if (type_to_camera[i].status_type == type)
-	    return type_to_camera[i].name;
-	i++;
+        if (type_to_camera[i].status_type == type)
+            return type_to_camera[i].name;
+        i++;
     }
     /* not found */
     return type_to_camera[i].name;
@@ -580,16 +580,16 @@ const char *dc240_get_battery_status_str (uint8_t status)
 {
     switch (status) {
     case 0:
-	return _("OK");
-	break;
+        return _("OK");
+        break;
     case 1:
-	return _("Weak");
-	break;
+        return _("Weak");
+        break;
     case 2:
-	return _("Empty");
-	break;
+        return _("Empty");
+        break;
     default:
-	break;
+        break;
     }
     return _("Invalid");
 }
@@ -598,13 +598,13 @@ const char *dc240_get_ac_status_str (uint8_t status)
 {
     switch (status) {
     case 0:
-	return _("Not used");
-	break;
+        return _("Not used");
+        break;
     case 1:
-	return _("In use");
-	break;
+        return _("In use");
+        break;
     default:
-	break;
+        break;
     }
     return _("Invalid");
 }
@@ -613,12 +613,12 @@ const char *dc240_get_ac_status_str (uint8_t status)
 const char * dc240_get_memcard_status_str(uint8_t status)
 {
     if (status & 0x80) {
-	if ((status & 0x10) == 0) {
-	    if (status & 0x08)
-		return _("Card is open");
-	    return _("Card is not open");
-	}
-	return _("Card is not formatted");
+        if ((status & 0x10) == 0) {
+            if (status & 0x08)
+                return _("Card is open");
+            return _("Card is not open");
+        }
+        return _("Card is not formatted");
     }
     return _("No card");
 }
@@ -630,7 +630,7 @@ const char * dc240_get_memcard_status_str(uint8_t status)
 static int dc240_load_status_data_to_table (const unsigned char *fdata, DC240StatusTable *table)
 {
     if (fdata [0] != 0x01)
-	return GP_ERROR;
+        return GP_ERROR;
     GP_DEBUG ("Camera Type = %d, %s\n", fdata[1], dc240_convert_type_to_camera (fdata[1]));
     table->cameraType = fdata[1];
     table->fwVersInt = fdata[2];
@@ -676,10 +676,10 @@ static int dc240_load_status_data_to_table (const unsigned char *fdata, DC240Sta
     table->focusMode = fdata[101];
     table->afMode = fdata[102];
     table->awbMode = fdata[103];
-/* table->zoomMag =  ????? */
+    /* table->zoomMag =  ????? */
     table->exposureMode = fdata[129];
     table->sharpControl = fdata[131];
-/* table->expTime = */
+    /* table->expTime = */
     table->fValue = (fdata[136] * 100) + (fdata[137]);
     table->imageEffect = fdata[138];
     table->dateTimeStamp = fdata[139];
@@ -708,19 +708,19 @@ int dc240_get_status (Camera *camera, DC240StatusTable *table, GPContext *contex
     retval = dc240_packet_exchange(camera, file, p, NULL, &size, 256, context);
 
     if (retval == GP_OK) {
-	retval = gp_file_get_data_and_size (file, &fdata, &fsize);
-	if (retval != GP_OK) goto exit;
-	if (fsize != 256) {
-	    GP_DEBUG ("wrong status packet size ! Size is %ld", fsize);
-	    retval = GP_ERROR;
-	    goto exit;
-	}
-	if (fdata [0] != 0x01) { /* see 2.6 for why 0x01 */
-	    GP_DEBUG ("not a status table. Is %d", fdata [0]);
-	    retval = GP_ERROR;
-	    goto exit;
-	}
-	dc240_load_status_data_to_table ((uint8_t *)fdata, table);
+        retval = gp_file_get_data_and_size (file, &fdata, &fsize);
+        if (retval != GP_OK) goto exit;
+        if (fsize != 256) {
+            GP_DEBUG ("wrong status packet size ! Size is %ld", fsize);
+            retval = GP_ERROR;
+            goto exit;
+        }
+        if (fdata [0] != 0x01) { /* see 2.6 for why 0x01 */
+            GP_DEBUG ("not a status table. Is %d", fdata [0]);
+            retval = GP_ERROR;
+            goto exit;
+        }
+        dc240_load_status_data_to_table ((uint8_t *)fdata, table);
     }
 exit:
     gp_file_free(file);
@@ -730,7 +730,7 @@ exit:
 }
 
 int dc240_get_directory_list (Camera *camera, CameraList *list, const char *folder,
-                             unsigned char attrib, GPContext *context) {
+                              unsigned char attrib, GPContext *context) {
 
     CameraFile *file;
     int x, y=0, z, size=256;
@@ -746,7 +746,7 @@ int dc240_get_directory_list (Camera *camera, CameraList *list, const char *fold
     gp_file_new(&file);
     ret = dc240_packet_exchange(camera, file, p1, p2, &size, 256, context);
     if (ret < 0) {
-	gp_file_free (file);
+        gp_file_free (file);
         return ret;
     }
     free(p1);
@@ -755,11 +755,11 @@ int dc240_get_directory_list (Camera *camera, CameraList *list, const char *fold
     /* Don't expect to have a fully useful buffer. */
     ret = gp_file_get_data_and_size (file, &fdata, &fsize);
     if (ret < 0) {
-	gp_file_free (file);
+        gp_file_free (file);
         return ret;
     }
     if ((size < 1) || !fdata) {
-	gp_file_free (file);
+        gp_file_free (file);
         return GP_ERROR;
     }
 
@@ -770,7 +770,7 @@ int dc240_get_directory_list (Camera *camera, CameraList *list, const char *fold
     GP_DEBUG ("number of file entries : %d, size = %ld", num_of_entries, fsize);
     if (total_size > fsize) {
         GP_DEBUG ("total_size %d > fsize %ld", total_size, fsize);
-	gp_file_free (file);
+        gp_file_free (file);
         return GP_ERROR;
     }
     for (x = 2; x < total_size; x += 20) {
@@ -781,14 +781,14 @@ int dc240_get_directory_list (Camera *camera, CameraList *list, const char *fold
                 buf[8] = 0;                         /* NULL terminate */
                 strcat(buf, ".");                   /* Append dot */
                 strcat(buf, &fdata[x+8]);      /* Append extension */
-		GP_DEBUG ("found file: %s", buf);
+                GP_DEBUG ("found file: %s", buf);
             } else {
                 strncpy(buf, &fdata[x], 8);    /* Copy over folder name */
                 z=0;
                 while ((buf[z] != 0x20)&&(z<8))     /* Chop trailing spaces */
                     z++;
                 buf[z] = 0;                         /* NULL terminate */
-		GP_DEBUG ("found folder: %s", buf);
+                GP_DEBUG ("found folder: %s", buf);
             }
             gp_list_append(list, buf, NULL);
             y++;
@@ -811,7 +811,7 @@ int dc240_file_action (Camera *camera, int action, CameraFile *file,
     case DC240_ACTION_PREVIEW:
         cmd_packet[4] = 0x02;
         thumb = 1;
-        /* no break on purpose */
+    /* no break on purpose */
     case DC240_ACTION_IMAGE:
         if ((size = dc240_get_file_size(camera, folder, filename, thumb, context)) < GP_OK) {
             retval = GP_ERROR;
@@ -833,7 +833,7 @@ int dc240_file_action (Camera *camera, int action, CameraFile *file,
     free(path_packet);
 
     if (file)
-	gp_file_set_mime_type (file, GP_MIME_JPEG);
+        gp_file_set_mime_type (file, GP_MIME_JPEG);
     return (retval);
 }
 
@@ -856,18 +856,18 @@ int dc240_capture (Camera *camera, CameraFilePath *path, GPContext *context)
     ret = dc240_packet_write(camera, p, 8, 1);
     free (p);
     if (ret != GP_OK) {
-	return ret;
+        return ret;
     }
 
     gp_context_status (context, "Waiting for completion...");
     ret = dc240_wait_for_completion(camera);
     if (ret != GP_OK) {
-	return ret;
+        return ret;
     }
 
     ret = dc240_wait_for_busy_completion(camera);
     if (ret != GP_OK) {
-	return ret;
+        return ret;
     }
 
     /*
@@ -878,10 +878,10 @@ int dc240_capture (Camera *camera, CameraFilePath *path, GPContext *context)
     ret = dc240_packet_exchange(camera, file, p, NULL, &size, 256, context);
     free(p);
     if (ret != GP_OK) {
-	path->name[0] = 0;
-	path->folder[0] = 0;
-	gp_file_unref (file);
-	return ret;
+        path->name[0] = 0;
+        path->folder[0] = 0;
+        gp_file_unref (file);
+        return ret;
     }
 
     /* this part assumes that the response is of fixed size */
@@ -907,10 +907,10 @@ int dc240_packet_set_size (Camera *camera, short int size) {
     p[3] = (size     ) & 0xFF;
 
     if (dc240_packet_write(camera, p, 8, 1) == GP_ERROR)
-            return (GP_ERROR);
+        return (GP_ERROR);
 
     if (dc240_wait_for_completion(camera)==GP_ERROR)
-            return (GP_ERROR);
+        return (GP_ERROR);
     free(p);
     return (GP_OK);
 }

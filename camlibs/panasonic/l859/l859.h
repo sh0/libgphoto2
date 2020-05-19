@@ -1,20 +1,20 @@
 /*
-	$Id$
+    $Id$
 
-	Copyright 2001 Andrew Selkirk <aselkirk@mailandnews.com>
+    Copyright 2001 Andrew Selkirk <aselkirk@mailandnews.com>
 
-	This file is part of the gPhoto project and may only be used,  modified,
-	and distributed under the terms of the gPhoto project license,  COPYING.
-	By continuing to use, modify, or distribute  this file you indicate that
-	you have read the license, understand and accept it fully.
+    This file is part of the gPhoto project and may only be used,  modified,
+    and distributed under the terms of the gPhoto project license,  COPYING.
+    By continuing to use, modify, or distribute  this file you indicate that
+    you have read the license, understand and accept it fully.
 
-	THIS  SOFTWARE IS PROVIDED AS IS AND COME WITH NO WARRANTY  OF ANY KIND,
-	EITHER  EXPRESSED OR IMPLIED.  IN NO EVENT WILL THE COPYRIGHT  HOLDER BE
-	LIABLE FOR ANY DAMAGES RESULTING FROM THE USE OF THIS SOFTWARE.
+    THIS  SOFTWARE IS PROVIDED AS IS AND COME WITH NO WARRANTY  OF ANY KIND,
+    EITHER  EXPRESSED OR IMPLIED.  IN NO EVENT WILL THE COPYRIGHT  HOLDER BE
+    LIABLE FOR ANY DAMAGES RESULTING FROM THE USE OF THIS SOFTWARE.
 
-	Note:
+    Note:
 
-	This is the Panasonic PV-L859 camera gPhoto library source code.
+    This is the Panasonic PV-L859 camera gPhoto library source code.
 
 */
 
@@ -27,9 +27,9 @@
 #define L859_BUFSIZE      0x74
 
 struct _CameraPrivateLibrary {
-	char buf[L859_BUFSIZE];
-	int  size;
-	int  speed;
+    char buf[L859_BUFSIZE];
+    int  size;
+    int  speed;
 };
 
 /* L859 Command Codes */
@@ -39,7 +39,7 @@ struct _CameraPrivateLibrary {
 #define L859_CMD_SPEED_19200    0x22
 #define L859_CMD_SPEED_57600    0x24
 #define L859_CMD_SPEED_115200   0x26
-#define	L859_CMD_RESET	        0x20
+#define L859_CMD_RESET          0x20
 #define L859_CMD_IMAGE          0xd0
 #define L859_CMD_PREVIEW        0xe8
 #define L859_CMD_PREVIEW_NEXT   0xe5

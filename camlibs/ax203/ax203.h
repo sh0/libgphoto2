@@ -30,107 +30,107 @@
 
 #define GP_MODULE "ax203"
 
-#define AX203_ABFS_MAGIC		"ABFS"
-#define AX203_ABFS_COUNT_OFFSET		0x05
+#define AX203_ABFS_MAGIC                "ABFS"
+#define AX203_ABFS_COUNT_OFFSET         0x05
 #define AX203_ABFS_FILE_OFFSET(idx)     (0x20 + 2 * (idx))
-#define AX203_ABFS_SIZE			0x1000
-#define AX203_PICTURE_OFFSET		0x2000 /* offset from ABFS start */
+#define AX203_ABFS_SIZE                 0x1000
+#define AX203_PICTURE_OFFSET            0x2000 /* offset from ABFS start */
 
 #define AX206_ABFS_FILE_OFFSET(idx)     (0x10 + 8 * (idx))
-#define AX206_PICTURE_OFFSET		0x1000 /* offset from ABFS start */
+#define AX206_PICTURE_OFFSET            0x1000 /* offset from ABFS start */
 
-#define AX3003_ABFS_FILE_OFFSET(idx)	(0x20 + 4 * (idx))
-#define AX3003_PICTURE_OFFSET		0x1000 /* offset from ABFS start */
-#define AX3003_BL_SIZE			0x10000 /* Space used by the bootloader
-						   at the end of the memory */
+#define AX3003_ABFS_FILE_OFFSET(idx)    (0x20 + 4 * (idx))
+#define AX3003_PICTURE_OFFSET           0x1000 /* offset from ABFS start */
+#define AX3003_BL_SIZE                  0x10000 /* Space used by the bootloader
+                                                   at the end of the memory */
 
-#define AX203_SET_TIME		0xCA
-#define AX203_TO_DEV		0xCB
-#define AX203_FROM_DEV		0xCD
-#define AX203_EEPROM_CMD	0x00
-#define AX203_GET_VERSION	0x01
-#define AX203_GET_LCD_SIZE	0x02
-#define AX203_GET_CHECKSUM	0x05 /* Note only seen on 206 sofar */
+#define AX203_SET_TIME      0xCA
+#define AX203_TO_DEV        0xCB
+#define AX203_FROM_DEV      0xCD
+#define AX203_EEPROM_CMD    0x00
+#define AX203_GET_VERSION   0x01
+#define AX203_GET_LCD_SIZE  0x02
+#define AX203_GET_CHECKSUM  0x05 /* Note only seen on 206 sofar */
 
-#define AX3003_FRAME_CMD	0xCA
-#define AX3003_SET_TIME		0x01
-#define AX3003_GET_FRAME_ID	0x02
-#define AX3003_GET_ABFS_START	0x03
+#define AX3003_FRAME_CMD    0xCA
+#define AX3003_SET_TIME     0x01
+#define AX3003_GET_FRAME_ID 0x02
+#define AX3003_GET_ABFS_START   0x03
 
 /* Note not all SPI EEPROM's actually have 4k sectors, some have
    64k sectors, ax203_commit() takes care if this. */
-#define SPI_EEPROM_SECTOR_SIZE	4096
-#define SPI_EEPROM_BLOCK_SIZE	65536
-#define SPI_EEPROM_WRSR		0x01 /* WRite Status Register */
-#define SPI_EEPROM_PP		0x02
-#define SPI_EEPROM_READ		0x03
-#define SPI_EEPROM_RDSR		0x05 /* ReaD Status Register */
-#define SPI_EEPROM_WREN		0x06
-#define SPI_EEPROM_ERASE_4K	0x20
-#define SPI_EEPROM_RDID		0x9f /* Read Device ID */
-#define SPI_EEPROM_RDP		0xab /* Release from Deep Powerdown */
-#define SPI_EEPROM_ERASE_64K	0xd8
+#define SPI_EEPROM_SECTOR_SIZE  4096
+#define SPI_EEPROM_BLOCK_SIZE   65536
+#define SPI_EEPROM_WRSR     0x01 /* WRite Status Register */
+#define SPI_EEPROM_PP       0x02
+#define SPI_EEPROM_READ     0x03
+#define SPI_EEPROM_RDSR     0x05 /* ReaD Status Register */
+#define SPI_EEPROM_WREN     0x06
+#define SPI_EEPROM_ERASE_4K 0x20
+#define SPI_EEPROM_RDID     0x9f /* Read Device ID */
+#define SPI_EEPROM_RDP      0xab /* Release from Deep Powerdown */
+#define SPI_EEPROM_ERASE_64K    0xd8
 
 #define CHECK(result) {int r=(result); if (r<0) return (r);}
 
 enum ax203_version {
-	AX203_FIRMWARE_3_3_x,
-	AX203_FIRMWARE_3_4_x,
-	AX206_FIRMWARE_3_5_x,
-	AX3003_FIRMWARE_3_5_x,
+    AX203_FIRMWARE_3_3_x,
+    AX203_FIRMWARE_3_4_x,
+    AX206_FIRMWARE_3_5_x,
+    AX3003_FIRMWARE_3_5_x,
 };
 
 enum ax203_compression {
-	AX203_COMPRESSION_YUV,
-	AX203_COMPRESSION_YUV_DELTA,
-	AX206_COMPRESSION_JPEG,
-	AX3003_COMPRESSION_JPEG,
+    AX203_COMPRESSION_YUV,
+    AX203_COMPRESSION_YUV_DELTA,
+    AX206_COMPRESSION_JPEG,
+    AX3003_COMPRESSION_JPEG,
 };
 
 struct _CameraPrivateLibrary {
-	FILE *mem_dump;
-	struct jdec_private *jdec;
-	char *mem;
-	int sector_is_present[4194304 / SPI_EEPROM_SECTOR_SIZE];
-	int sector_dirty[4194304 / SPI_EEPROM_SECTOR_SIZE];
-	int fs_start;
-	/* LCD display attributes */
-	int width;
-	int height;
-	/* USB "bridge" / firmware attributes */
-	enum ax203_version frame_version;
-	enum ax203_compression compression_version;
-	/* EEPROM attributes */
-	int mem_size;
-	int has_4k_sectors;
-	int block_protection_removed;
-	int pp_64k;
-	/* Driver configuration settings */
-	int syncdatetime;
+    FILE *mem_dump;
+    struct jdec_private *jdec;
+    char *mem;
+    int sector_is_present[4194304 / SPI_EEPROM_SECTOR_SIZE];
+    int sector_dirty[4194304 / SPI_EEPROM_SECTOR_SIZE];
+    int fs_start;
+    /* LCD display attributes */
+    int width;
+    int height;
+    /* USB "bridge" / firmware attributes */
+    enum ax203_version frame_version;
+    enum ax203_compression compression_version;
+    /* EEPROM attributes */
+    int mem_size;
+    int has_4k_sectors;
+    int block_protection_removed;
+    int pp_64k;
+    /* Driver configuration settings */
+    int syncdatetime;
 };
 
 struct ax203_devinfo {
-	unsigned short vendor_id;
-	unsigned short product_id;
-	int frame_version;
+    unsigned short vendor_id;
+    unsigned short product_id;
+    int frame_version;
 };
 
 struct ax203_fileinfo {
-	int address;
-	int present;
-	int size;
+    int address;
+    int present;
+    int size;
 };
 
 struct ax206_v3_5_x_raw_fileinfo {
-	uint8_t present;
-	uint32_t address;
-	uint16_t size;
-	uint8_t pad;
+    uint8_t present;
+    uint32_t address;
+    uint16_t size;
+    uint8_t pad;
 } __attribute__((packed));
 
 struct ax3003_v3_5_x_raw_fileinfo {
-	uint16_t address; /* In blocks of 256 bytes */
-	uint16_t size;    /* In blocks of 256 bytes */
+    uint16_t address; /* In blocks of 256 bytes */
+    uint16_t size;    /* In blocks of 256 bytes */
 } __attribute__((packed));
 
 /* functions in ax203.c */
@@ -200,7 +200,7 @@ ax203_encode_yuv_delta(int **src, char *dest, int width, int height);
 
 int
 ax206_compress_jpeg(Camera *camera, int **in, uint8_t *outbuf, int out_size,
-	int width, int height);
+                    int width, int height);
 
 #endif
 

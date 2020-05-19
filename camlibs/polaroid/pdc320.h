@@ -4,39 +4,39 @@
 #include <jpeg.h>
 
 static const jpeg_quantization_table chrominance = {
-  3,  2,  2,  3,  5,  8, 10, 12,
-  2,  2,  3,  4,  5, 12, 12, 11,
-  3,  3,  3,  5,  8, 11, 14, 11,
-  3,  3,  4,  6, 10, 17, 16, 12,
-  4,  4,  7, 11, 14, 22, 21, 15,
-  5,  7, 11, 13, 16, 21, 23, 18,
- 10, 13, 16, 17, 21, 24, 24, 20,
- 14, 18, 19, 20, 22, 20, 21, 20
+    3,  2,  2,  3,  5,  8, 10, 12,
+    2,  2,  3,  4,  5, 12, 12, 11,
+    3,  3,  3,  5,  8, 11, 14, 11,
+    3,  3,  4,  6, 10, 17, 16, 12,
+    4,  4,  7, 11, 14, 22, 21, 15,
+    5,  7, 11, 13, 16, 21, 23, 18,
+    10, 13, 16, 17, 21, 24, 24, 20,
+    14, 18, 19, 20, 22, 20, 21, 20
 };
 static const jpeg_quantization_table luminance = {
-  3,  4,  5,  9, 20, 20, 20, 20,
-  4,  4,  5, 13, 20, 20, 20, 20,
-  5,  5, 11, 20, 20, 20, 20, 20,
-  9, 13, 20, 20, 20, 20, 20, 20,
- 20, 20, 20, 20, 20, 20, 20, 20,
- 20, 20, 20, 20, 20, 20, 20, 20,
- 20, 20, 20, 20, 20, 20, 20, 20,
- 20, 20, 20, 20, 20, 20, 20, 20
+    3,  4,  5,  9, 20, 20, 20, 20,
+    4,  4,  5, 13, 20, 20, 20, 20,
+    5,  5, 11, 20, 20, 20, 20, 20,
+    9, 13, 20, 20, 20, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 20
 };
 
 /* ID returns 0 , XIRLINK, and 4 byte more */
 #define ID_PDC640SE    "\x0XIRLINK\x2\x1\x3\x1"
 #define ID_PDC320      "\x0XIRLINK\x2\x1\x3\x0"
 
-#define PDC320_INIT	0x00
-#define PDC320_ID	0x01
-#define PDC320_STATE	0x02
-#define PDC320_NUM	0x03
-#define PDC320_SIZE	0x04
-#define PDC320_PIC	0x05
-#define PDC320_DEL	0x07
-#define PDC320_ENDINIT	0x0a
-#define PDC320_UNKNOWN3	0x0c
+#define PDC320_INIT 0x00
+#define PDC320_ID   0x01
+#define PDC320_STATE    0x02
+#define PDC320_NUM  0x03
+#define PDC320_SIZE 0x04
+#define PDC320_PIC  0x05
+#define PDC320_DEL  0x07
+#define PDC320_ENDINIT  0x0a
+#define PDC320_UNKNOWN3 0x0c
 
 
 #define RETRIES 3
@@ -45,12 +45,12 @@ static const jpeg_quantization_table luminance = {
 #define CR_FREE(result, data) {int r = (result); if (r < 0) {free (data); return (r);}}
 
 static struct {
-	const char *model;
-	unsigned char id;
+    const char *model;
+    unsigned char id;
 } models[] = {
-	{"Polaroid:Fun! 320", 0x3f},
-	{"Polaroid:640SE",    0x40},
-	{NULL,                0x00}
+    {"Polaroid:Fun! 320", 0x3f},
+    {"Polaroid:640SE",    0x40},
+    {NULL,                0x00}
 };
 
 #define HUFF_00 33, \

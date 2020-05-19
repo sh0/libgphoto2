@@ -20,17 +20,17 @@
 #include <gphoto2/gphoto2-port.h>
 
 typedef struct {
-  unsigned char state; /*delete or ok*/
-  unsigned char unk1;
-  unsigned char quality;
-  unsigned char name[9];
-  unsigned char unk2[4];
+    unsigned char state; /*delete or ok*/
+    unsigned char unk1;
+    unsigned char quality;
+    unsigned char name[9];
+    unsigned char unk2[4];
 
-  unsigned char unk3[10];
-  unsigned char unk4[2];
-  unsigned char unk5;
-  unsigned char size[2];
-  unsigned char unk6;
+    unsigned char unk3[10];
+    unsigned char unk4[2];
+    unsigned char unk5;
+    unsigned char size[2];
+    unsigned char unk6;
 } FileEntry;
 
 #define CHECK(result) {int res; res = result; if (res < 0) return (res);}
@@ -42,6 +42,6 @@ int pccam600_delete_file(GPPort *port, GPContext *context, int index);
 int pccam600_read_data(GPPort *port, unsigned char *buffer);
 int pccam600_get_file(GPPort *port, GPContext *context, int index);
 int pccam600_get_mem_info(GPPort *port, GPContext *context, int *totalmem,
-			  int *freemem);
+                          int *freemem);
 #endif /* __PCCAM600_H__ */
 

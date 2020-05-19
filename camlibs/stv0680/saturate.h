@@ -35,32 +35,32 @@
 
 typedef enum
 {
-  ALL_HUES,
-  RED_HUES,
-  YELLOW_HUES,
-  GREEN_HUES,
-  CYAN_HUES,
-  BLUE_HUES,
-  MAGENTA_HUES
+    ALL_HUES,
+    RED_HUES,
+    YELLOW_HUES,
+    GREEN_HUES,
+    CYAN_HUES,
+    BLUE_HUES,
+    MAGENTA_HUES
 } HueRange;
 
 typedef struct _HueSaturationDialog HueSaturationDialog;
 
 struct _HueSaturationDialog
 {
-  int     hue_data;
-  int     lightness_data;
-  int     saturation_data;
+    int     hue_data;
+    int     lightness_data;
+    int     saturation_data;
 
-  double  hue[7];
-  double  lightness[7];
-  double  saturation[7];
+    double  hue[7];
+    double  lightness[7];
+    double  saturation[7];
 
-  HueRange  hue_partition;
+    HueRange  hue_partition;
 
-  int	hue_transfer[6][256];
-  int	lightness_transfer[6][256];
-  int	saturation_transfer[6][256];
+    int   hue_transfer[6][256];
+    int   lightness_transfer[6][256];
+    int   saturation_transfer[6][256];
 };
 
 extern void stv680_hue_saturation( int width, int height, unsigned char *srcPR, unsigned char *destPR);

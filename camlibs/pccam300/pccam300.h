@@ -20,7 +20,7 @@
 /* You should have received a copy of the GNU Library General   */
 /* Public License along with this library; if not, write to the */
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
-/* Boston, MA  02110-1301  USA					*/
+/* Boston, MA  02110-1301  USA                  */
 /****************************************************************/
 
 
@@ -38,18 +38,18 @@ int pccam300_get_file_list (GPPort *port, GPContext *context);
 int pccam300_delete_file (GPPort *port, GPContext *context, int index);
 int pccam300_delete_all (GPPort *port, GPContext *context);
 int pccam300_get_file (GPPort *port, GPContext *context, int index,
-		       unsigned char **data, unsigned int *size,
-		       unsigned int *type);
+                       unsigned char **data, unsigned int *size,
+                       unsigned int *type);
 int pccam300_get_mem_info (GPPort *port, GPContext *context, int *totalmem,
-			   int *freemem);
+                           int *freemem);
 int pccam300_get_filecount (GPPort *port, int *filecount);
 int pccam300_get_filesize (GPPort *port, unsigned int index,
-			   unsigned int *filesize);
+                           unsigned int *filesize);
 
 enum {
-	PCCAM300_MIME_JPEG,
-	PCCAM300_MIME_WAV,
-	PCCAM300_MIME_AVI
+    PCCAM300_MIME_JPEG,
+    PCCAM300_MIME_WAV,
+    PCCAM300_MIME_AVI
 };
 
 

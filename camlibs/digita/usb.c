@@ -34,42 +34,42 @@
 
 static int digita_usb_read(CameraPrivateLibrary *dev, void *buffer, int len)
 {
-	return gp_port_read(dev->gpdev, buffer, len);
+    return gp_port_read(dev->gpdev, buffer, len);
 }
 
 static int digita_usb_send(CameraPrivateLibrary *dev, void *buffer, int len)
 {
-	return gp_port_write(dev->gpdev, buffer, len);
+    return gp_port_write(dev->gpdev, buffer, len);
 }
 
 int digita_usb_open(CameraPrivateLibrary *dev, Camera *camera)
 {
-	GPPortSettings settings;
-	char buffer[128];
-	int ret;
+    GPPortSettings settings;
+    char buffer[128];
+    int ret;
 
-	ret = gp_port_get_settings(camera->port, &settings);
-	if (ret < 0)
-		return ret;
+    ret = gp_port_get_settings(camera->port, &settings);
+    if (ret < 0)
+        return ret;
 
-	/* We'll take the defaults. The core should have the done what's */
-	/* necessary to find the config, interface, altsetting and endpoints */
+    /* We'll take the defaults. The core should have the done what's */
+    /* necessary to find the config, interface, altsetting and endpoints */
 
-	ret = gp_port_set_settings(dev->gpdev, settings);
-	if (ret < 0)
-		return ret;
+    ret = gp_port_set_settings(dev->gpdev, settings);
+    if (ret < 0)
+        return ret;
 
-	dev->send = digita_usb_send;
-	dev->read = digita_usb_read;
+    dev->send = digita_usb_send;
+    dev->read = digita_usb_read;
 
-	gp_port_set_timeout(camera->port, 100);
+    gp_port_set_timeout(camera->port, 100);
 
-	/* Mop up anything still pending */
-	while (gp_port_read(dev->gpdev, buffer, sizeof(buffer)) > 0)
-		;
+    /* Mop up anything still pending */
+    while (gp_port_read(dev->gpdev, buffer, sizeof(buffer)) > 0)
+        ;
 
-	gp_port_set_timeout(camera->port, 10000);
+    gp_port_set_timeout(camera->port, 10000);
 
-	return GP_OK;
+    return GP_OK;
 }
 

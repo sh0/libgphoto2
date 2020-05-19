@@ -27,7 +27,7 @@
  *
  * Note that this is also the value 0, and every error is negative (lower).
  */
-#define GP_OK                            0
+#define GP_OK                           0
 /**
  * \brief Generic Error
  */
@@ -35,31 +35,31 @@
 /**
  * \brief Bad parameters passed
  */
-#define GP_ERROR_BAD_PARAMETERS		-2
+#define GP_ERROR_BAD_PARAMETERS         -2
 /**
  * \brief Out of memory
  */
-#define GP_ERROR_NO_MEMORY		-3
+#define GP_ERROR_NO_MEMORY              -3
 /**
  * \brief Error in the camera driver
  */
-#define GP_ERROR_LIBRARY		-4
+#define GP_ERROR_LIBRARY                -4
 /**
  * \brief Unknown libgphoto2 port passed
  */
-#define GP_ERROR_UNKNOWN_PORT		-5
+#define GP_ERROR_UNKNOWN_PORT           -5
 /**
  * \brief Functionality not supported
  */
-#define GP_ERROR_NOT_SUPPORTED		-6
+#define GP_ERROR_NOT_SUPPORTED          -6
 /**
  * \brief Generic I/O error
  */
-#define GP_ERROR_IO			-7
+#define GP_ERROR_IO                     -7
 /**
  * \brief Buffer overflow of internal structure
  */
-#define GP_ERROR_FIXED_LIMIT_EXCEEDED	-8
+#define GP_ERROR_FIXED_LIMIT_EXCEEDED   -8
 /**
  * \brief Operation timed out
  */

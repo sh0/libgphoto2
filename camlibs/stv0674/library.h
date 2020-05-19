@@ -31,7 +31,7 @@ int stv0674_get_image_raw     (GPPort *, int image_no, CameraFile *file);
 int stv0674_get_image_preview (GPPort *, int image_no, CameraFile *file);
 
 int stv0674_capture_preview   (GPPort *device, char **data, int *size);
-int stv0674_capture	      (GPPort *port);
-int stv0674_delete_all	      (GPPort *port);
+int stv0674_capture       (GPPort *port);
+int stv0674_delete_all        (GPPort *port);
 
 #endif

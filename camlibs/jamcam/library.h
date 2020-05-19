@@ -20,13 +20,13 @@
 /* You should have received a copy of the GNU Library General   */
 /* Public License along with this library; if not, write to the */
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
-/* Boston, MA  02110-1301  USA					*/
+/* Boston, MA  02110-1301  USA                  */
 /****************************************************************/
 
 #ifndef __LIBRARY_H__
 #define __LIBRARY_H__
 
-#define	RETRIES			10
+#define RETRIES         10
 
 #define SER_PKT_SIZE 4096
 #define USB_PKT_SIZE 4096
@@ -34,10 +34,10 @@
 #define CHECK(result) {int __res; __res = result; if (__res < 0) return (__res);}
 
 struct jamcam_file {
-	unsigned int position;
-	unsigned int width;
-	unsigned int height;
-	unsigned int data_incr;
+    unsigned int position;
+    unsigned int width;
+    unsigned int height;
+    unsigned int data_incr;
 };
 
 int jamcam_enq(Camera *camera);

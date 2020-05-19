@@ -34,10 +34,10 @@
 #define GAMMA_NUMBER 0.5
 
 typedef enum ultrapocket_IMG_TYPE {
-   TYPE_QVGA    = 0,
-   TYPE_VGA     = 1,
-   TYPE_QVGA_BH = 2,
-   TYPE_VGA_BH  = 3
+    TYPE_QVGA    = 0,
+    TYPE_VGA     = 1,
+    TYPE_QVGA_BH = 2,
+    TYPE_VGA_BH  = 3
 } smal_img_type;
 
 int ultrapocket_getpicsoverview(Camera *camera, GPContext *context,int *numpics, CameraList *list);

@@ -29,18 +29,18 @@
 typedef unsigned char Info;
 
 struct _CameraPrivateLibrary {
-	unsigned char model;
-	unsigned char init_done;
-	int can_do_capture;
-	int blocksize;
-	int nb_entries;
-	int data_reg_opened;
-	unsigned long total_data_in_camera;
-	unsigned long data_to_read;
-	unsigned char *data_cache;
-	unsigned long bytes_read_from_camera;
-	unsigned long bytes_put_away;
-	Info table[0x4000];
+    unsigned char model;
+    unsigned char init_done;
+    int can_do_capture;
+    int blocksize;
+    int nb_entries;
+    int data_reg_opened;
+    unsigned long total_data_in_camera;
+    unsigned long data_to_read;
+    unsigned char *data_cache;
+    unsigned long bytes_read_from_camera;
+    unsigned long bytes_put_away;
+    Info table[0x4000];
 };
 
 
@@ -48,7 +48,7 @@ int jl2005c_init (Camera *camera, GPPort *port, CameraPrivateLibrary *priv);
 int jl2005c_open_data_reg (Camera *camera, GPPort *port);
 int jl2005c_get_pic_data_size (CameraPrivateLibrary *priv, Info *table, int n);
 unsigned long jl2005c_get_start_of_photo (CameraPrivateLibrary *priv,
-						Info *table, unsigned int n);
+        Info *table, unsigned int n);
 
 int set_usb_in_endpoint       (Camera *camera, int inep);
 int jl2005c_read_data  (GPPort *port, char *data, int size);

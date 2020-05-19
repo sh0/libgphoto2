@@ -30,19 +30,19 @@
 
 static int
 gp_gamma_correct_triple (unsigned char *table_red,
-			 unsigned char *table_green,
-			 unsigned char *table_blue,
-			 unsigned char *data, unsigned int size)
+                         unsigned char *table_green,
+                         unsigned char *table_blue,
+                         unsigned char *data, unsigned int size)
 {
-	unsigned int x;
+    unsigned int x;
 
-	for (x = 0; x < (size * 3); x += 3) {
-		data[x + 0] = table_red  [data[x + 0]];
-		data[x + 1] = table_green[data[x + 1]];
-		data[x + 2] = table_blue [data[x + 2]];
-	}
+    for (x = 0; x < (size * 3); x += 3) {
+        data[x + 0] = table_red  [data[x + 0]];
+        data[x + 1] = table_green[data[x + 1]];
+        data[x + 2] = table_blue [data[x + 2]];
+    }
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 /**
@@ -59,9 +59,9 @@ gp_gamma_correct_triple (unsigned char *table_red,
  */
 int
 gp_gamma_correct_single (unsigned char *table, unsigned char *data,
-			 unsigned int size)
+                         unsigned int size)
 {
-	return (gp_gamma_correct_triple (table, table, table, data, size));
+    return (gp_gamma_correct_triple (table, table, table, data, size));
 }
 
 /**
@@ -77,10 +77,10 @@ gp_gamma_correct_single (unsigned char *table, unsigned char *data,
 int
 gp_gamma_fill_table (unsigned char *table, double g)
 {
-	unsigned int x;
+    unsigned int x;
 
-	for (x = 0; x < 256; x++)
-		table[x] = 255 * pow ((double) x/255., g);
+    for (x = 0; x < 256; x++)
+        table[x] = 255 * pow ((double) x/255., g);
 
-	return (GP_OK);
+    return (GP_OK);
 }

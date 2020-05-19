@@ -37,56 +37,60 @@
 
 int QVycctoppm(const unsigned char *ycc, long int yccSize, int width, int height, int ratew, unsigned char **ppm, long int *ppmSize)
 {
-  char header[64];
-  size_t headerSize;
-  unsigned char *dst;
-  int x, y;
-  long cr, cb;
-  long L;
-  long r,g,b;
-  const unsigned char *Y;
-  const unsigned char *Cr;
-  const unsigned char *Cb;
+    char header[64];
+    size_t headerSize;
+    unsigned char *dst;
+    int x, y;
+    long cr, cb;
+    long L;
+    long r,g,b;
+    const unsigned char *Y;
+    const unsigned char *Cr;
+    const unsigned char *Cb;
 
-  snprintf(header,sizeof(header),"P6\n%d %d\n255\n",width,height);
-  headerSize=strlen(header);
+    snprintf(header,sizeof(header),"P6\n%d %d\n255\n",width,height);
+    headerSize=strlen(header);
 
-  *ppm=malloc(*ppmSize=(headerSize+3*width*height));
+    *ppm=malloc(*ppmSize=(headerSize+3*width*height));
 
-  dst=*ppm;
-  memcpy(dst,header,headerSize);  dst+=headerSize;
+    dst=*ppm;
+    memcpy(dst,header,headerSize);
+    dst+=headerSize;
 
-  Y = ycc;
-  Cb = Y + (height * width);
-  Cr = Cb + (height / RATE_H) * (width / ratew);
+    Y = ycc;
+    Cb = Y + (height * width);
+    Cr = Cb + (height / RATE_H) * (width / ratew);
 
-  for (y=0; y<height; ++y)
-  {
-    for (x=0; x<width; ++x)
+    for (y=0; y<height; ++y)
     {
-      L = Y[y * width + x] *  100000;
-      cb = Cb[(y/RATE_H) * width/ratew + x/ratew];
-      if (cb > 127) cb = cb - 256;
-      cr = Cr[(y/RATE_H) * width/ratew + x/ratew];
-      if (cr > 127) cr = cr - 256;
+        for (x=0; x<width; ++x)
+        {
+            L = Y[y * width + x] *  100000;
+            cb = Cb[(y/RATE_H) * width/ratew + x/ratew];
+            if (cb > 127) cb = cb - 256;
+            cr = Cr[(y/RATE_H) * width/ratew + x/ratew];
+            if (cr > 127) cr = cr - 256;
 
-      r = L + 140200 * cr;
-      g = L - 34414 * cb - 71414 * cr;
-      b = L + 177200 * cb;
+            r = L + 140200 * cr;
+            g = L - 34414 * cb - 71414 * cr;
+            b = L + 177200 * cb;
 
-      r = r / 100000;
-      g = g / 100000;
-      b = b / 100000;
+            r = r / 100000;
+            g = g / 100000;
+            b = b / 100000;
 
-      if (r<0) r=0; else if (r>255) r=255;
-      if (g<0) g=0; else if (g>255) g=255;
-      if (b<0) b=0; else if (b>255) b=255;
+            if (r<0) r=0;
+            else if (r>255) r=255;
+            if (g<0) g=0;
+            else if (g>255) g=255;
+            if (b<0) b=0;
+            else if (b>255) b=255;
 
-      *dst++ = r;
-      *dst++ = g;
-      *dst++ = b;
+            *dst++ = r;
+            *dst++ = g;
+            *dst++ = b;
+        }
     }
-  }
 
-  return GP_OK;
+    return GP_OK;
 }

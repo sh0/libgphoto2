@@ -18,9 +18,9 @@
  *                                                                           *
  *  You should have received a copy of the GNU Library General Public        *
  *  License along with this program; see the file COPYING.LIB.  If not,      *
- *  write to the 							     *
+ *  write to the                                                             *
  *  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,         *
- *  Boston, MA  02110-1301  USA						     *
+ *  Boston, MA  02110-1301  USA                                              *
  *****************************************************************************/
 
 #define STX 0x02
@@ -29,17 +29,17 @@
 #define ACK 0x06
 #define NAK 0x15
 
-#define HP215_OK	0xe0e0
+#define HP215_OK    0xe0e0
 
 typedef struct
 {
-  unsigned int hour;
-  unsigned int min;
-  unsigned int sec;
+    unsigned int hour;
+    unsigned int min;
+    unsigned int sec;
 
-  unsigned int day;
-  unsigned int month;
-  unsigned int year;
+    unsigned int day;
+    unsigned int month;
+    unsigned int year;
 
 } t_date;
 #endif

@@ -21,15 +21,15 @@
 /* You should have received a copy of the GNU Library General   */
 /* Public License along with this library; if not, write to the */
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
-/* Boston, MA  02110-1301  USA					*/
+/* Boston, MA  02110-1301  USA                  */
 /****************************************************************/
 
 #define CHECK(result) {int res; res = result; if (res < 0) return (res);}
 
 int coolshot_sm           (Camera *camera);
 int coolshot_sb           (Camera *camera, int speed);
-int coolshot_enq			(Camera *camera);
-int coolshot_file_count		(Camera *camera);
+int coolshot_enq            (Camera *camera);
+int coolshot_file_count     (Camera *camera);
 int coolshot_request_image (Camera *camera, CameraFile *file, char *buf, int *len, int number, GPContext *context);
 int coolshot_request_thumbnail (Camera *camera, CameraFile *file, char *buf, int *len, int number, GPContext *context);
 int coolshot_build_thumbnail (char *data, int *size);

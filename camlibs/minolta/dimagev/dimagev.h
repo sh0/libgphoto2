@@ -88,8 +88,8 @@
    can contain NULLs, and classic C strings won't work.
 */
 typedef struct {
-        int length;
-        unsigned char buffer[1024];
+    int length;
+    unsigned char buffer[1024];
 } dimagev_packet;
 
 /* This struct represents the information returned by the DIMAGEV_INQUIRY
@@ -98,11 +98,11 @@ typedef struct {
    always "L1", which was apparently the development name for the Dimage V.
 */
 typedef struct {
-        unsigned char vendor[8];
-        unsigned char model[8];
-        unsigned char hardware_rev[4];
-        unsigned char firmware_rev[4];
-        unsigned char have_storage;
+    unsigned char vendor[8];
+    unsigned char model[8];
+    unsigned char hardware_rev[4];
+    unsigned char firmware_rev[4];
+    unsigned char have_storage;
 } dimagev_info_t;
 
 /* This struct represents the information returned by the DIMAGEV_GET_STATUS
@@ -129,14 +129,14 @@ typedef struct {
    memory is not so expensive as to spend that much effort shifting bits.
 */
 typedef struct {
-        unsigned char battery_level;
-        unsigned int number_images;
-        unsigned int minimum_images_can_take;
-        unsigned char busy;
-        unsigned char flash_charging;
-        unsigned char lens_status;
-        unsigned char card_status;
-        unsigned char id_number;
+    unsigned char battery_level;
+    unsigned int number_images;
+    unsigned int minimum_images_can_take;
+    unsigned char busy;
+    unsigned char flash_charging;
+    unsigned char lens_status;
+    unsigned char card_status;
+    unsigned char id_number;
 } dimagev_status_t;
 
 /* This struct represents the information returned by the DIMAGEV_GET_DATA
@@ -171,31 +171,31 @@ typedef struct {
           Camera and Card ID: used when switching cards.
 */
 typedef struct {
-        unsigned char host_mode;
-        unsigned char exposure_valid;
-        unsigned char date_valid;
-        unsigned char self_timer_mode;
-        unsigned char flash_mode;
-        unsigned char quality_setting;
-        unsigned char play_rec_mode;
-        unsigned char year;
-        unsigned char month;
-        unsigned char day;
-        unsigned char hour;
-        unsigned char minute;
-        unsigned char second;
-        unsigned char exposure_correction;
-        unsigned char valid;
-        unsigned char id_number;
+    unsigned char host_mode;
+    unsigned char exposure_valid;
+    unsigned char date_valid;
+    unsigned char self_timer_mode;
+    unsigned char flash_mode;
+    unsigned char quality_setting;
+    unsigned char play_rec_mode;
+    unsigned char year;
+    unsigned char month;
+    unsigned char day;
+    unsigned char hour;
+    unsigned char minute;
+    unsigned char second;
+    unsigned char exposure_correction;
+    unsigned char valid;
+    unsigned char id_number;
 } dimagev_data_t;
 
 /* This struct is used as the camera->camlib_data value in this library. */
 typedef struct _CameraPrivateLibrary {
-        int size;
-        GPPort *dev;
-        dimagev_data_t *data;
-        dimagev_status_t *status;
-        dimagev_info_t *info;
+    int size;
+    GPPort *dev;
+    dimagev_data_t *data;
+    dimagev_status_t *status;
+    dimagev_info_t *info;
 } dimagev_t;
 
 /* These functions are in packet.c */

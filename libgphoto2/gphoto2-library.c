@@ -37,8 +37,8 @@
 int
 camera_id (CameraText *id)
 {
-	strcpy (id->text, "sample driver");
-	return (GP_OK);
+    strcpy (id->text, "sample driver");
+    return (GP_OK);
 }
 
 /**
@@ -55,8 +55,8 @@ camera_id (CameraText *id)
 int
 camera_abilities (CameraAbilitiesList *list)
 {
-	/* Dummy implementation */
-	return (GP_OK);
+    /* Dummy implementation */
+    return (GP_OK);
 }
 
 /**
@@ -83,6 +83,6 @@ camera_abilities (CameraAbilitiesList *list)
 int
 camera_init (Camera *camera)
 {
-	/* Dummy implementation */
-	return (GP_OK);
+    /* Dummy implementation */
+    return (GP_OK);
 }

@@ -53,8 +53,8 @@ void gp_context_unref (GPContext *context);
  * libgphoto2 and the camera driver will try to cancel transfer.
  */
 typedef enum _GPContextFeedback {
-	GP_CONTEXT_FEEDBACK_OK,		/**< Everything ok... proceed. */
-	GP_CONTEXT_FEEDBACK_CANCEL	/**< Please cancel the current transfer if possible. */
+    GP_CONTEXT_FEEDBACK_OK,     /**< Everything ok... proceed. */
+    GP_CONTEXT_FEEDBACK_CANCEL  /**< Please cancel the current transfer if possible. */
 } GPContextFeedback;
 
 /* Functions */
@@ -63,72 +63,72 @@ typedef void (* GPContextErrorFunc)    (GPContext *context, const char *text, vo
 typedef void (* GPContextStatusFunc)   (GPContext *context, const char *text, void *data);
 typedef void (* GPContextMessageFunc)  (GPContext *context, const char *text, void *data);
 typedef GPContextFeedback (* GPContextQuestionFunc) (GPContext *context,
-						     const char *text, void *data);
+        const char *text, void *data);
 typedef GPContextFeedback (* GPContextCancelFunc)   (GPContext *context,
-						     void *data);
+        void *data);
 typedef unsigned int (* GPContextProgressStartFunc)  (GPContext *context,
-						      float target,
-						      const char *text,
-						      void *data);
+        float target,
+        const char *text,
+        void *data);
 typedef void         (* GPContextProgressUpdateFunc) (GPContext *context,
-						      unsigned int id,
-						      float current,
-						      void *data);
+        unsigned int id,
+        float current,
+        void *data);
 typedef void         (* GPContextProgressStopFunc)   (GPContext *context,
-						      unsigned int id,
-						      void *data);
+        unsigned int id,
+        void *data);
 
 /* Setting those functions (frontends) */
 void gp_context_set_idle_func      (GPContext *context,
-			            GPContextIdleFunc func,     void *data);
+                                    GPContextIdleFunc func,     void *data);
 void gp_context_set_progress_funcs (GPContext *context,
-				    GPContextProgressStartFunc  start_func,
-				    GPContextProgressUpdateFunc update_func,
-				    GPContextProgressStopFunc   stop_func,
-				    void *data);
+                                    GPContextProgressStartFunc  start_func,
+                                    GPContextProgressUpdateFunc update_func,
+                                    GPContextProgressStopFunc   stop_func,
+                                    void *data);
 void gp_context_set_error_func     (GPContext *context,
-				    GPContextErrorFunc func,    void *data);
+                                    GPContextErrorFunc func,    void *data);
 void gp_context_set_status_func    (GPContext *context,
-				    GPContextStatusFunc func,   void *data);
+                                    GPContextStatusFunc func,   void *data);
 void gp_context_set_question_func  (GPContext *context,
-				    GPContextQuestionFunc func, void *data);
+                                    GPContextQuestionFunc func, void *data);
 void gp_context_set_cancel_func    (GPContext *context,
-				    GPContextCancelFunc func,   void *data);
+                                    GPContextCancelFunc func,   void *data);
 void gp_context_set_message_func   (GPContext *context,
-				    GPContextMessageFunc func,  void *data);
+                                    GPContextMessageFunc func,  void *data);
 
 /* Calling those functions (backends) */
 void gp_context_idle     (GPContext *context);
 void gp_context_error    (GPContext *context, const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,2,3)))
+__attribute__((__format__(printf,2,3)))
 #endif
 ;
 void gp_context_status   (GPContext *context, const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,2,3)))
+__attribute__((__format__(printf,2,3)))
 #endif
 ;
 void gp_context_message  (GPContext *context, const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,2,3)))
+__attribute__((__format__(printf,2,3)))
 #endif
 ;
 GPContextFeedback gp_context_question (GPContext *context, const char *format,
-				       ...)
+                                       ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,2,3)))
+__attribute__((__format__(printf,2,3)))
 #endif
 ;
 GPContextFeedback gp_context_cancel   (GPContext *context);
 unsigned int gp_context_progress_start  (GPContext *context, float target,
-					 const char *format, ...)
+        const char *format, ...)
 #ifdef __GNUC__
-	__attribute__((__format__(printf,3,4)))
+__attribute__((__format__(printf,3,4)))
 #endif
 ;
 void         gp_context_progress_update (GPContext *context, unsigned int id,
-					 float current);
+        float current);
 void         gp_context_progress_stop   (GPContext *context, unsigned int id);
 
 #ifdef __cplusplus

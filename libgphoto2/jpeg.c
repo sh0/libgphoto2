@@ -54,17 +54,17 @@ const char *JPEG_MARKERNAMES[] = {
 
 chunk *gpi_jpeg_chunk_new(int length)
 {
-	chunk *mychunk;
-	printf("Entered gpi_jpeg_chunk_new\n");
-	mychunk =  (chunk *) malloc(sizeof(chunk));
-	if (mychunk==NULL) {
-		printf("Failed to allocate new chunk!\n");
-		return NULL;
-	}
-	mychunk->size=length;
-/*    printf("New chunk of size %i\n", mychunk->size); */
-	mychunk->data = malloc(length);
-	return mychunk;
+    chunk *mychunk;
+    printf("Entered gpi_jpeg_chunk_new\n");
+    mychunk =  (chunk *) malloc(sizeof(chunk));
+    if (mychunk==NULL) {
+        printf("Failed to allocate new chunk!\n");
+        return NULL;
+    }
+    mychunk->size=length;
+    /*    printf("New chunk of size %i\n", mychunk->size); */
+    mychunk->data = malloc(length);
+    return mychunk;
 }
 
 chunk *gpi_jpeg_chunk_new_filled(int length, char *data)
@@ -73,7 +73,7 @@ chunk *gpi_jpeg_chunk_new_filled(int length, char *data)
     printf("Entered gpi_jpeg_chunk_new_filled\n");
     mychunk = gpi_jpeg_chunk_new(length);
     if (!mychunk)
-	return NULL;
+        return NULL;
     printf("Filling the chunk data via chunk_new_filled\n");
     memcpy(mychunk->data, data, length);
     return mychunk;
@@ -91,7 +91,7 @@ void gpi_jpeg_chunk_destroy(chunk *mychunk)
 void gpi_jpeg_chunk_print(chunk *mychunk)
 {
     int x;
-/*    printf("Size=%i\n", mychunk->size); */
+    /*    printf("Size=%i\n", mychunk->size); */
     nullpointerabortvoid(mychunk, "Chunk");
     for (x=0; x<mychunk->size; x++)
         printf("%hhX ", mychunk->data[x]);
@@ -100,25 +100,25 @@ void gpi_jpeg_chunk_print(chunk *mychunk)
 
 char gpi_jpeg_findff(int *location, chunk *picture)
 {
-/* printf("Entered jpeg_findamarker!!!!!!\n"); */
+    /* printf("Entered jpeg_findamarker!!!!!!\n"); */
     nullpointerabort(picture, "Picture",0);
     while(*location<picture->size)
     {
-/*        printf("%hX ",picture->data[*location]); */
+        /*        printf("%hX ",picture->data[*location]); */
         if (picture->data[*location]==0xff)
         {
-/*        printf("return success!\n"); */
-        return 1;
+            /*        printf("return success!\n"); */
+            return 1;
         }
-    (*location)++;
+        (*location)++;
     }
-/*    printf("return failure!\n"); */
+    /*    printf("return failure!\n"); */
     return 0;
 }
 
 char gpi_jpeg_findactivemarker(char *id, int *location, chunk *picture)
 {
-/*    printf("Entered gpi_jpeg_findactivemarker!!!!!!!!\n"); */
+    /*    printf("Entered gpi_jpeg_findactivemarker!!!!!!!!\n"); */
     nullpointerabort(picture, "Picture",0);
     while(gpi_jpeg_findff(location, picture) && ((*location+1)<picture->size))
         if (picture->data[*location+1]) {
@@ -131,11 +131,11 @@ char gpi_jpeg_findactivemarker(char *id, int *location, chunk *picture)
 char *gpi_jpeg_markername(unsigned int c)
 {
     unsigned int x;
-/*    printf("searching for marker %X in list\n",c); */
-/*    printf("%i\n", sizeof(markers)); */
+    /*    printf("searching for marker %X in list\n",c); */
+    /*    printf("%i\n", sizeof(markers)); */
     for (x=0; x<countof(JPEG_MARKERS); x++)
     {
-/*        printf("checking to see if it is marker %X\n", markers[x]); */
+        /*        printf("checking to see if it is marker %X\n", markers[x]); */
 
         if (c==JPEG_MARKERS[x])
             return (char *)JPEG_MARKERNAMES[x];
@@ -165,18 +165,18 @@ void gpi_jpeg_add_marker(jpeg *myjpeg, chunk *picture, int start, int end)
     int length;
     nullpointerabortvoid(picture, "Picture");
     length=(int)(end-start+1);
-/*  printf("Add marker #%i starting from %i and ending at %i for a length of %i\n", myjpeg->count, start, end, length); */
+    /*  printf("Add marker #%i starting from %i and ending at %i for a length of %i\n", myjpeg->count, start, end, length); */
     myjpeg->marker[myjpeg->count] = gpi_jpeg_chunk_new(length);
     if (!myjpeg->marker[myjpeg->count])
-	return;
-/*  printf("Read length is: %i\n", myjpeg->marker[myjpeg->count].size); */
+        return;
+    /*  printf("Read length is: %i\n", myjpeg->marker[myjpeg->count].size); */
     memcpy(myjpeg->marker[myjpeg->count]->data, picture->data+start, length);
     gpi_jpeg_chunk_print(myjpeg->marker[myjpeg->count]);
     myjpeg->count++;
 }
 
 void gpi_jpeg_add_chunk(jpeg *myjpeg, chunk *source)
-{ /* Warning! This points to the added chunk instead of deleting it! */
+{   /* Warning! This points to the added chunk instead of deleting it! */
     printf("Entered gpi_jpeg_add_chunk\n");
     nullpointerabortvoid(source, "Chunk to add");
     myjpeg->marker[myjpeg->count]=source;
@@ -190,31 +190,31 @@ void gpi_jpeg_parse(jpeg *myjpeg, chunk *picture)
     char id;
     nullpointerabortvoid(picture,"Picture");
     if (picture->data[0]!=0xff)
-        {
-            gpi_jpeg_findactivemarker(&id, &position, picture);
-            gpi_jpeg_add_marker(myjpeg,picture,0,position-1);
-            lastposition=position;
-            position++;
-        }
-        else
-        {
+    {
+        gpi_jpeg_findactivemarker(&id, &position, picture);
+        gpi_jpeg_add_marker(myjpeg,picture,0,position-1);
+        lastposition=position;
+        position++;
+    }
+    else
+    {
         lastposition=position;
         position+=2;
         gpi_jpeg_findactivemarker(&id, &position, picture);
         gpi_jpeg_add_marker(myjpeg,picture,0,position-1);
         lastposition=position;
         position+=2;
-        }
+    }
     while (position<picture->size)
-        {
-            gpi_jpeg_findactivemarker(&id, &position, picture);
-            gpi_jpeg_add_marker(myjpeg,picture,lastposition,position-1);
-            lastposition=position;
-            position+=2;
-        }
+    {
+        gpi_jpeg_findactivemarker(&id, &position, picture);
+        gpi_jpeg_add_marker(myjpeg,picture,lastposition,position-1);
+        lastposition=position;
+        position+=2;
+    }
     position-=2;
     if (position<picture->size)
-    gpi_jpeg_add_marker(myjpeg,picture,lastposition,picture->size-1);
+        gpi_jpeg_add_marker(myjpeg,picture,lastposition,picture->size-1);
 }
 
 void gpi_jpeg_print(jpeg *myjpeg)
@@ -234,7 +234,7 @@ chunk *gpi_jpeg_make_start() /* also makes the JFIF marker */
     /* Start marker and
        JFIF APPO Marker:Version 1.01, density 1x2 (the 00 01 00 02) */
     temp = gpi_jpeg_chunk_new_filled(20,  "\xFF\xD8"
-        "\xFF\xE0\x00\x10\x4A\x46\x49\x46" "\x00\x01\x01\x00\x00\x01\x00\x02" "\x00\x00");
+                                     "\xFF\xE0\x00\x10\x4A\x46\x49\x46" "\x00\x01\x01\x00\x00\x01\x00\x02" "\x00\x00");
     return temp;
 }
 
@@ -242,12 +242,15 @@ chunk *gpi_jpeg_make_SOFC (int width, int height, char vh1, char vh2, char vh3, 
 {
     chunk *target;
 
-    char sofc_data[]={
+    char sofc_data[]= {
         0xFF, 0xC0, 0x00, 0x11,  0x08, 0x00, 0x80, 0x01,
         0x40, 0x03, 0x01, 0x11,  0x00, 0x02, 0x21, 0x01,  0x03, 0x11, 0x00
-        };
+    };
     target = gpi_jpeg_chunk_new(sizeof(sofc_data));
-    if (target==NULL) { printf("New SOFC failed allocation\n"); return target; }
+    if (target==NULL) {
+        printf("New SOFC failed allocation\n");
+        return target;
+    }
     memcpy(target->data, sofc_data, sizeof(sofc_data));
     target->data[5] = (height&0xff00) >> 8;
     target->data[6] = height&0xff;
@@ -267,7 +270,7 @@ chunk *gpi_jpeg_makeSsSeAhAl(int huffset1, int huffset2, int huffset3)
     chunk *target;
     printf("About to call gpi_jpeg_chunk_new_filled\n");
     target= gpi_jpeg_chunk_new_filled(14, "\xFF\xDA\x00\x0C\x03\x01\x00\x02"
-        "\x00\x03\x00\x00\x3F\x00");
+                                      "\x00\x03\x00\x00\x3F\x00");
     if (!target) return NULL;
     target->data[6] = huffset1;
     target->data[8] = huffset2;
@@ -302,16 +305,16 @@ chunk *gpi_jpeg_make_quantization(const jpeg_quantization_table *table, char num
     for (c=z=0; z<8; z++)
         if (z%2)
             for (y=0,x=z; y<=z; x--,y++)
-                {
+            {
                 temp->data[5+c] = (*table)[x+y*8];
                 temp->data[5+63-c++] = (*table)[63-x-y*8];
-                }
+            }
         else
             for (x=0,y=z; x<=z; x++,y--)
-                {
+            {
                 temp->data[5+c] = (*table)[x+y*8];
                 temp->data[5+63-c++] = (*table)[63-x-y*8];
-                }
+            }
     return temp;
 }
 
@@ -323,26 +326,26 @@ jpeg_quantization_table *gpi_jpeg_quantization2table(chunk *qmarker)
     for (c=z=0; z<8; z++)
         if (z%2)
             for (y=0,x=z; y<=z; x--,y++)
-                {
+            {
                 (*table)[63-x-y*8] = qmarker->data[5+63-c];
                 (*table)[x+y*8] = qmarker->data[5+c++];
-                }
+            }
         else
             for (x=0,y=z; x<=z; x++,y--)
-                {
+            {
                 (*table)[63-x-y*8] = qmarker->data[5+63-c];
                 (*table)[x+y*8] = qmarker->data[5+c++];
-                }
+            }
     return table;
 }
 
 
 jpeg *gpi_jpeg_header(int width, int height,
-    char vh1, char vh2, char vh3,
-    char q1, char q2, char q3,
-    const jpeg_quantization_table *quant1, const jpeg_quantization_table *quant2,
-    char huffset1, char huffset2, char huffset3,
-    chunk *huff1, chunk *huff2, chunk *huff3, chunk *huff4)
+                      char vh1, char vh2, char vh3,
+                      char q1, char q2, char q3,
+                      const jpeg_quantization_table *quant1, const jpeg_quantization_table *quant2,
+                      char huffset1, char huffset2, char huffset3,
+                      chunk *huff1, chunk *huff2, chunk *huff3, chunk *huff4)
 {
     jpeg *temp;
     temp = gpi_jpeg_new();
@@ -375,50 +378,52 @@ char gpi_jpeg_write(CameraFile *file, const char *filename, jpeg *myjpeg)
 
 #ifdef TESTING_JPEG_C
 /* TEST CODE SECTION */
-char testdata[] ={
+char testdata[] = {
     0xFF,0xD8, 0xFF,0xE0, 0xff,0xDB, 0xFF,0xC4, 0xFF,0xDA,
-    0xFF,0xC0, 0xff,0xff};
+    0xFF,0xC0, 0xff,0xff
+};
 
 jpeg_quantization_table mytable = {
-      2,  3,  4,  5,  6,  7,  8,  9,
-      3,  4,  5,  6,  7,  8,  9, 10,
-      4,  5,  6,  7,  8,  9, 10, 11,
-      5,  6,  7,  8,  9, 10, 11, 12,
-      6,  7,  8,  9, 10, 11, 12, 13,
-      7,  8,  9, 10, 11, 12, 13, 14,
-      8,  9, 10, 11, 12, 13, 14, 15,
-      9, 10, 11, 12, 13, 14, 15, 16};
+    2,  3,  4,  5,  6,  7,  8,  9,
+    3,  4,  5,  6,  7,  8,  9, 10,
+    4,  5,  6,  7,  8,  9, 10, 11,
+    5,  6,  7,  8,  9, 10, 11, 12,
+    6,  7,  8,  9, 10, 11, 12, 13,
+    7,  8,  9, 10, 11, 12, 13, 14,
+    8,  9, 10, 11, 12, 13, 14, 15,
+    9, 10, 11, 12, 13, 14, 15, 16
+};
 
 int main()
 {
-chunk *picture;
-jpeg *myjpeg;
-char id;
-int location=0,x;
-printf("Print the test quantization table\n");
-gpi_jpeg_print_quantization_table(&mytable);
-myjpeg = gpi_jpeg_new();
-picture = gpi_jpeg_chunk_new(sizeof(testdata));
-picture->data=testdata;
-picture->size=sizeof(testdata);
-printf("testdata size is %i\n",picture->size);
-gpi_jpeg_chunk_print(picture);
-printf("Call jpeg_parse!!!!!!!!!!!!!!!!!!!!!!!\n");
-gpi_jpeg_parse(myjpeg,picture);
+    chunk *picture;
+    jpeg *myjpeg;
+    char id;
+    int location=0,x;
+    printf("Print the test quantization table\n");
+    gpi_jpeg_print_quantization_table(&mytable);
+    myjpeg = gpi_jpeg_new();
+    picture = gpi_jpeg_chunk_new(sizeof(testdata));
+    picture->data=testdata;
+    picture->size=sizeof(testdata);
+    printf("testdata size is %i\n",picture->size);
+    gpi_jpeg_chunk_print(picture);
+    printf("Call jpeg_parse!!!!!!!!!!!!!!!!!!!!!!!\n");
+    gpi_jpeg_parse(myjpeg,picture);
 
-printf("\nPrint the jpeg table\n");
-gpi_jpeg_print(myjpeg);
-printf("\nCall gpi_jpeg_destroy\n");
-gpi_jpeg_destroy(myjpeg);
-/* You can't call gpi_jpeg_chunk_destroy because testdata is a constant.
- * Since picture->data points to it, it would segfault.
- */
-free(picture);
-printf("gpi_jpeg_chunk_new and gpi_jpeg_chunk_destroy tests\n");
-picture = gpi_jpeg_chunk_new(10);
-for (x=0; x<10; x++) picture->data[x]=x;
-for (x=0; x<10; x++) printf("%hX ",picture->data[x]);
-gpi_jpeg_chunk_destroy(picture);
-printf("\n");
+    printf("\nPrint the jpeg table\n");
+    gpi_jpeg_print(myjpeg);
+    printf("\nCall gpi_jpeg_destroy\n");
+    gpi_jpeg_destroy(myjpeg);
+    /* You can't call gpi_jpeg_chunk_destroy because testdata is a constant.
+     * Since picture->data points to it, it would segfault.
+     */
+    free(picture);
+    printf("gpi_jpeg_chunk_new and gpi_jpeg_chunk_destroy tests\n");
+    picture = gpi_jpeg_chunk_new(10);
+    for (x=0; x<10; x++) picture->data[x]=x;
+    for (x=0; x<10; x++) printf("%hX ",picture->data[x]);
+    gpi_jpeg_chunk_destroy(picture);
+    printf("\n");
 }
 #endif

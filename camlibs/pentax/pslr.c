@@ -292,19 +292,19 @@ user_file_format_t *get_file_format_t( user_file_format uff ) {
 
 int pslr_set_user_file_format(pslr_handle_t h, user_file_format uff) {
     switch ( uff ) {
-        case USER_FILE_FORMAT_PEF:
-            pslr_set_image_format(h, PSLR_IMAGE_FORMAT_RAW);
-            pslr_set_raw_format(h, PSLR_RAW_FORMAT_PEF);
-            break;
-        case USER_FILE_FORMAT_DNG:
-            pslr_set_image_format(h, PSLR_IMAGE_FORMAT_RAW);
-            pslr_set_raw_format(h, PSLR_RAW_FORMAT_DNG);
-            break;
-        case USER_FILE_FORMAT_JPEG:
-            pslr_set_image_format(h, PSLR_IMAGE_FORMAT_JPEG);
-            break;
-        case USER_FILE_FORMAT_MAX:
-            return PSLR_PARAM;
+    case USER_FILE_FORMAT_PEF:
+        pslr_set_image_format(h, PSLR_IMAGE_FORMAT_RAW);
+        pslr_set_raw_format(h, PSLR_RAW_FORMAT_PEF);
+        break;
+    case USER_FILE_FORMAT_DNG:
+        pslr_set_image_format(h, PSLR_IMAGE_FORMAT_RAW);
+        pslr_set_raw_format(h, PSLR_RAW_FORMAT_DNG);
+        break;
+    case USER_FILE_FORMAT_JPEG:
+        pslr_set_image_format(h, PSLR_IMAGE_FORMAT_JPEG);
+        break;
+    case USER_FILE_FORMAT_MAX:
+        return PSLR_PARAM;
     }
     return PSLR_OK;
 }
@@ -327,29 +327,29 @@ user_file_format get_user_file_format( pslr_status *st ) {
 pslr_gui_exposure_mode_t exposure_mode_conversion( pslr_exposure_mode_t exp ) {
     switch ( exp ) {
 
-        case PSLR_EXPOSURE_MODE_GREEN:
-            return PSLR_GUI_EXPOSURE_MODE_GREEN;
-        case PSLR_EXPOSURE_MODE_P:
-            return PSLR_GUI_EXPOSURE_MODE_P;
-        case PSLR_EXPOSURE_MODE_SV:
-            return PSLR_GUI_EXPOSURE_MODE_SV;
-        case PSLR_EXPOSURE_MODE_TV:
-            return PSLR_GUI_EXPOSURE_MODE_TV;
-        case PSLR_EXPOSURE_MODE_AV:
-        case PSLR_EXPOSURE_MODE_AV_OFFAUTO:
-            return PSLR_GUI_EXPOSURE_MODE_AV;
-        case PSLR_EXPOSURE_MODE_TAV:
-            return PSLR_GUI_EXPOSURE_MODE_TAV;
-        case PSLR_EXPOSURE_MODE_M:
-        case PSLR_EXPOSURE_MODE_M_OFFAUTO:
-            return PSLR_GUI_EXPOSURE_MODE_M;
-        case PSLR_EXPOSURE_MODE_B:
-        case PSLR_EXPOSURE_MODE_B_OFFAUTO:
-            return PSLR_GUI_EXPOSURE_MODE_B;
-        case PSLR_EXPOSURE_MODE_X:
-            return PSLR_GUI_EXPOSURE_MODE_X;
-        case PSLR_EXPOSURE_MODE_MAX:
-            return PSLR_GUI_EXPOSURE_MODE_MAX;
+    case PSLR_EXPOSURE_MODE_GREEN:
+        return PSLR_GUI_EXPOSURE_MODE_GREEN;
+    case PSLR_EXPOSURE_MODE_P:
+        return PSLR_GUI_EXPOSURE_MODE_P;
+    case PSLR_EXPOSURE_MODE_SV:
+        return PSLR_GUI_EXPOSURE_MODE_SV;
+    case PSLR_EXPOSURE_MODE_TV:
+        return PSLR_GUI_EXPOSURE_MODE_TV;
+    case PSLR_EXPOSURE_MODE_AV:
+    case PSLR_EXPOSURE_MODE_AV_OFFAUTO:
+        return PSLR_GUI_EXPOSURE_MODE_AV;
+    case PSLR_EXPOSURE_MODE_TAV:
+        return PSLR_GUI_EXPOSURE_MODE_TAV;
+    case PSLR_EXPOSURE_MODE_M:
+    case PSLR_EXPOSURE_MODE_M_OFFAUTO:
+        return PSLR_GUI_EXPOSURE_MODE_M;
+    case PSLR_EXPOSURE_MODE_B:
+    case PSLR_EXPOSURE_MODE_B_OFFAUTO:
+        return PSLR_GUI_EXPOSURE_MODE_B;
+    case PSLR_EXPOSURE_MODE_X:
+        return PSLR_GUI_EXPOSURE_MODE_X;
+    case PSLR_EXPOSURE_MODE_MAX:
+        return PSLR_GUI_EXPOSURE_MODE_MAX;
     }
     return 0;
 }
@@ -587,14 +587,14 @@ static
 char *get_special_setting_info( pslr_setting_status_t setting_status) {
     char *strbuffer = malloc(32);
     switch ( setting_status ) {
-        case PSLR_SETTING_STATUS_NA:
-            sprintf(strbuffer,"N/A");
-            break;
-        case PSLR_SETTING_STATUS_UNKNOWN:
-            sprintf(strbuffer,"Unknown");
-            break;
-        default:
-            return NULL;
+    case PSLR_SETTING_STATUS_NA:
+        sprintf(strbuffer,"N/A");
+        break;
+    case PSLR_SETTING_STATUS_UNKNOWN:
+        sprintf(strbuffer,"Unknown");
+        break;
+    default:
+        return NULL;
     }
     return strbuffer;
 }

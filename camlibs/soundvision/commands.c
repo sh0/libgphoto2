@@ -41,9 +41,9 @@
 
 #define GP_MODULE "soundvision"
 
-    /* Regular commands always 8 bytes long */
+/* Regular commands always 8 bytes long */
 int32_t soundvision_send_command(uint32_t command, uint32_t argument,
-				  CameraPrivateLibrary *dev) {
+                                 CameraPrivateLibrary *dev) {
 
     uint8_t cmd[12];
     int result;
@@ -57,9 +57,9 @@ int32_t soundvision_send_command(uint32_t command, uint32_t argument,
     return GP_OK;
 }
 
-    /* Filenames are always 12 bytes long */
+/* Filenames are always 12 bytes long */
 int32_t soundvision_send_file_command(const char *filename,
-				       CameraPrivateLibrary *dev) {
+                                      CameraPrivateLibrary *dev) {
     char file_cmd[16];
 
     htole32a(&file_cmd[0],0xc);        /* Length is 12 little-endian 32 bits */
@@ -67,68 +67,68 @@ int32_t soundvision_send_file_command(const char *filename,
     return gp_port_write (dev->gpdev, file_cmd, sizeof(file_cmd));
 }
 
-    /* USB-only */
+/* USB-only */
 int32_t soundvision_read(CameraPrivateLibrary *dev, void *buffer, int len) {
 
     return gp_port_read(dev->gpdev, buffer, len);
 }
 
 
-       /* Reset the camera */
+/* Reset the camera */
 int soundvision_reset(CameraPrivateLibrary *dev,char *revision, char *status) {
 
     int ret,attempts=0;
 
 retry_reset:
 
-        /* This prevents lockups on tiger !!!! */
+    /* This prevents lockups on tiger !!!! */
     ret=soundvision_send_command(SOUNDVISION_START_TRANSACTION,0,dev);
     if (ret<0) goto reset_error;
 
-       /* First get firmware revision */
+    /* First get firmware revision */
     ret=soundvision_get_revision(dev,revision);
 
-       /* If camera out of whack, this is where it will hang   */
-       /* If we retry a few times usually after a few timeouts */
-       /* It will get going again                              */
+    /* If camera out of whack, this is where it will hang   */
+    /* If we retry a few times usually after a few timeouts */
+    /* It will get going again                              */
     if (ret<0) {
-       if (attempts<2) {
-          attempts++;
-          goto retry_reset;
-       }
-       else goto reset_error;
+        if (attempts<2) {
+            attempts++;
+            goto retry_reset;
+        }
+        else goto reset_error;
     }
 
 
-       /* Dshot 3 camera does 2 extra steps    */
-       /* Seems to enable extra info in status */
-       /* What does it do?  It works w/o it    */
-       /* And other tiger cameras might not    */
-       /* need it.                             */
+    /* Dshot 3 camera does 2 extra steps    */
+    /* Seems to enable extra info in status */
+    /* What does it do?  It works w/o it    */
+    /* And other tiger cameras might not    */
+    /* need it.                             */
 #if 0
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS) {
 
-       char result[12];
+        char result[12];
 
-          /* What does 0x405 signify? */
-       ret=soundvision_send_command(SOUNDVISION_SETPC2,0x405,dev);
-       if (ret<0) goto reset_error;
+        /* What does 0x405 signify? */
+        ret=soundvision_send_command(SOUNDVISION_SETPC2,0x405,dev);
+        if (ret<0) goto reset_error;
 
-       ret=soundvision_send_command(SOUNDVISION_INIT2,0,dev);
-       if (ret<0) goto reset_error;
+        ret=soundvision_send_command(SOUNDVISION_INIT2,0,dev);
+        if (ret<0) goto reset_error;
 
-          /* Read returned value.  Why 0x140,0xf,0x5 ? */
-       ret = soundvision_read(dev, &result, sizeof(result));
-       if (ret<0) goto reset_error;
+        /* Read returned value.  Why 0x140,0xf,0x5 ? */
+        ret = soundvision_read(dev, &result, sizeof(result));
+        if (ret<0) goto reset_error;
     }
 #endif
 
-       /* Read the status registers */
+    /* Read the status registers */
     dev->reset_times++;
 
     if (dev->device_type!=SOUNDVISION_IXLA) {
-       ret=soundvision_get_status(dev,status);
-       if (ret<0) goto reset_error;
+        ret=soundvision_get_status(dev,status);
+        if (ret<0) goto reset_error;
     }
 
     return GP_OK;
@@ -151,19 +151,19 @@ int soundvision_get_revision(CameraPrivateLibrary *dev, char *revision) {
     ret = soundvision_read(dev, &version, sizeof(version)-1);
     if (ret<0) return ret;
 
-       /* If null we don't care */
+    /* If null we don't care */
     if (revision!=NULL) {
-       strncpy(revision,version,8);
-       revision[8]=0;
+        strncpy(revision,version,8);
+        revision[8]=0;
     }
 
     return GP_OK;
 }
 
 
-    /* Status is a 96 byte array.         */
-    /* Haven't been able to decode it yet */
-    /* It changes with every read  though */
+/* Status is a 96 byte array.         */
+/* Haven't been able to decode it yet */
+/* It changes with every read  though */
 int soundvision_get_status(CameraPrivateLibrary *dev, char *status) {
 
     uint8_t ss[0x60];
@@ -176,7 +176,7 @@ int soundvision_get_status(CameraPrivateLibrary *dev, char *status) {
     if (ret < 0) goto get_status_error;
 
     if (status!=NULL) {
-       memcpy(status,ss,0x60);
+        memcpy(status,ss,0x60);
     }
 
     return GP_OK;
@@ -207,44 +207,44 @@ error_photos_taken:
 
 int soundvision_get_file_list(CameraPrivateLibrary *dev) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_get_file_list(dev);
+        return tiger_get_file_list(dev);
     else
-       return agfa_get_file_list(dev);
+        return agfa_get_file_list(dev);
 }
 
 int soundvision_get_thumb_size(CameraPrivateLibrary *dev, const char *filename) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_get_thumb_size(dev,filename);
+        return tiger_get_thumb_size(dev,filename);
     else
-       return agfa_get_thumb_size(dev,filename);
+        return agfa_get_thumb_size(dev,filename);
 }
 
 int soundvision_get_thumb(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size) {
+                          unsigned char *data,int size) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_get_thumb(dev,filename,data,size);
+        return tiger_get_thumb(dev,filename,data,size);
     else
-       return agfa_get_thumb(dev,filename,data,size);
+        return agfa_get_thumb(dev,filename,data,size);
 }
 
 int soundvision_get_pic_size(CameraPrivateLibrary *dev, const char *filename) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_get_pic_size(dev,filename);
+        return tiger_get_pic_size(dev,filename);
     else
-       return agfa_get_pic_size(dev,filename);
+        return agfa_get_pic_size(dev,filename);
 }
 
 int soundvision_get_pic(CameraPrivateLibrary *dev, const char *filename,
-		   unsigned char *data,int size) {
+                        unsigned char *data,int size) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_get_pic(dev,filename,data,size);
+        return tiger_get_pic(dev,filename,data,size);
     else
-       return agfa_get_pic(dev,filename,data,size);
+        return agfa_get_pic(dev,filename,data,size);
 }
 
 int soundvision_delete_picture(CameraPrivateLibrary *dev, const char *filename) {
     if (dev->device_type==SOUNDVISION_TIGERFASTFLICKS)
-       return tiger_delete_picture(dev,filename);
+        return tiger_delete_picture(dev,filename);
     else
-       return agfa_delete_picture(dev,filename);
+        return agfa_delete_picture(dev,filename);
 }

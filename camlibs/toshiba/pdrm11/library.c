@@ -47,105 +47,105 @@
 int
 camera_id (CameraText *id)
 {
-	strcpy(id->text, "toshiba-pdrm11");
+    strcpy(id->text, "toshiba-pdrm11");
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 
 int
 camera_abilities (CameraAbilitiesList *list)
 {
-	CameraAbilities a;
+    CameraAbilities a;
 
-	memset(&a, 0, sizeof(a));
-	strcpy(a.model, "Toshiba:PDR-M11");
-	a.status = GP_DRIVER_STATUS_TESTING;
-	a.port     = GP_PORT_USB;
-	a.speed[0] = 0;
-	a.usb_vendor = 0x1132;
-	a.usb_product = 0x4337;
-	a.operations        = 	GP_OPERATION_NONE;
-	a.file_operations   = 	GP_FILE_OPERATION_DELETE |
-				GP_FILE_OPERATION_PREVIEW;
-	a.folder_operations = 	GP_FOLDER_OPERATION_NONE;
+    memset(&a, 0, sizeof(a));
+    strcpy(a.model, "Toshiba:PDR-M11");
+    a.status = GP_DRIVER_STATUS_TESTING;
+    a.port     = GP_PORT_USB;
+    a.speed[0] = 0;
+    a.usb_vendor = 0x1132;
+    a.usb_product = 0x4337;
+    a.operations        =   GP_OPERATION_NONE;
+    a.file_operations   =   GP_FILE_OPERATION_DELETE |
+                            GP_FILE_OPERATION_PREVIEW;
+    a.folder_operations =   GP_FOLDER_OPERATION_NONE;
 
-	gp_abilities_list_append(list, a);
+    gp_abilities_list_append(list, a);
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 
 static int
 camera_exit (Camera *camera, GPContext *context)
 {
-	return (GP_OK);
+    return (GP_OK);
 }
 
 
 static int
 get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
-	       CameraFileType type, CameraFile *file, void *data,
-	       GPContext *context)
+               CameraFileType type, CameraFile *file, void *data,
+               GPContext *context)
 {
-	int picNum;
-	Camera *camera = data;
+    int picNum;
+    Camera *camera = data;
 
-	switch(type){
-	case GP_FILE_TYPE_PREVIEW:
-	case GP_FILE_TYPE_NORMAL:
-		picNum = gp_filesystem_number(fs, folder, filename, context) + 1;
-		return pdrm11_get_file (fs, filename, type, file, camera->port, picNum);
-	default:
-		return GP_ERROR_NOT_SUPPORTED;
-	}
+    switch(type) {
+    case GP_FILE_TYPE_PREVIEW:
+    case GP_FILE_TYPE_NORMAL:
+        picNum = gp_filesystem_number(fs, folder, filename, context) + 1;
+        return pdrm11_get_file (fs, filename, type, file, camera->port, picNum);
+    default:
+        return GP_ERROR_NOT_SUPPORTED;
+    }
 }
 
 
 static int
 delete_file_func (CameraFilesystem *fs, const char *folder,
-		  const char *filename, void *data, GPContext *context)
+                  const char *filename, void *data, GPContext *context)
 {
-	int picNum;
-	Camera *camera = data;
+    int picNum;
+    Camera *camera = data;
 
-	picNum = gp_filesystem_number(fs, folder, filename, context) + 1;
-	return pdrm11_delete_file(camera->port, picNum);
+    picNum = gp_filesystem_number(fs, folder, filename, context) + 1;
+    return pdrm11_delete_file(camera->port, picNum);
 }
 
 
 static int
 camera_about (Camera *camera, CameraText *about, GPContext *context)
 {
-	strcpy (about->text, _("Toshiba\n"
-			       "David Hogue <david@jawa.gotdns.org>\n"
-			       "Toshiba pdr-m11 driver.\n"));
+    strcpy (about->text, _("Toshiba\n"
+                           "David Hogue <david@jawa.gotdns.org>\n"
+                           "Toshiba pdr-m11 driver.\n"));
 
-	return (GP_OK);
+    return (GP_OK);
 }
 
 static int
 file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-		void *data, GPContext *context)
+                void *data, GPContext *context)
 {
-	Camera *camera = data;
+    Camera *camera = data;
 
-	return pdrm11_get_filenames(camera->port, list);
+    return pdrm11_get_filenames(camera->port, list);
 }
 
 static CameraFilesystemFuncs fsfuncs = {
-	.file_list_func = file_list_func,
-	.get_file_func = get_file_func,
-	.del_file_func = delete_file_func
+    .file_list_func = file_list_func,
+    .get_file_func = get_file_func,
+    .del_file_func = delete_file_func
 };
 
 int
 camera_init (Camera *camera, GPContext *context)
 {
-        /* First, set up all the function pointers */
-        camera->functions->exit                 = camera_exit;
-        camera->functions->about                = camera_about;
-	/* Now, tell the filesystem where to get lists, files and info */
-	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
-	return pdrm11_init(camera->port);
+    /* First, set up all the function pointers */
+    camera->functions->exit                 = camera_exit;
+    camera->functions->about                = camera_about;
+    /* Now, tell the filesystem where to get lists, files and info */
+    gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
+    return pdrm11_init(camera->port);
 }

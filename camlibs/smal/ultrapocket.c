@@ -71,7 +71,7 @@ static int
 ultrapocket_command(GPPort *port, int iswrite, unsigned char *data, int datasize) {
     int ret;
     if (iswrite)
-	ret = gp_port_write(port, (char *)data, datasize);
+        ret = gp_port_write(port, (char *)data, datasize);
     else
         ret = gp_port_read(port, (char *)data, datasize);
 
@@ -106,35 +106,35 @@ getpicture_generic(Camera *camera, GPContext *context, unsigned char **rd,int *r
     styp = header[3];
 
     switch (styp) {
-     case TYPE_QVGA:
-	/* 24 packets, including one already got */
-	ptc = 24;
-	width = 320;
-	height = 240;
-	imgstart = 0x29;
-	break;
-     case TYPE_VGA:
-	/* 80 including one already got. */
-	ptc = 80;
-	width = 640;
-	height = 480;
-	imgstart = 0x29;
-	break;
-     case TYPE_QVGA_BH:
-	ptc = 24;
-	width = 320;
-	height = 240;
-	imgstart = 0x100;
-	break;
-     case TYPE_VGA_BH:
-	ptc = 80;
-	width = 640;
-	height = 480;
-	imgstart = 0x100;
-	break;
-     default:
-	return GP_ERROR;
-   }
+    case TYPE_QVGA:
+        /* 24 packets, including one already got */
+        ptc = 24;
+        width = 320;
+        height = 240;
+        imgstart = 0x29;
+        break;
+    case TYPE_VGA:
+        /* 80 including one already got. */
+        ptc = 80;
+        width = 640;
+        height = 480;
+        imgstart = 0x29;
+        break;
+    case TYPE_QVGA_BH:
+        ptc = 24;
+        width = 320;
+        height = 240;
+        imgstart = 0x100;
+        break;
+    case TYPE_VGA_BH:
+        ptc = 80;
+        width = 640;
+        height = 480;
+        imgstart = 0x100;
+        break;
+    default:
+        return GP_ERROR;
+    }
     rawdata = malloc(0x1000 * ptc * sizeof(char));
     if (!rawdata) return (GP_ERROR_NO_MEMORY);
 
@@ -142,15 +142,15 @@ getpicture_generic(Camera *camera, GPContext *context, unsigned char **rd,int *r
     id = gp_context_progress_start(context, ptc-1, _("Downloading image..."));
 
     memcpy(rawdata, retdata, 0x1000 * sizeof(char));
-    for (pc=1;pc<ptc;pc++) {
-	int ret = ultrapocket_command(port, 0, retdata, 0x1000);
-	if (ret < GP_OK) {
-	     free (rawdata);
-	     gp_context_progress_stop(context, id);
-	     return ret;
-	}
-	gp_context_progress_update(context, id, pc);
-	memcpy(rawdata + (pc * 0x1000), retdata, 0x1000 * sizeof(char));
+    for (pc=1; pc<ptc; pc++) {
+        int ret = ultrapocket_command(port, 0, retdata, 0x1000);
+        if (ret < GP_OK) {
+            free (rawdata);
+            gp_context_progress_stop(context, id);
+            return ret;
+        }
+        gp_context_progress_update(context, id, pc);
+        memcpy(rawdata + (pc * 0x1000), retdata, 0x1000 * sizeof(char));
     }
     gp_context_progress_stop(context, id);
 
@@ -190,15 +190,15 @@ getpicture_logitech_pd(Camera *camera, GPContext *context, unsigned char **rd, c
     id = gp_context_progress_start(context, ptc-1, _("Downloading image..."));
 
     memcpy(rawdata, retdata, 0x8000 * sizeof(char));
-    for (pc=1;pc<ptc;pc++) {
-	int ret = ultrapocket_command(port, 0, retdata, 0x8000);
-	if (ret < GP_OK) {
-    	    gp_context_progress_stop(context, id);
-	    free (rawdata);
-	    return ret;
-	}
-	gp_context_progress_update(context, id, pc);
-	memcpy(rawdata + (pc * 0x8000), retdata, 0x8000 * sizeof(char));
+    for (pc=1; pc<ptc; pc++) {
+        int ret = ultrapocket_command(port, 0, retdata, 0x8000);
+        if (ret < GP_OK) {
+            gp_context_progress_stop(context, id);
+            free (rawdata);
+            return ret;
+        }
+        gp_context_progress_update(context, id, pc);
+        memcpy(rawdata + (pc * 0x8000), retdata, 0x8000 * sizeof(char));
     }
     gp_context_progress_stop(context, id);
 
@@ -211,7 +211,7 @@ getpicture_logitech_pd(Camera *camera, GPContext *context, unsigned char **rd, c
  */
 int
 ultrapocket_getrawpicture(Camera *camera, GPContext *context,
-   unsigned char **pdata, int *size, const char *filename)
+                          unsigned char **pdata, int *size, const char *filename)
 {
     char           ppmheader[200];
     unsigned char *rawdata,*outdata;
@@ -222,65 +222,65 @@ ultrapocket_getrawpicture(Camera *camera, GPContext *context,
     BayerTile      tile;
 
     switch (camera->pl->up_type) {
-     case BADGE_CARDCAM:
-     case BADGE_FLATFOTO:
-     case BADGE_GENERIC:
-     case BADGE_ULTRAPOCKET:
-     case BADGE_AXIA:
-	CHECK_RESULT(getpicture_generic(camera, context, &rawdata, &width, &height, &imgstart, filename));
-	break;
-     case BADGE_LOGITECH_PD:
-	CHECK_RESULT(getpicture_logitech_pd(camera, context, &rawdata, filename));
-	width = 640;
-	height = 480;
-	imgstart = 0x29;
-	break;
-     default:
+    case BADGE_CARDCAM:
+    case BADGE_FLATFOTO:
+    case BADGE_GENERIC:
+    case BADGE_ULTRAPOCKET:
+    case BADGE_AXIA:
+        CHECK_RESULT(getpicture_generic(camera, context, &rawdata, &width, &height, &imgstart, filename));
+        break;
+    case BADGE_LOGITECH_PD:
+        CHECK_RESULT(getpicture_logitech_pd(camera, context, &rawdata, filename));
+        width = 640;
+        height = 480;
+        imgstart = 0x29;
+        break;
+    default:
         return GP_ERROR;
     }
 
-   tile = BAYER_TILE_BGGR;
+    tile = BAYER_TILE_BGGR;
 
-   snprintf (ppmheader, sizeof(ppmheader), "P6\n"
-	    "# CREATOR: gphoto2, ultrapocket library, raw,"
-	    " assuming Bayer tile %s\n"
-	    "%d %d\n"
-	    "255\n", BayerTileNames[tile], width, height);
+    snprintf (ppmheader, sizeof(ppmheader), "P6\n"
+              "# CREATOR: gphoto2, ultrapocket library, raw,"
+              " assuming Bayer tile %s\n"
+              "%d %d\n"
+              "255\n", BayerTileNames[tile], width, height);
 
-   /* Allocate memory for Interpolated ppm image */
-   pmmhdr_len = strlen(ppmheader);
-   outsize = ((long)width + 4) * height * 3 + pmmhdr_len;
-   outdata = malloc(outsize);
-   if (!outdata) {
-     free(rawdata);
-     return (GP_ERROR_NO_MEMORY);
-   }
+    /* Allocate memory for Interpolated ppm image */
+    pmmhdr_len = strlen(ppmheader);
+    outsize = ((long)width + 4) * height * 3 + pmmhdr_len;
+    outdata = malloc(outsize);
+    if (!outdata) {
+        free(rawdata);
+        return (GP_ERROR_NO_MEMORY);
+    }
 
-   /* Set header */
-   strcpy((char *)outdata, ppmheader);
+    /* Set header */
+    strcpy((char *)outdata, ppmheader);
 
-   /* Expand the Bayer tiles */
-   result = gp_bayer_expand((rawdata+imgstart), width + 4, height,
-			    &outdata[pmmhdr_len], tile);
+    /* Expand the Bayer tiles */
+    result = gp_bayer_expand((rawdata+imgstart), width + 4, height,
+                             &outdata[pmmhdr_len], tile);
 
-   /* and chop the spare 4 pixels off the RHS */
-   for (pc = 1; pc < height; pc++) {
-      memmove(outdata + pmmhdr_len + ((long)width * pc * 3),
-              outdata + pmmhdr_len + (((long)width + 4) * pc * 3),
-              ((long)width) * 3);
-   }
-   /* modify outsize to reflect trim */
-   outsize = ((long)width) * height * 3 + pmmhdr_len;
+    /* and chop the spare 4 pixels off the RHS */
+    for (pc = 1; pc < height; pc++) {
+        memmove(outdata + pmmhdr_len + ((long)width * pc * 3),
+                outdata + pmmhdr_len + (((long)width + 4) * pc * 3),
+                ((long)width) * 3);
+    }
+    /* modify outsize to reflect trim */
+    outsize = ((long)width) * height * 3 + pmmhdr_len;
 
-   free(rawdata);
-   if (result < 0) {
-      free (outdata);
-      return (result);
-   }
+    free(rawdata);
+    if (result < 0) {
+        free (outdata);
+        return (result);
+    }
 
-   *pdata = outdata;
-   *size  = outsize;
-   return GP_OK;
+    *pdata = outdata;
+    *size  = outsize;
+    return GP_OK;
 }
 
 /* Different camera types (pocket digital/generic)
@@ -289,7 +289,7 @@ ultrapocket_getrawpicture(Camera *camera, GPContext *context,
 int
 ultrapocket_getpicture(Camera *camera, GPContext *context, unsigned char **pdata, int *size, const char *filename)
 {
-    char	   *savelocale;
+    char       *savelocale;
     char           ppmheader[200];
     unsigned char *rawdata,*outdata;
     int            width, height, result;
@@ -302,79 +302,79 @@ ultrapocket_getpicture(Camera *camera, GPContext *context, unsigned char **pdata
 #endif
 
     switch (camera->pl->up_type) {
-     case BADGE_CARDCAM:
-     case BADGE_FLATFOTO:
-     case BADGE_GENERIC:
-     case BADGE_ULTRAPOCKET:
-     case BADGE_AXIA:
-	CHECK_RESULT(getpicture_generic(camera, context, &rawdata, &width, &height, &imgstart, filename));
-	break;
-     case BADGE_LOGITECH_PD:
-	CHECK_RESULT(getpicture_logitech_pd(camera, context, &rawdata, filename));
-	width = 640;
-	height = 480;
-	imgstart = 0x29;
-	break;
-     default:
-	return GP_ERROR;
+    case BADGE_CARDCAM:
+    case BADGE_FLATFOTO:
+    case BADGE_GENERIC:
+    case BADGE_ULTRAPOCKET:
+    case BADGE_AXIA:
+        CHECK_RESULT(getpicture_generic(camera, context, &rawdata, &width, &height, &imgstart, filename));
+        break;
+    case BADGE_LOGITECH_PD:
+        CHECK_RESULT(getpicture_logitech_pd(camera, context, &rawdata, filename));
+        width = 640;
+        height = 480;
+        imgstart = 0x29;
+        break;
+    default:
+        return GP_ERROR;
     }
 
-   tile = BAYER_TILE_BGGR;
+    tile = BAYER_TILE_BGGR;
 
-   savelocale = setlocale (LC_ALL, "C");
-   snprintf (ppmheader, sizeof(ppmheader), "P6\n"
-	    "# CREATOR: gphoto2, ultrapocket library,"
-	    " assuming Bayer tile %s, interpolated"
+    savelocale = setlocale (LC_ALL, "C");
+    snprintf (ppmheader, sizeof(ppmheader), "P6\n"
+              "# CREATOR: gphoto2, ultrapocket library,"
+              " assuming Bayer tile %s, interpolated"
 #if DO_GAMMA
-	    ", gamma %.2f"
+              ", gamma %.2f"
 #endif
-	    "\n%d %d\n"
-	    "255\n", BayerTileNames[tile],
+              "\n%d %d\n"
+              "255\n", BayerTileNames[tile],
 #if DO_GAMMA
-	    GAMMA_NUMBER,
+              GAMMA_NUMBER,
 #endif
-	    width, height);
-   setlocale (LC_ALL, savelocale);
+              width, height);
+    setlocale (LC_ALL, savelocale);
 
-   /* Allocate memory for Interpolated ppm image */
-   pmmhdr_len = strlen(ppmheader);
-   outsize = ((long)width + 4) * height * 3 + pmmhdr_len;
-   outdata = malloc(outsize);
-   if (!outdata) {
-     free (rawdata);
-     return (GP_ERROR_NO_MEMORY);
-   }
+    /* Allocate memory for Interpolated ppm image */
+    pmmhdr_len = strlen(ppmheader);
+    outsize = ((long)width + 4) * height * 3 + pmmhdr_len;
+    outdata = malloc(outsize);
+    if (!outdata) {
+        free (rawdata);
+        return (GP_ERROR_NO_MEMORY);
+    }
 
-   /* Set header */
-   strcpy((char *)outdata, ppmheader);
+    /* Set header */
+    strcpy((char *)outdata, ppmheader);
 
-   /* Decode and interpolate the Bayer tiles */
-   result = gp_bayer_decode((rawdata+imgstart), width+4, height,
-			    &outdata[pmmhdr_len], tile);
+    /* Decode and interpolate the Bayer tiles */
+    result = gp_bayer_decode((rawdata+imgstart), width+4, height,
+                             &outdata[pmmhdr_len], tile);
 
-   /* and chop the spare 4 pixels off the RHS */
-   for (pc = 1; pc < height; pc++) {
-      memmove(outdata + pmmhdr_len + ((long)width * pc * 3),
-              outdata + pmmhdr_len + (((long)width + 4) * pc * 3),
-              ((long)width) * 3);
-   }
-   /* modify outsize to reflect trim */
-   outsize = ((long)width) * height * 3 + pmmhdr_len;
+    /* and chop the spare 4 pixels off the RHS */
+    for (pc = 1; pc < height; pc++) {
+        memmove(outdata + pmmhdr_len + ((long)width * pc * 3),
+                outdata + pmmhdr_len + (((long)width + 4) * pc * 3),
+                ((long)width) * 3);
+    }
+    /* modify outsize to reflect trim */
+    outsize = ((long)width) * height * 3 + pmmhdr_len;
 
-   free(rawdata);
-   if (result < 0) {
-      free (outdata);
-      return (result);
-   }
+    free(rawdata);
+    if (result < 0) {
+        free (outdata);
+        return (result);
+    }
 
 #if DO_GAMMA
-   gp_gamma_fill_table(gtable, GAMMA_NUMBER);
-   gp_gamma_correct_single(gtable, &outdata[pmmhdr_len], height * width);
+    gp_gamma_fill_table(gtable, GAMMA_NUMBER);
+    gp_gamma_correct_single(gtable, &outdata[pmmhdr_len], height * width);
 #endif
 
-   *pdata = outdata;
-   *size  = outsize;
-   return GP_OK;
+    *pdata = outdata;
+    *size  = outsize;
+    return GP_OK;
 }
 
 /*
@@ -384,109 +384,109 @@ ultrapocket_getpicture(Camera *camera, GPContext *context, unsigned char **pdata
 static int
 ultrapocket_reset(Camera *camera)
 {
-   GPPortInfo oldpi;
-   GPPortInfo newpi;
-   GPPort *port = camera->port;
-   CameraAbilities cab;
-   unsigned char cmdbuf[0x10];
-   gp_camera_get_abilities(camera, &cab);
-   GP_DEBUG ("First connect since camera was used - need to reset cam");
-   char *val;
-   GPPortType porttype;
+    GPPortInfo oldpi;
+    GPPortInfo newpi;
+    GPPort *port = camera->port;
+    CameraAbilities cab;
+    unsigned char cmdbuf[0x10];
+    gp_camera_get_abilities(camera, &cab);
+    GP_DEBUG ("First connect since camera was used - need to reset cam");
+    char *val;
+    GPPortType porttype;
 
-   /*
-    * this resets the ultrapocket.  Messy, but it's what the windows
-    * software does.   We only reset if it's been plugged in since
-    * last reset.
-    */
-   memset(cmdbuf, 0, 16);
-   cmdbuf[0] = 0x28;
-   cmdbuf[1] = 0x01;
-   CHECK_RESULT(ultrapocket_command(port, 1, cmdbuf, 0x10));
-   /* -------------- */
-   sleep(4); /* This should do - _might_ need increasing */
-   CHECK_RESULT(gp_port_get_info(port, &oldpi));
-   gp_port_info_new(&newpi);
-   gp_port_info_get_name (oldpi, &val);
-   gp_port_info_set_name (newpi, val);
-   gp_port_info_get_path (oldpi, &val);
-   gp_port_info_set_path (newpi, val);
-   gp_port_info_get_type (oldpi, &porttype);
-   gp_port_info_set_type (newpi, porttype);
-   /*gp_port_info_get_library_filename (oldpi, &val);
-   gp_port_info_set_library_filename (newpi, val);*/
+    /*
+     * this resets the ultrapocket.  Messy, but it's what the windows
+     * software does.   We only reset if it's been plugged in since
+     * last reset.
+     */
+    memset(cmdbuf, 0, 16);
+    cmdbuf[0] = 0x28;
+    cmdbuf[1] = 0x01;
+    CHECK_RESULT(ultrapocket_command(port, 1, cmdbuf, 0x10));
+    /* -------------- */
+    sleep(4); /* This should do - _might_ need increasing */
+    CHECK_RESULT(gp_port_get_info(port, &oldpi));
+    gp_port_info_new(&newpi);
+    gp_port_info_get_name (oldpi, &val);
+    gp_port_info_set_name (newpi, val);
+    gp_port_info_get_path (oldpi, &val);
+    gp_port_info_set_path (newpi, val);
+    gp_port_info_get_type (oldpi, &porttype);
+    gp_port_info_set_type (newpi, porttype);
+    /*gp_port_info_get_library_filename (oldpi, &val);
+    gp_port_info_set_library_filename (newpi, val);*/
 
-   CHECK_RESULT(gp_port_free(port));
-   CHECK_RESULT(gp_port_new(&port));
-   CHECK_RESULT(gp_port_set_info(port, newpi));
-   CHECK_RESULT(gp_port_usb_find_device(port, cab.usb_vendor, cab.usb_product));
-   CHECK_RESULT(gp_port_open(port));
-   camera->port = port;
-   return GP_OK;
+    CHECK_RESULT(gp_port_free(port));
+    CHECK_RESULT(gp_port_new(&port));
+    CHECK_RESULT(gp_port_set_info(port, newpi));
+    CHECK_RESULT(gp_port_usb_find_device(port, cab.usb_vendor, cab.usb_product));
+    CHECK_RESULT(gp_port_open(port));
+    camera->port = port;
+    return GP_OK;
 }
 
 static int
 ultrapocket_skip(GPPort *port, int npackets)
 {
-   int old_timeout = 200;
-   unsigned char retbuf[0x1000];
+    int old_timeout = 200;
+    unsigned char retbuf[0x1000];
 
-   gp_port_get_timeout(port, &old_timeout);
-   gp_port_set_timeout(port, 100);
-   for (; (npackets > 0) && gp_port_read(port, (char *)retbuf, 0x1000); npackets--);
-   gp_port_set_timeout(port, old_timeout);
-   return GP_OK;
+    gp_port_get_timeout(port, &old_timeout);
+    gp_port_set_timeout(port, 100);
+    for (; (npackets > 0) && gp_port_read(port, (char *)retbuf, 0x1000); npackets--);
+    gp_port_set_timeout(port, old_timeout);
+    return GP_OK;
 }
 
 static int
 ultrapocket_sync(Camera *camera)
 {
-   GPPort *port = camera->port;
-   unsigned char command[0x10];
+    GPPort *port = camera->port;
+    unsigned char command[0x10];
 
-   /* Who knows what's in all these packets? ... only SmAL! */
+    /* Who knows what's in all these packets? ... only SmAL! */
 
-   if (camera->pl->up_type == BADGE_CARDCAM) {
+    if (camera->pl->up_type == BADGE_CARDCAM) {
 #if 0
-       memset(command, 0, 16);
-       command[0] = 0x12;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 8);
-       /* -------------- */
+        memset(command, 0, 16);
+        command[0] = 0x12;
+        CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+        ultrapocket_skip(port, 8);
+        /* -------------- */
 #endif
-       memset(command, 0, 16);
-       command[0] = 0x31;
-       command[1] = 0x01;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 8);
-       /* -------------- */
-       memset(command, 0, 16);
-       command[0] = 0x12;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 8);
-       /* -------------- */
-       memset(command, 0, 16);
-       command[0] = 0x31;
-       command[1] = 0x01;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 8);
-   }
+        memset(command, 0, 16);
+        command[0] = 0x31;
+        command[1] = 0x01;
+        CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+        ultrapocket_skip(port, 8);
+        /* -------------- */
+        memset(command, 0, 16);
+        command[0] = 0x12;
+        CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+        ultrapocket_skip(port, 8);
+        /* -------------- */
+        memset(command, 0, 16);
+        command[0] = 0x31;
+        command[1] = 0x01;
+        CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+        ultrapocket_skip(port, 8);
+    }
 #if 0
-       /* -------------- */
-       memset(command, 0, 16);
-       command[0] = 0x30;
-       command[1] = 0x01;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 16);
-       /* -------------- */
-       memset(command, 0, 16);
-       command[0] = 0x29;
-       command[1] = 0x01;
-       CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
-       ultrapocket_skip(port, 8);
-       /* -------------- */
+    /* -------------- */
+    memset(command, 0, 16);
+    command[0] = 0x30;
+    command[1] = 0x01;
+    CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+    ultrapocket_skip(port, 16);
+    /* -------------- */
+    memset(command, 0, 16);
+    command[0] = 0x29;
+    command[1] = 0x01;
+    CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+    ultrapocket_skip(port, 8);
+    /* -------------- */
 #endif
-   return GP_OK;
+    return GP_OK;
 }
 
 /*
@@ -495,54 +495,54 @@ ultrapocket_sync(Camera *camera)
 static int getpicsoverview_generic(
     Camera *camera, GPContext *context,
     int *numpics, CameraList *list
-				   ) {
-   GPPort **pport = &camera->port;
-   GPPort *port = *pport;
-   unsigned char command[0x10];
-   unsigned char retbuf[0x1000];
-   int y;
-   int np = 0;
-   char fn[20];
-   int picid;
-   int reset_needed;
+) {
+    GPPort **pport = &camera->port;
+    GPPort *port = *pport;
+    unsigned char command[0x10];
+    unsigned char retbuf[0x1000];
+    int y;
+    int np = 0;
+    char fn[20];
+    int picid;
+    int reset_needed;
 
-   CHECK_RESULT(ultrapocket_sync(camera));
+    CHECK_RESULT(ultrapocket_sync(camera));
 
-   memset(command, 0, 16);
-   command[0] = 0x12;
+    memset(command, 0, 16);
+    command[0] = 0x12;
 
-   CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
+    CHECK_RESULT(ultrapocket_command(port, 1, command, 0x10));
 
-   CHECK_RESULT(ultrapocket_command(port, 0, retbuf, 0x1000));
-   np = *(unsigned char*)(retbuf + 0x104);
-   for (y=0;y<np;y++) {
-      picid = retbuf[0x106+y*2] + (retbuf[0x107+y*2] << 8);
-      sprintf(fn, "IMG%4.4d.PPM",picid);
-      gp_list_append(list, fn, NULL);
-   }
-   reset_needed = (*(retbuf + 2) & UP_FLAG_NEEDS_RESET);
-   ultrapocket_skip(port, 7);
+    CHECK_RESULT(ultrapocket_command(port, 0, retbuf, 0x1000));
+    np = *(unsigned char*)(retbuf + 0x104);
+    for (y=0; y<np; y++) {
+        picid = retbuf[0x106+y*2] + (retbuf[0x107+y*2] << 8);
+        sprintf(fn, "IMG%4.4d.PPM",picid);
+        gp_list_append(list, fn, NULL);
+    }
+    reset_needed = (*(retbuf + 2) & UP_FLAG_NEEDS_RESET);
+    ultrapocket_skip(port, 7);
 
 #if 0
-   CHECK_RESULT(ultrapocket_sync(camera));
+    CHECK_RESULT(ultrapocket_sync(camera));
 #endif
-   if (reset_needed) {
-      CHECK_RESULT(ultrapocket_reset(camera));
-      port = *pport;
-   }
+    if (reset_needed) {
+        CHECK_RESULT(ultrapocket_reset(camera));
+        port = *pport;
+    }
 #if 0
-   CHECK_RESULT(ultrapocket_sync(camera));
+    CHECK_RESULT(ultrapocket_sync(camera));
 #endif
 
-   *numpics = np;
+    *numpics = np;
 
-   return GP_OK;
+    return GP_OK;
 }
 
 static int getpicsoverview_logitech_pd(
-				       Camera *camera, GPContext *context,
-				       int *numpics, CameraList *list
-				       ) {
+    Camera *camera, GPContext *context,
+    int *numpics, CameraList *list
+) {
     GPPort *port = camera->port;
     unsigned char command[0x10];
     unsigned char retbuf[0x8000];
@@ -557,14 +557,14 @@ static int getpicsoverview_logitech_pd(
 
     CHECK_RESULT(ultrapocket_command(port, 0, retbuf, 0x8000));
     np = *(unsigned char*)(retbuf + 0x105);
-    for (y=0;y<np;y++) {
-	memset(fn, 0, 20);
-	memcpy(fn, retbuf+0x106+(y*0x10),11);
-	/* bizzarely, the logitech camera returns a fname with a space
-	 * in it, but requires a '.'. Go figure, eh?
-	 */
-	fn[7] = '.';
-	gp_list_append(list, fn, NULL);
+    for (y=0; y<np; y++) {
+        memset(fn, 0, 20);
+        memcpy(fn, retbuf+0x106+(y*0x10),11);
+        /* bizzarely, the logitech camera returns a fname with a space
+         * in it, but requires a '.'. Go figure, eh?
+         */
+        fn[7] = '.';
+        gp_list_append(list, fn, NULL);
     }
     CHECK_RESULT(ultrapocket_command(port, 0, retbuf, 0x8000));
 
@@ -593,18 +593,18 @@ ultrapocket_getpicsoverview(
     int *numpics, CameraList *list
 ) {
     switch (camera->pl->up_type) {
-     case BADGE_CARDCAM:
-     case BADGE_FLATFOTO:
-     case BADGE_GENERIC:
-     case BADGE_ULTRAPOCKET:
-     case BADGE_AXIA:
-	return getpicsoverview_generic(camera, context, numpics, list);
-	break;
-     case BADGE_LOGITECH_PD:
-	return getpicsoverview_logitech_pd(camera, context, numpics, list);
-	break;
-     default:
-	break;
+    case BADGE_CARDCAM:
+    case BADGE_FLATFOTO:
+    case BADGE_GENERIC:
+    case BADGE_ULTRAPOCKET:
+    case BADGE_AXIA:
+        return getpicsoverview_generic(camera, context, numpics, list);
+        break;
+    case BADGE_LOGITECH_PD:
+        return getpicsoverview_logitech_pd(camera, context, numpics, list);
+        break;
+    default:
+        break;
     }
     return GP_ERROR;
 }
@@ -643,18 +643,18 @@ ultrapocket_deletefile(Camera *camera, const char *filename)
     GPPort *port = camera->port;
 
     switch (camera->pl->up_type) {
-     case BADGE_CARDCAM:
-     case BADGE_FLATFOTO:
-     case BADGE_GENERIC:
-     case BADGE_ULTRAPOCKET:
-     case BADGE_AXIA:
-	return deletefile_generic(camera, filename);
-	break;
-     case BADGE_LOGITECH_PD:
-	return deletefile_logitech_pd(port, filename);
-	break;
-     default:
-	break;
+    case BADGE_CARDCAM:
+    case BADGE_FLATFOTO:
+    case BADGE_GENERIC:
+    case BADGE_ULTRAPOCKET:
+    case BADGE_AXIA:
+        return deletefile_generic(camera, filename);
+        break;
+    case BADGE_LOGITECH_PD:
+        return deletefile_logitech_pd(port, filename);
+        break;
+    default:
+        break;
     }
     return GP_ERROR;
 
@@ -703,8 +703,8 @@ int deleteall_generic(Camera *camera)
     ultrapocket_skip(camera->port, 7);
 
     if (reset_needed) {
-	CHECK_RESULT(ultrapocket_reset(camera));
-	port = camera->port;
+        CHECK_RESULT(ultrapocket_reset(camera));
+        port = camera->port;
     }
 
     memset(command, 0, 0x10);
@@ -722,18 +722,18 @@ ultrapocket_deleteall(Camera *camera)
     GPPort **pport = &camera->port;
 
     switch (camera->pl->up_type) {
-     case BADGE_CARDCAM:
-     case BADGE_FLATFOTO:
-     case BADGE_GENERIC:
-     case BADGE_ULTRAPOCKET:
-     case BADGE_AXIA:
-	return deleteall_generic(camera);
-	break;
-     case BADGE_LOGITECH_PD:
-	return deleteall_logitech_pd(pport);
-	break;
-     default:
-	break;
+    case BADGE_CARDCAM:
+    case BADGE_FLATFOTO:
+    case BADGE_GENERIC:
+    case BADGE_ULTRAPOCKET:
+    case BADGE_AXIA:
+        return deleteall_generic(camera);
+        break;
+    case BADGE_LOGITECH_PD:
+        return deleteall_logitech_pd(pport);
+        break;
+    default:
+        break;
     }
     return GP_ERROR;
 }

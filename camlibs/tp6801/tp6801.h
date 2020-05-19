@@ -28,57 +28,57 @@
 
 #define GP_MODULE "tp6801"
 
-#define TP6801_PAT_MAGIC		"erutangiS metsyS eliF egamI 1086PT xneT"
-#define TP6801_PAT_MAGIC_OFFSET		0x1e80
-#define TP6801_PAT_OFFSET		0x1e00
-#define TP6801_PAT_PAGE			(TP6801_PAT_OFFSET / TP6801_PAGE_SIZE)
-#define TP6801_PAT_SIZE			256 /* Including the magic */
-#define TP6801_PAT_ENTRY_PRE_ERASED	0xff
+#define TP6801_PAT_MAGIC        "erutangiS metsyS eliF egamI 1086PT xneT"
+#define TP6801_PAT_MAGIC_OFFSET     0x1e80
+#define TP6801_PAT_OFFSET       0x1e00
+#define TP6801_PAT_PAGE         (TP6801_PAT_OFFSET / TP6801_PAGE_SIZE)
+#define TP6801_PAT_SIZE         256 /* Including the magic */
+#define TP6801_PAT_ENTRY_PRE_ERASED 0xff
 /* Windows software uses 0xfe to mark as deleted, the frame itself 0x00 */
-#define TP6801_PAT_ENTRY_DELETED_FRAME	0x00
-#define TP6801_PAT_ENTRY_DELETED_WIN	0xfe
-#define TP6801_PAT_ENTRY_DELETED(x)	((x) == 0xfe || (x) == 0x00)
-#define TP6801_PICTURE_OFFSET(i, size)	(0x10000 + (i) * (size))
-#define TP6801_READ			0xC1
-#define TP6801_ERASE_BLOCK		0xC6
-#define TP6801_SET_TIME			0xCA
-#define TP6801_PROGRAM_PAGE		0xCB
-#define TP6801_BLOCK_SIZE		65536
-#define TP6801_PAGE_SIZE		256
+#define TP6801_PAT_ENTRY_DELETED_FRAME  0x00
+#define TP6801_PAT_ENTRY_DELETED_WIN    0xfe
+#define TP6801_PAT_ENTRY_DELETED(x) ((x) == 0xfe || (x) == 0x00)
+#define TP6801_PICTURE_OFFSET(i, size)  (0x10000 + (i) * (size))
+#define TP6801_READ         0xC1
+#define TP6801_ERASE_BLOCK      0xC6
+#define TP6801_SET_TIME         0xCA
+#define TP6801_PROGRAM_PAGE     0xCB
+#define TP6801_BLOCK_SIZE       65536
+#define TP6801_PAGE_SIZE        256
 /* USB bulk transfers are 32k max */
-#define TP6801_MAX_READ			(32768 / TP6801_PAGE_SIZE)
-#define TP6801_MAX_MEM_SIZE		4194304
-#define TP6801_CONST_DATA_SIZE		393216
-#define TP6801_SCSI_MODEL_OFFSET	32
-#define TP6801_SCSI_MODEL_LEN		32
-#define TP6801_ISO_OFFSET		256
+#define TP6801_MAX_READ         (32768 / TP6801_PAGE_SIZE)
+#define TP6801_MAX_MEM_SIZE     4194304
+#define TP6801_CONST_DATA_SIZE      393216
+#define TP6801_SCSI_MODEL_OFFSET    32
+#define TP6801_SCSI_MODEL_LEN       32
+#define TP6801_ISO_OFFSET       256
 /* page_state flags */
-#define TP6801_PAGE_READ		0x01
-#define TP6801_PAGE_DIRTY		0x02
-#define TP6801_PAGE_CONTAINS_DATA	0x04
-#define TP6801_PAGE_NEEDS_ERASE		0x08
+#define TP6801_PAGE_READ        0x01
+#define TP6801_PAGE_DIRTY       0x02
+#define TP6801_PAGE_CONTAINS_DATA   0x04
+#define TP6801_PAGE_NEEDS_ERASE     0x08
 
 #define CHECK(result) {int r=(result); if (r<0) return (r);}
 
 struct _CameraPrivateLibrary {
-	FILE *mem_dump;
-	char *mem;
-	unsigned char *pat;
-	char page_state[TP6801_MAX_MEM_SIZE / TP6801_PAGE_SIZE];
-	unsigned char last_cmd;
-	int picture_count;
-	/* LCD display attributes */
-	int width;
-	int height;
-	/* EEPROM attributes */
-	int mem_size;
-	/* Driver configuration settings */
-	int syncdatetime;
+    FILE *mem_dump;
+    char *mem;
+    unsigned char *pat;
+    char page_state[TP6801_MAX_MEM_SIZE / TP6801_PAGE_SIZE];
+    unsigned char last_cmd;
+    int picture_count;
+    /* LCD display attributes */
+    int width;
+    int height;
+    /* EEPROM attributes */
+    int mem_size;
+    /* Driver configuration settings */
+    int syncdatetime;
 };
 
 struct tp6801_devinfo {
-	unsigned short vendor_id;
-	unsigned short product_id;
+    unsigned short vendor_id;
+    unsigned short product_id;
 };
 
 /* functions in tp6801.c */
