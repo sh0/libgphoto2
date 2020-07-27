@@ -22,8 +22,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_LIBRARY_H__
-#define __GPHOTO2_LIBRARY_H__
+#ifndef GPHOTO2_LIBRARY_H
+#define GPHOTO2_LIBRARY_H
 
 #include <gphoto2/gphoto2-abilities-list.h>
 #include <gphoto2/gphoto2-camera.h>
@@ -33,48 +33,50 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \brief Returns a unique id for the camera driver.
- *
- * \param id a #CameraText
- * \return a gphoto2 error code
- *
- **/
-typedef int (* CameraLibraryIdFunc)        (CameraText *id);
-
-/**
  * \brief Adds the abilities of the supported models to the supplied list.
  *
- * \param list a #CameraAbilitiesList
- * \return a gphoto2 error code
- *
- **/
-typedef int (* CameraLibraryAbilitiesFunc) (CameraAbilitiesList *list);
+ * \param list Abilities list.
+ * \return Error code.
+ */
+typedef int (*CameraLibraryAbilitiesFunc)(CameraAbilitiesList* list);
 
 /**
  * \brief Initializes the camera.
  *
- * \param camera a #Camera
- * \param context a #GPContext
- * \return a gphoto2 error code
+ * \param camera Camera context.
+ * \param context gPhoto2 context.
+ * \return Error code.
  *
  * The camera driver will establish a first connection
  * to the camera and configure the camera variable (i.e. using
  * #gp_filesystem_set_list_funcs or #gp_port_get_settings).
- *
- **/
-typedef int (* CameraLibraryInitFunc)      (Camera *camera, GPContext *context);
-
-/*
- * If you want to write a camera library, you need to implement
- * the following three functions. Everything else should be declared
- * as static.
  */
-int camera_id		(CameraText *id);
-int camera_abilities 	(CameraAbilitiesList *list);
-int camera_init 	(Camera *camera, GPContext *context);
+typedef int (*CameraLibraryInitFunc)(Camera* camera, GPContext* context);
+
+/**
+ * \brief Camera library descriptor.
+ *
+ * If you want to write a camera library then you should fill the following
+ * structure with callbacks to library functions.
+ */
+struct _CameraLibrary {
+    const char* id;
+    CameraLibraryAbilitiesFunc abilities;
+    CameraLibraryInitFunc init;
+};
+
+/**
+ * \brief Get a null-terminated list of built-in camera libraries.
+ *
+ * Applications should not use this function directly, but rely on
+ * gp_abilities_* and gp_camera_* functions.
+ *
+ * \return Null-terminated list of camera library descriptor pointers.
+ */
+CameraLibrary** gp_camera_libraries_list();
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __GPHOTO2_LIBRARY_H__ */
+#endif /* GPHOTO2_LIBRARY_H */

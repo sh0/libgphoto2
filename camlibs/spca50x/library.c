@@ -24,7 +24,7 @@
 /****************************************************************/
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 
 #include <stdlib.h>
@@ -130,14 +130,7 @@ models[] =
 	{NULL, 0, 0, 0, 0}
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "spca50x");
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int x = 0;
@@ -539,7 +532,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	int ret = 0;
@@ -655,3 +648,9 @@ cam_has_card (CameraPrivateLibrary *pl)
 {
 	return pl->storage_media_mask & SPCA50X_CARD;
 }
+
+CameraLibrary camera_spca50x_library = {
+    .id = "spca50x",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

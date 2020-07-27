@@ -71,8 +71,8 @@
  * we use floating point arithmetic.
  */
 
-#include "config.h"
-#include <_stdint.h>
+#include <gphoto2-config.h>
+#include <stdint.h>
 #include "tinyjpeg-internal.h"
 
 #define FAST_FLOAT float

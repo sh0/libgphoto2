@@ -38,7 +38,7 @@ struct tf_datetime
 };
 #pragma pack()
 
-time_t tfdt_to_time(struct tf_datetime *dt);
-void time_to_tfdt(time_t t, struct tf_datetime *dt);
+time_t topfield_tfdt_to_time(struct tf_datetime *dt);
+void topfield_time_to_tfdt(time_t t, struct tf_datetime *dt);
 
 #endif /* _MJD_H */

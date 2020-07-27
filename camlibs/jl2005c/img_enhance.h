@@ -22,14 +22,10 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __IMG_ENHANCE_H__
-#define __IMG_ENHANCE_H__
+#ifndef JL2005C_IMG_ENHANCE_H
+#define JL2005C_IMG_ENHANCE_H
 
-
-int
-histogram(unsigned char *data, unsigned int size, int *htable_r,
-						int *htable_g, int *htable_b);
-int
-white_balance(unsigned char *data, unsigned int size, float saturation);
+int jl2005c_histogram(unsigned char *data, unsigned int size, int *htable_r, int *htable_g, int *htable_b);
+int jl2005c_white_balance(unsigned char *data, unsigned int size, float saturation);
 
 #endif

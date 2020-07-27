@@ -66,9 +66,9 @@ typedef struct {
     const char *extension;
 } user_file_format_t;
 
-extern user_file_format_t file_formats[3];
+extern user_file_format_t pslr_file_formats[3];
 
-user_file_format_t *get_file_format_t( user_file_format uff );
+user_file_format_t *pslr_get_file_format_t( user_file_format uff );
 
 // OFF-AUTO: Off-Auto-Aperture
 typedef enum {
@@ -116,7 +116,7 @@ typedef struct {
 
 typedef void (*pslr_progress_callback_t)(uint32_t current, uint32_t total);
 
-void sleep_sec(double sec);
+void pslr_sleep_sec(double sec);
 
 pslr_handle_t pslr_init(char *model, char *device);
 int pslr_connect(pslr_handle_t h);
@@ -133,8 +133,8 @@ int pslr_get_settings(pslr_handle_t h, pslr_settings *ps);
 int pslr_get_settings_json(pslr_handle_t h, pslr_settings *ps);
 int pslr_get_settings_buffer(pslr_handle_t h, uint8_t *st_buf);
 
-char *collect_status_info( pslr_handle_t h, pslr_status status );
-char *collect_settings_info( pslr_handle_t h, pslr_settings settings );
+char *pslr_collect_status_info( pslr_handle_t h, pslr_status status );
+char *pslr_collect_settings_info( pslr_handle_t h, pslr_settings settings );
 
 int pslr_get_buffer(pslr_handle_t h, int bufno, pslr_buffer_type type, int resolution,
                     uint8_t **pdata, uint32_t *pdatalen);
@@ -169,7 +169,7 @@ int pslr_set_jpeg_hue(pslr_handle_t h, int32_t hue);
 int pslr_set_image_format(pslr_handle_t h, pslr_image_format_t format);
 int pslr_set_raw_format(pslr_handle_t h, pslr_raw_format_t format);
 int pslr_set_user_file_format(pslr_handle_t h, user_file_format uff);
-user_file_format get_user_file_format( pslr_status *st );
+user_file_format pslr_get_user_file_format( pslr_status *st );
 
 int pslr_delete_buffer(pslr_handle_t h, int bufno);
 
@@ -224,14 +224,14 @@ int pslr_write_setting_by_name(pslr_handle_t *h, char *name, uint32_t value);
 bool pslr_has_setting_by_name(pslr_handle_t *h, char *name);
 int pslr_read_settings(pslr_handle_t *h);
 
-pslr_gui_exposure_mode_t exposure_mode_conversion( pslr_exposure_mode_t exp );
-char *format_rational( pslr_rational_t rational, char * fmt );
+pslr_gui_exposure_mode_t pslr_exposure_mode_conversion( pslr_exposure_mode_t exp );
+char *pslr_format_rational( pslr_rational_t rational, char * fmt );
 
 int pslr_test( pslr_handle_t h, bool cmd9_wrap, int subcommand, int argnum,  int arg1, int arg2, int arg3, int arg4);
 
-char *copyright(void);
+char *pslr_copyright(void);
 
-void write_debug( const char* message, ... );
+void pslr_write_debug( const char* message, ... );
 
-int debug_onoff(ipslr_handle_t *p, char debug_mode);
+int pslr_debug_onoff(ipslr_handle_t *p, char debug_mode);
 #endif

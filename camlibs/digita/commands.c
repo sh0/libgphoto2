@@ -21,19 +21,16 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
 #include "digita.h"
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #define GP_MODULE "digita"
 

@@ -25,7 +25,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -100,15 +100,7 @@ static unsigned short from_camera(unsigned short a)
 	return ret;
 }
 
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "agfa_cl20");
-
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -655,7 +647,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_file_func = get_file_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -708,3 +700,9 @@ camera_init (Camera *camera, GPContext *context)
 	else
 		return (GP_ERROR_MODEL_NOT_FOUND);
 }
+
+CameraLibrary camera_agfa_cl20_library = {
+    .id = "agfa_cl20",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

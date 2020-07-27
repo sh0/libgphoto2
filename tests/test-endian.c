@@ -18,13 +18,13 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include <gphoto2-endian.h>
+#include <gphoto2/gphoto2-endian.h>
 #include <gphoto2/gphoto2-filesys.h>
 #include <gphoto2/gphoto2-result.h>
 #include <gphoto2/gphoto2-port-log.h>

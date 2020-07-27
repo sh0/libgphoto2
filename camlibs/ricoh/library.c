@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,7 +81,7 @@ struct _CameraPrivateLibrary {
 	RicohModel model;
 };
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -221,14 +221,6 @@ camera_about (Camera *camera, CameraText *about, GPContext *context)
 		);
 
 	return GP_OK;
-}
-
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "Ricoh");
-
-	return (GP_OK);
 }
 
 static int
@@ -529,7 +521,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_info_func = get_info_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -604,3 +596,8 @@ camera_init (Camera *camera, GPContext *context)
 	return (GP_OK);
 }
 
+CameraLibrary camera_ricoh_library = {
+    .id = "Ricoh",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

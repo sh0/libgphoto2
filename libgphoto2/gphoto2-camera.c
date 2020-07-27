@@ -24,15 +24,13 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <gphoto2/gphoto2-camera.h>
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-#include <ltdl.h>
 
 #include <gphoto2/gphoto2-result.h>
 #include <gphoto2/gphoto2-library.h>
@@ -212,7 +210,7 @@
 	if ((c)->pc->used)						\
 		return (GP_ERROR_CAMERA_BUSY);				\
 	(c)->pc->used++;						\
-	if (!(c)->pc->lh)						\
+	if (!(c)->pc->initialized)						\
 		CR((c), gp_camera_init (c, ctx), ctx);			\
 }
 
@@ -223,9 +221,6 @@ struct _CameraPrivateCore {
 
 	/* The abilities of this camera */
 	CameraAbilities a;
-
-	/* Library handle */
-	lt_dlhandle lh;
 
 	char error[2048];
 
@@ -276,6 +271,7 @@ gp_camera_exit (Camera *camera, GPContext *context)
 		camera->pc->exit_requested = 1;
 		return (GP_OK);
 	}
+	camera->pc->initialized = FALSE;
 
 	/* Remove every timeout that is still pending */
 	while (camera->pc->timeout_ids_len)
@@ -291,14 +287,6 @@ gp_camera_exit (Camera *camera, GPContext *context)
 	}
 	gp_port_close (camera->port);
 	memset (camera->functions, 0, sizeof (CameraFunctions));
-
-	if (camera->pc->lh) {
-#if !defined(VALGRIND)
-		lt_dlclose (camera->pc->lh);
-		lt_dlexit ();
-#endif
-		camera->pc->lh = NULL;
-	}
 
 	gp_filesystem_reset (camera->fs);
 
@@ -375,7 +363,7 @@ gp_camera_set_abilities (Camera *camera, CameraAbilities abilities)
 	 * If the camera is currently initialized, terminate that connection.
 	 * We don't care if we are successful or not.
 	 */
-	if (camera->pc->lh)
+	if (camera->pc->initialized)
 		gp_camera_exit (camera, NULL);
 
 	memcpy (&camera->pc->a, &abilities, sizeof (CameraAbilities));
@@ -424,7 +412,7 @@ gp_camera_set_port_info (Camera *camera, GPPortInfo info)
 	 * If the camera is currently initialized, terminate that connection.
 	 * We don't care if we are successful or not.
 	 */
-	if (camera->pc->lh)
+	if (camera->pc->initialized)
 		gp_camera_exit (camera, NULL);
 
 	gp_port_info_get_name (info, &name);
@@ -468,7 +456,7 @@ gp_camera_set_port_speed (Camera *camera, int speed)
 	 * If the camera is currently initialized, terminate that connection.
 	 * We don't care if we are successful or not.
 	 */
-	if (camera->pc->lh)
+	if (camera->pc->initialized)
 		gp_camera_exit (camera, NULL);
 
 	CR (camera, gp_port_get_settings (camera->port, &settings), NULL);
@@ -569,7 +557,7 @@ gp_camera_free (Camera *camera)
 	 * If the camera is currently initialized, close the connection.
 	 * We don't care if we are successful or not.
 	 */
-	if (camera->port && camera->pc && camera->pc->lh)
+	if (camera->port && camera->pc && camera->pc->initialized)
 		gp_camera_exit (camera, NULL);
 
 	/* We don't care if anything goes wrong */
@@ -684,7 +672,6 @@ gp_camera_init (Camera *camera, GPContext *context)
 {
 	CameraAbilities a;
 	const char *model, *port;
-	CameraLibraryInitFunc init_func;
 	int result;
 
 	GP_LOG_D ("Initializing camera...");
@@ -791,47 +778,29 @@ gp_camera_init (Camera *camera, GPContext *context)
 	}
 
 	/* Load the library. */
-	GP_LOG_D ("Loading '%s'...", camera->pc->a.library);
-	lt_dlinit ();
-	camera->pc->lh = lt_dlopenext (camera->pc->a.library);
-	if (!camera->pc->lh) {
-		gp_context_error (context, _("Could not load required "
-			"camera driver '%s' (%s)."), camera->pc->a.library,
-			lt_dlerror ());
-		lt_dlexit ();
-		return (GP_ERROR_LIBRARY);
-	}
+	GP_LOG_D("Loading '%s'...", camera->pc->a.library->id);
+	camera->pc->initialized = TRUE;
 
 	/* Initialize the camera */
-	init_func = lt_dlsym (camera->pc->lh, "camera_init");
-	if (!init_func) {
-		lt_dlclose (camera->pc->lh);
-		lt_dlexit ();
-		camera->pc->lh = NULL;
-		gp_context_error (context, _("Camera driver '%s' is "
-			"missing the 'camera_init' function."),
-			camera->pc->a.library);
-		return (GP_ERROR_LIBRARY);
+	if (!camera->pc->a.library->init) {
+		gp_context_error(context, _("Camera driver '%s' is missing the 'camera_init' function."), camera->pc->a.library->id);
+		return GP_ERROR_LIBRARY;
 	}
 
-	if (strcasecmp (camera->pc->a.model, "Directory Browse")) {
-		result = gp_port_open (camera->port);
+	if (strcasecmp(camera->pc->a.model, "Directory Browse")) {
+		result = gp_port_open(camera->port);
 		if (result < 0) {
-			lt_dlclose (camera->pc->lh);
-			lt_dlexit ();
-			camera->pc->lh = NULL;
-			return (result);
+			camera->pc->initialized = FALSE;
+			return result;
 		}
 	}
 
-	result = init_func (camera, context);
+	result = camera->pc->a.library->init(camera, context);
 	if (result < 0) {
-		gp_port_close (camera->port);
-		lt_dlclose (camera->pc->lh);
-		lt_dlexit ();
-		camera->pc->lh = NULL;
-		memset (camera->functions, 0, sizeof (CameraFunctions));
-		return (result);
+		gp_port_close(camera->port);
+		camera->pc->initialized = FALSE;
+		memset(camera->functions, 0, sizeof (CameraFunctions));
+		return result;
 	}
 
 	/* We don't care if that goes wrong */

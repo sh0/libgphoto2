@@ -21,11 +21,11 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GAMMA_H__
-#define __GAMMA_H__
+#ifndef GPHOTO2_GAMMA_H
+#define GPHOTO2_GAMMA_H
 
 int gp_gamma_fill_table     (unsigned char *table, double g);
 int gp_gamma_correct_single (unsigned char *table, unsigned char *data,
 			     unsigned int data_size);
 
-#endif /* __GAMMA_H__ */
+#endif /* GPHOTO2_GAMMA_H */

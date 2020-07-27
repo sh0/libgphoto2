@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -97,15 +97,7 @@ static const struct {
 	{NULL,0,0,0}
 };
 
-int
-camera_id(CameraText *id)
-{
-	strncpy (id->text, "SQ905C chipset camera",32);
-	return GP_OK;
-}
-
-
-int
+static int
 camera_abilities(CameraAbilitiesList *list)
 {
 	int i;
@@ -312,7 +304,7 @@ get_file_func(CameraFilesystem *fs, const char *folder, const char *filename,
 		gp_gamma_fill_table (gtable, .65);
 		gp_gamma_correct_single(gtable,ptr,w*h);
 	} else
-		white_balance (ptr, w*h, 1.1);
+		digi_white_balance (ptr, w*h, 1.1);
 	gp_file_set_mime_type (file, GP_MIME_PPM);
 	gp_file_set_data_and_size (file, (char *)ppm, size);
 	/* Reset camera when done, for more graceful exit. */
@@ -399,7 +391,7 @@ camera_capture_preview(Camera *camera, CameraFile *file, GPContext *context)
 		gp_gamma_fill_table (gtable, .65);
 		gp_gamma_correct_single(gtable,ptr,w*h);
 	} else
-		white_balance(ptr, w * h, 1.1);
+		digi_white_balance(ptr, w * h, 1.1);
 	gp_file_set_mime_type(file, GP_MIME_PPM);
 	gp_file_set_data_and_size(file, (char *)ppm, size);
 	digi_reset(camera->port);
@@ -428,7 +420,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init(Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -478,3 +470,9 @@ camera_init(Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_digigr8_library = {
+    .id = "SQ905C chipset camera",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -57,14 +57,7 @@ static const struct camera_to_usb {
 
 };
 
-int camera_id (CameraText *id)
-{
-	strcpy(id->text, "STV0674");
-
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
     CameraAbilities a;
     unsigned int i;
@@ -223,7 +216,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int camera_init (Camera *camera, GPContext *context)
+static int camera_init (Camera *camera, GPContext *context)
 {
     GPPortSettings settings;
     int ret;
@@ -260,3 +253,9 @@ int camera_init (Camera *camera, GPContext *context)
     /* test camera */
     return stv0674_ping(camera->port);
 }
+
+CameraLibrary camera_stv0674_library = {
+    .id = "STV0674",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

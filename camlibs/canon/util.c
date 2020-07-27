@@ -12,7 +12,7 @@
  *
  ****************************************************************************/
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -38,7 +38,7 @@
  *
  */
 int
-is_thumbnail (const char *name)
+canon_is_thumbnail (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -63,7 +63,7 @@ is_thumbnail (const char *name)
  *
  */
 int
-is_audio (const char *name)
+canon_is_audio (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -88,7 +88,7 @@ is_audio (const char *name)
  *
  */
 int
-is_image (const char *name)
+canon_is_image (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -115,7 +115,7 @@ is_image (const char *name)
  *
  */
 int
-is_jpeg (const char *name)
+canon_is_jpeg (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -140,7 +140,7 @@ is_jpeg (const char *name)
  *
  */
 int
-is_crw (const char *name)
+canon_is_crw (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -165,7 +165,7 @@ is_crw (const char *name)
  *
  */
 int
-is_cr2 (const char *name)
+canon_is_cr2 (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -191,7 +191,7 @@ is_cr2 (const char *name)
  *
  */
 int
-is_movie (const char *name)
+canon_is_movie (const char *name)
 {
 	const char *pos;
 	int res = 0;
@@ -214,7 +214,7 @@ is_movie (const char *name)
  */
 
 const char *
-filename2mimetype (const char *filename)
+canon_filename2mimetype (const char *filename)
 {
 	const char *pos = strchr (filename, '.');
 
@@ -235,7 +235,7 @@ filename2mimetype (const char *filename)
 	return GP_MIME_UNKNOWN;
 }
 
-void dump_hex ( FILE *fp, void *buffer, int length ) {
+void canon_dump_hex ( FILE *fp, void *buffer, int length ) {
 	unsigned char *data = (unsigned char *)buffer;
 	int i, j, full_lines, remainder;
 	char output_line[17];

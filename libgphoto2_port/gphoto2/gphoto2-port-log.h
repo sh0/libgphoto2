@@ -18,8 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_PORT_LOG_H__
-#define __GPHOTO2_PORT_LOG_H__
+#ifndef GPHOTO2_PORT_LOG_H
+#define GPHOTO2_PORT_LOG_H
 
 #include <stdarg.h>
 
@@ -237,4 +237,4 @@ __attribute__((__format__(printf,4,5)))
 
 #endif /* _GPHOTO2_INTERNAL_CODE */
 
-#endif /* __GPHOTO2_PORT_LOG_H__ */
+#endif /* GPHOTO2_PORT_LOG_H */

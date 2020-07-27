@@ -56,7 +56,7 @@ ARGV0 " prints the camera list in the specified format FORMAT on stdout.\n" \
 /* for detailed version message */
 #include <gphoto2/gphoto2-version.h>
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #ifndef TRUE
 #define TRUE  (0==0)
@@ -146,6 +146,53 @@ typedef int (* end_func_t)    (const func_params_t *params,
 		} \
 	} while (0)
 
+/* enum CameraOperation */
+const StringFlagItem gpi_camera_operation_map[] = {
+    { "none",            GP_OPERATION_NONE },
+    { "capture_image",   GP_OPERATION_CAPTURE_IMAGE },
+    { "capture_video",   GP_OPERATION_CAPTURE_VIDEO },
+    { "capture_audio",   GP_OPERATION_CAPTURE_AUDIO },
+    { "capture_preview", GP_OPERATION_CAPTURE_PREVIEW },
+    { "config",          GP_OPERATION_CONFIG },
+    { NULL, 0 },
+};
+
+/* enum CameraFileOperation */
+const StringFlagItem gpi_file_operation_map[] = {
+    { "none",    GP_FILE_OPERATION_NONE },
+    { "delete",  GP_FILE_OPERATION_DELETE },
+    { "preview", GP_FILE_OPERATION_PREVIEW },
+    { "raw",     GP_FILE_OPERATION_RAW },
+    { "audio",   GP_FILE_OPERATION_AUDIO },
+    { "exif",    GP_FILE_OPERATION_EXIF },
+    { NULL, 0 },
+};
+
+/* enum CameraFolderOperation */
+const StringFlagItem gpi_folder_operation_map[] = {
+    { "none",       GP_FOLDER_OPERATION_NONE },
+    { "delete_all", GP_FOLDER_OPERATION_DELETE_ALL },
+    { "put_file",   GP_FOLDER_OPERATION_PUT_FILE },
+    { "make_dir",   GP_FOLDER_OPERATION_MAKE_DIR },
+    { "remove_dir", GP_FOLDER_OPERATION_REMOVE_DIR },
+    { NULL, 0 },
+};
+
+/* enum GphotoDeviceType */
+const StringFlagItem gpi_gphoto_device_type_map[] = {
+    { "still_camera", GP_DEVICE_STILL_CAMERA },
+    { "audio_player", GP_DEVICE_AUDIO_PLAYER },
+    { NULL, 0 },
+};
+
+/* enum CameraDriverStatus */
+const StringFlagItem gpi_camera_driver_status_map[] = {
+    { "production",   GP_DRIVER_STATUS_PRODUCTION },
+    { "testing",      GP_DRIVER_STATUS_TESTING },
+    { "experimental", GP_DRIVER_STATUS_EXPERIMENTAL },
+    { "deprecated",   GP_DRIVER_STATUS_DEPRECATED },
+    { NULL, 0 },
+};
 
 /* print_version_comment
  * Print comment to output containing information on library versions

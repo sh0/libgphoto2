@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <gphoto2/gphoto2-library.h>
 
@@ -52,14 +52,6 @@ static int
 get_info_func (CameraFilesystem *fs, const char *folder, const char *file,
 	       CameraFileInfo *info, void *data, GPContext *context);
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "Casio QV");
-
-	return (GP_OK);
-}
-
 static struct {
 	const char       *model;
 	int               public;
@@ -76,7 +68,7 @@ static struct {
 	{NULL, 0, 0}
 };
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -326,10 +318,10 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = delete_file_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
-	gp_port_settings settings;
+	GPPortSettings settings;
 	int selected_speed;
 
         /* First, set up all the function pointers */
@@ -367,3 +359,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return (GP_OK);
 }
+
+CameraLibrary camera_casio_library = {
+    .id = "Casio QV",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

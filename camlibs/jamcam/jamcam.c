@@ -23,7 +23,7 @@
 /* Boston, MA  02110-1301  USA					*/
 /****************************************************************/
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -65,17 +65,7 @@ static const struct {
 	{ NULL, 0, 0 }
 };
 
-
-int camera_id (CameraText *id)
-{
-	/* GP_DEBUG ("* camera_id"); */
-
-	strcpy (id->text, "jamcam");
-
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
 	int x = 0;
 	char *ptr;
@@ -308,7 +298,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_info_func = get_info_func,
 };
 
-int camera_init (Camera *camera, GPContext *context)
+static int camera_init (Camera *camera, GPContext *context)
 {
 	int count;
 	GPPortSettings settings;
@@ -351,3 +341,8 @@ int camera_init (Camera *camera, GPContext *context)
 	return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
 
+CameraLibrary camera_jamcam_library = {
+    .id = "jamcam",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

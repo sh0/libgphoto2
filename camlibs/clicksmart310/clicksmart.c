@@ -20,7 +20,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -220,7 +220,7 @@ clicksmart_reset (GPPort *port)
 
 /* create_jpeg_from_data adapted from camlibs/spca50x */
 
-int create_jpeg_from_data (unsigned char * dst, unsigned char * src,
+int clicksmart_create_jpeg_from_data (unsigned char * dst, unsigned char * src,
 			int qIndex, int w, int h, unsigned char format,
 			int o_size, int *size,
 		        int omit_huffman_table, int omit_escape)

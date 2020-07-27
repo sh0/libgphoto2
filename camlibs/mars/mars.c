@@ -22,7 +22,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -33,7 +33,7 @@
 
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "mars.h"
 
@@ -120,8 +120,8 @@ mars_get_pic_data_size (Info *info, int n)
 	return (info[8*n+6]*0x100 + info[8*n+5])*0x100 + info[8*n+4];
 }
 
-static int
-set_usb_in_endpoint	(Camera *camera, int inep)
+static int 
+mars_set_usb_in_endpoint	(Camera *camera, int inep)
 {
 	GPPortSettings settings;
 	gp_port_get_settings ( camera ->port, &settings);
@@ -157,9 +157,9 @@ mars_read_picture_data (Camera *camera, Info *info, GPPort *port,
 	/*Initialization routine for download. */
 	mars_routine (info, port, GET_DATA, n);
 	/*Data transfer begins*/
-	set_usb_in_endpoint (camera, 0x82);
+	mars_set_usb_in_endpoint (camera, 0x82);
 	mars_read_data (port, data, size);
-	set_usb_in_endpoint (camera, 0x83);
+	mars_set_usb_in_endpoint (camera, 0x83);
     	return GP_OK;
 }
 
@@ -385,7 +385,7 @@ mars_routine (Info *info, GPPort *port, char param, int n)
  */
 
 int
-histogram (unsigned char *data, unsigned int size, int *htable_r, int *htable_g, int *htable_b)
+mars_histogram (unsigned char *data, unsigned int size, int *htable_r, int *htable_g, int *htable_b)
 {
 	int x;
 	/* Initializations */
@@ -416,7 +416,7 @@ mars_white_balance (unsigned char *data, unsigned int size, float saturation,
 
 	/* ------------------- GAMMA CORRECTION ------------------- */
 
-	histogram(data, size, htable_r, htable_g, htable_b);
+	mars_histogram(data, size, htable_r, htable_g, htable_b);
 	x = 1;
 	for (r = 48; r < 208; r++)
 	{
@@ -440,7 +440,7 @@ mars_white_balance (unsigned char *data, unsigned int size, float saturation,
 
 	/* ---------------- BRIGHT DOTS ------------------- */
 	max = size / 200;
-	histogram(data, size, htable_r, htable_g, htable_b);
+	mars_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r=0xfe, x=0; (r > 32) && (x < max); r--)
 		x += htable_r[r];
@@ -481,7 +481,7 @@ mars_white_balance (unsigned char *data, unsigned int size, float saturation,
 	}
 	/* ---------------- DARK DOTS ------------------- */
 	max = size / 200;  /*  1/200 = 0.5%  */
-	histogram(data, size, htable_r, htable_g, htable_b);
+	mars_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r=0, x=0; (r < 96) && (x < max); r++)
 		x += htable_r[r];

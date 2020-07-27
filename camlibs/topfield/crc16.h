@@ -25,4 +25,4 @@
 
 #include <sys/types.h>
 
-unsigned short crc16_ansi(const void *data, size_t size);
+unsigned short topfield_crc16_ansi(const void *data, size_t size);

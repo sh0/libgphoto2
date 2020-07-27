@@ -23,7 +23,7 @@
  */
 #define _POSIX_C_SOURCE 199309L
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -257,14 +257,7 @@ static char *models[] = {
         NULL
 };
 
-int
-camera_id (CameraText *id)
-{
-        strcpy(id->text, "barbie");
-        return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
         int x=0;
@@ -373,7 +366,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_file_func = get_file_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -400,3 +393,9 @@ camera_init (Camera *camera, GPContext *context)
                 return (GP_OK);
         return (GP_ERROR);
 }
+
+CameraLibrary camera_barbie_library = {
+    .id = "barbie",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

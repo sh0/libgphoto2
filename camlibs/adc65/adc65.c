@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gphoto2/gphoto2.h>
-#include <gphoto2/gphoto2-abilities-list.h>
+#include <gphoto2/gphoto2-library.h>
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -29,6 +29,7 @@
 #endif
 
 #define GP_MODULE "adc65"
+extern CameraLibrary camera_adc65_library;
 
 #define ACK		0x15
 
@@ -190,12 +191,7 @@ adc65_read_picture(Camera *camera, int picture_number, int *size) {
 }
 
 
-int camera_id (CameraText *id) {
-	strcpy(id->text, "adc65");
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list) {
+static int camera_abilities (CameraAbilitiesList *list) {
 	CameraAbilities a;
 
 	memset(&a, 0, sizeof(a));
@@ -248,10 +244,10 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_file_func = get_file_func
 };
 
-int
+static int
 camera_init(Camera *camera, GPContext *context) {
 	int ret;
-	gp_port_settings settings;
+	GPPortSettings settings;
 
 	camera->functions->about        = camera_about;
 	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
@@ -272,3 +268,9 @@ camera_init(Camera *camera, GPContext *context) {
 
 	return adc65_ping(camera);
 }
+
+CameraLibrary camera_adc65_library = {
+    .id = "adc65",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

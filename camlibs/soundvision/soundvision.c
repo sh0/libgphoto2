@@ -27,16 +27,13 @@
  * Copyright 1999-2000 Johannes Erdfelt, VA Linux Systems
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
 #include <gphoto2/gphoto2.h>
 
@@ -89,15 +86,7 @@ static const struct {
         {NULL,0,0,0}
 };
 
-int camera_id(CameraText *id) {
-
-    strcpy(id->text, "soundvision");
-
-    return GP_OK;
-}
-
-
-int camera_abilities(CameraAbilitiesList *list) {
+static int camera_abilities(CameraAbilitiesList *list) {
 
     int i;
     CameraAbilities a;
@@ -440,7 +429,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = delete_file_func,
 };
 
-int camera_init(Camera *camera, GPContext *context) {
+static int camera_init(Camera *camera, GPContext *context) {
 
     GPPortSettings settings;
     CameraAbilities a;
@@ -512,3 +501,8 @@ int camera_init(Camera *camera, GPContext *context) {
     return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
 
+CameraLibrary camera_soundvision_library = {
+    .id = "soundvision",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

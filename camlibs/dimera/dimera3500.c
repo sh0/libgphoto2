@@ -21,7 +21,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include "mesalib.h"
 #include "dimeratab.h"
@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <_stdint.h>
+#include <stdint.h>
 
 #include <gphoto2/gphoto2.h>
 
@@ -106,15 +106,7 @@ static const char *models[] = {
         NULL
 };
 
-
-int camera_id (CameraText *id) {
-
-	strcpy(id->text, "dimera3500");
-
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list) {
+static int camera_abilities (CameraAbilitiesList *list) {
 
 	int x=0;
 	CameraAbilities a;
@@ -909,7 +901,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_info_func = get_info_func
 };
 
-int camera_init (Camera *camera, GPContext *context) {
+static int camera_init (Camera *camera, GPContext *context) {
 
 	GPPortSettings settings;
         int ret, selected_speed;
@@ -1012,3 +1004,9 @@ int camera_init (Camera *camera, GPContext *context) {
 	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 	return (GP_OK);
 }
+
+CameraLibrary camera_dimera_library = {
+    .id = "dimera3500",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

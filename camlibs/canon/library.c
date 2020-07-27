@@ -22,7 +22,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -328,25 +328,6 @@ static const struct canonImageFormatStateStruct imageFormatStateArray[] = {
 };
 
 /**
- * camera_id:
- * @id: string buffer to receive text identifying camera type
- *
- * Standard gphoto2 camlib interface
- *
- * Returns:
- *  string is copied into @id.
- *
- */
-int camera_id (CameraText *id)
-{
-	/* GP_DEBUG ("camera_id()"); */
-
-	strcpy (id->text, "canon");
-
-	return GP_OK;
-}
-
-/**
  * camera_manual
  * @camera: Camera for which to get manual text (unused)
  * @manual: Buffer into which to copy manual text
@@ -393,7 +374,7 @@ camera_manual (Camera __unused__ *camera, CameraText *manual,
  * Returns: list of abilities in @list
  *
  */
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -401,19 +382,19 @@ camera_abilities (CameraAbilitiesList *list)
 
 	/* GP_DEBUG ("camera_abilities()"); */
 
-	for (i = 0; models[i].id_str; i++) {
+	for (i = 0; canon_models[i].id_str; i++) {
 		memset (&a, 0, sizeof (a));
 
 		a.status = GP_DRIVER_STATUS_PRODUCTION;
 
-		strcpy (a.model, models[i].id_str);
+		strcpy (a.model, canon_models[i].id_str);
 		a.port = 0;
-		if (models[i].usb_vendor && models[i].usb_product) {
+		if (canon_models[i].usb_vendor && canon_models[i].usb_product) {
 			a.port |= GP_PORT_USB;
-			a.usb_vendor = models[i].usb_vendor;
-			a.usb_product = models[i].usb_product;
+			a.usb_vendor = canon_models[i].usb_vendor;
+			a.usb_product = canon_models[i].usb_product;
 		}
-		if (models[i].serial_id_string != NULL) {
+		if (canon_models[i].serial_id_string != NULL) {
 			a.port |= GP_PORT_SERIAL;
 			a.speed[0] = 9600;
 			a.speed[1] = 19200;
@@ -424,7 +405,7 @@ camera_abilities (CameraAbilitiesList *list)
 		}
 		a.operations = GP_OPERATION_CONFIG;
 
-		if (models[i].usb_capture_support != CAP_NON) {
+		if (canon_models[i].usb_capture_support != CAP_NON) {
 			a.operations |= GP_OPERATION_CAPTURE_IMAGE;
 			a.operations |= GP_OPERATION_CAPTURE_PREVIEW;
 		}
@@ -433,7 +414,7 @@ camera_abilities (CameraAbilitiesList *list)
 			GP_FOLDER_OPERATION_MAKE_DIR |
 			GP_FOLDER_OPERATION_REMOVE_DIR;
 
-		if (UPLOAD_BOOL || (models[i].serial_id_string != NULL)) {
+		if (UPLOAD_BOOL || (canon_models[i].serial_id_string != NULL)) {
 			a.folder_operations |= GP_FOLDER_OPERATION_PUT_FILE;
 		}
 
@@ -452,7 +433,7 @@ camera_abilities (CameraAbilitiesList *list)
  *
  */
 void
-clear_readiness (Camera *camera)
+canon_clear_readiness (Camera *camera)
 {
 	GP_DEBUG ("clear_readiness()");
 
@@ -513,7 +494,7 @@ canon_int_switch_camera_off (Camera *camera, GPContext *context)
 			GP_DEBUG ("Not trying to shut down USB camera...");
 			break;
 	GP_PORT_DEFAULT_RETURN_EMPTY}
-	clear_readiness (camera);
+	canon_clear_readiness (camera);
 }
 
 /**
@@ -827,7 +808,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 			 * supported here so that gPhoto2 query for
 			 * GP_FILE_TYPE_EXIF instead
 			 */
-			if (is_jpeg (filename)) {
+			if (canon_is_jpeg (filename)) {
 				if (camera->pl->md->model != CANON_CLASS_2) {
 					GP_DEBUG ("get_file_func: preview requested where "
 						  "EXIF should be possible");
@@ -935,12 +916,12 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 			break;
 
 		case GP_FILE_TYPE_NORMAL:
-			gp_file_set_mime_type (file, filename2mimetype (filename));
+			gp_file_set_mime_type (file, canon_filename2mimetype (filename));
 			gp_file_set_data_and_size (file, (char *)data, datalen);
 			break;
 #ifdef HAVE_LIBEXIF
 		case GP_FILE_TYPE_EXIF:
-			if ( !is_cr2 ( filename ) )
+			if ( !canon_is_cr2 ( filename ) )
 				gp_file_set_mime_type (file, GP_MIME_JPEG);
 			else
 				gp_file_set_mime_type (file, GP_MIME_EXIF);
@@ -1423,7 +1404,7 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	destpath[j] = '\\';
 	destpath[j + 1] = '\0';
 
-	clear_readiness (camera);
+	canon_clear_readiness (camera);
 
 	return canon_int_put_file (camera, file, filename, destname, destpath, context);
 }
@@ -1537,7 +1518,7 @@ put_file_func (CameraFilesystem __unused__ *fs, const char __unused__ *folder, c
 	destpath[j] = '\\';
 	destpath[j + 1] = '\0';
 
-	clear_readiness (camera);
+	canon_clear_readiness (camera);
 
 	return canon_int_put_file (camera, file, filename, destname, destpath, context);
 }
@@ -2406,11 +2387,11 @@ get_info_func (CameraFilesystem __unused__ *fs, const char *folder,
 	/* | GP_FILE_INFO_PERMISSIONS | GP_FILE_INFO_SIZE; */
 	/* info->file.fields.permissions =  */
 
-	if (is_movie (filename))
+	if (canon_is_movie (filename))
 		strcpy (info->file.type, GP_MIME_AVI);
-	else if (is_image (filename))
+	else if (canon_is_image (filename))
 		strcpy (info->file.type, GP_MIME_JPEG);
-	else if (is_audio (filename))
+	else if (canon_is_audio (filename))
 		strcpy (info->file.type, GP_MIME_WAV);
 	else
 		strcpy (info->file.type, GP_MIME_UNKNOWN);
@@ -2528,7 +2509,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.storage_info_func = storage_info_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -2598,9 +2579,8 @@ camera_init (Camera *camera, GPContext *context)
 	return GP_ERROR;
 }
 
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */
+CameraLibrary camera_canon_library = {
+    .id = "canon",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

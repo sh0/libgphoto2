@@ -7,7 +7,7 @@
  * creative expressions, and as such are believed to not be under copyright.
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include "st2205.h"
 

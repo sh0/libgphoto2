@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <stdlib.h>
 
 #include <gphoto2/gphoto2-port-version.h>
@@ -30,33 +30,19 @@ const char **gp_port_library_version(GPVersionVerbosity verbose)
 	static const char *shrt[] =
 		{
 			PACKAGE_VERSION,
-			"iolibs: " IOLIB_LIST,
-#ifdef HAVE_CC
-			HAVE_CC,
-#else
-			"unknown cc",
-#endif
-#ifdef HAVE_LTDL
-			"ltdl",
-#else
-			"no ltdl",
-#endif
 #ifdef HAVE_LIBEXIF
 			"EXIF",
 #else
 			"no EXIF",
 #endif
-#if defined(HAVE_LIBUSB) || defined(HAVE_LIBUSB1) || defined(HAVE_LIBUSB_WIN32)
+#if defined(BUILD_PORT_LIBUSB1) || defined(BUILD_PORT_RAWUSB) || defined(HAVE_LIBUSB_WIN32)
 			"USB",
 #else
 			"no USB",
 #endif
-#ifdef HAVE_SERIAL
+#ifdef BUILD_PORT_SERIAL
 			"serial "
-
-#ifdef HAVE_RESMGR
-			"resmgr locking",
-#elif HAVE_TTYLOCK
+#if HAVE_TTYLOCK
 			"ttylock locking",
 #elif HAVE_LOCKDEV
 			"lockdev locking",
@@ -72,17 +58,6 @@ const char **gp_port_library_version(GPVersionVerbosity verbose)
 	static const char *verb[] =
 		{
 			PACKAGE_VERSION,
-			"iolibs: " IOLIB_LIST,
-#ifdef HAVE_CC
-			HAVE_CC " (C compiler used)",
-#else
-			"unknown (C compiler used)",
-#endif
-#ifdef HAVE_LTDL
-			"ltdl (for portable loading of iolibs)",
-#else
-			"no ltdl (for portable loading of iolibs)",
-#endif
 #ifdef HAVE_LIBEXIF
 			"EXIF (for vusb)",
 #else
@@ -90,22 +65,17 @@ const char **gp_port_library_version(GPVersionVerbosity verbose)
 #endif
 #ifdef HAVE_LIBUSB_WIN32
 			"USB (libusb-win32, for USB cameras)",
-#elif defined(HAVE_LIBUSB1)
+#elif defined(BUILD_PORT_LIBUSB1)
 			"USB (libusb1, for USB cameras)",
-#elif defined(HAVE_LIBUSB)
+#elif defined(BUILD_PORT_RAWUSB)
 			"USB (libusb0, for USB cameras)",
 #else
 			"no USB (for USB cameras)",
 #endif
-#ifdef HAVE_SERIAL
+#ifdef BUILD_PORT_SERIAL
 			"serial (for serial cameras)",
 #else
 			"no serial (for serial cameras)",
-#endif
-#ifdef HAVE_RESMGR
-			"resmgr (serial port access and locking)",
-#else
-			"no resmgr (serial port access and locking)",
 #endif
 #ifdef HAVE_TTYLOCK
 			"ttylock (serial port locking)",
@@ -122,17 +92,3 @@ const char **gp_port_library_version(GPVersionVerbosity verbose)
 	return((verbose == GP_VERSION_VERBOSE)?verb:shrt);
 }
 
-/*
-static void foobar() {
-	GPVersionFunc gp_port_lib_ver_func = NULL;
-	gp_port_lib_ver_func = gp_port_library_version;
-	gp_port_lib_ver_func(GP_VERSION_VERBOSE);
-}
-*/
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */

@@ -17,7 +17,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -43,14 +43,7 @@ static const struct ModelInfo models[] = {
 	{ SONY_MODEL_DSC_F55, "Sony:DSC-F55" }
 };
 
-int
-camera_id(CameraText * id)
-{
-	strcpy(id->text, SONY_CAMERA_ID);
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities(CameraAbilitiesList * list)
 {
 	unsigned int i;
@@ -310,7 +303,7 @@ static CameraFilesystemFuncs fsfuncs = {
 /**
  * Initialises camera
  */
-int
+static int
 camera_init(Camera * camera, GPContext *context)
 {
 	int rc;
@@ -337,9 +330,8 @@ camera_init(Camera * camera, GPContext *context)
 	return (GP_OK);
 }
 
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */
+CameraLibrary camera_sonydscf55_library = {
+    .id = "sonydscf55",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

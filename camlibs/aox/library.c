@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -67,14 +67,7 @@ static struct {
 	{NULL,0,0,0}
 };
 
-int
-camera_id (CameraText *id)
-{
-    	strcpy (id->text, "Aox chipset camera");
-    	return GP_OK;
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
     	int i;
@@ -303,7 +296,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_file_func = get_file_func
 };
 
-int
+static int
 camera_init(Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -363,3 +356,9 @@ camera_init(Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_aox_library = {
+    .id = "Aox chipset camera",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

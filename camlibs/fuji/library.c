@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -115,15 +115,7 @@ cmd_get_name (FujiCmd command)
 	return (Commands[i].name);
 }
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "Fuji");
-
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -493,7 +485,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_info_func = get_info_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -545,3 +537,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return (GP_OK);
 }
+
+CameraLibrary camera_fuji_library = {
+    .id = "Fuji",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

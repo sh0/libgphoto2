@@ -17,7 +17,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,14 +44,6 @@
 #  define N_(String) (String)
 #endif
 
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "smal");
-	return (GP_OK);
-}
-
-
 static const struct smal_cameras {
 	char * name;
 	unsigned short idVendor;
@@ -66,7 +58,7 @@ static const struct smal_cameras {
 	{ NULL, 0, 0 }
 };
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
    CameraAbilities a;
@@ -190,7 +182,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
     CameraAbilities cab;
@@ -245,3 +237,9 @@ camera_init (Camera *camera, GPContext *context)
     /* don't need to do any exciting init stuff until we get pic numbers */
     return GP_OK;
 }
+
+CameraLibrary camera_smal_library = {
+    .id = "smal",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

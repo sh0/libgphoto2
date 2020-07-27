@@ -27,7 +27,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -88,14 +88,7 @@ models[] =
 	NULL, 0, 0}
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "gsmart300");
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int x = 0;
@@ -181,7 +174,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	int ret;
@@ -351,3 +344,9 @@ delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
 	CHECK (gsmart300_delete_all (camera->pl));
 	return GP_OK;
 }
+
+CameraLibrary camera_gsmart300_library = {
+    .id = "gsmart300",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

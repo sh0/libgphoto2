@@ -25,20 +25,17 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <ltdl.h>
-
 #include <gphoto2/gphoto2-port-result.h>
 #include <gphoto2/gphoto2-port-library.h>
 #include <gphoto2/gphoto2-port-log.h>
-
-#include "gphoto2-port-info.h"
+#include <gphoto2/gphoto2-port-info.h>
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -75,7 +72,6 @@ struct _GPPortPrivateCore {
 
 	struct _GPPortInfo info;	/**< Internal port information of this port. */
 	GPPortOperations *ops;	/**< Internal port operations. */
-	lt_dlhandle lh;		/**< Internal libtool library handle. */
 };
 
 /**
@@ -150,8 +146,6 @@ gp_port_set_info (GPPort *port, GPPortInfo info)
 {
 	int ret;
 
-	GPPortLibraryOperations ops_func;
-
 	C_PARAMS (port);
 
 	free (port->pc->info.name);
@@ -159,87 +153,65 @@ gp_port_set_info (GPPort *port, GPPortInfo info)
 	free (port->pc->info.path);
 	C_MEM (port->pc->info.path = strdup (info->path));
 	port->pc->info.type = info->type;
-	free (port->pc->info.library_filename);
-	C_MEM (port->pc->info.library_filename = strdup (info->library_filename));
-
+    port->pc->info.library = info->library;
 	port->type = info->type;
 
-	/* Clean up */
+	/* Clean up port. */
 	if (port->pc->ops) {
 		gp_port_exit (port);
-		free (port->pc->ops);
 		port->pc->ops = NULL;
 	}
-	if (port->pc->lh) {
-#if !defined(VALGRIND)
-		lt_dlclose (port->pc->lh);
-		lt_dlexit ();
-#endif
-	}
 
-	lt_dlinit ();
-	port->pc->lh = lt_dlopenext (info->library_filename);
-	if (!port->pc->lh) {
-		GP_LOG_E ("Could not load '%s' ('%s').", info->library_filename, lt_dlerror ());
-		lt_dlexit ();
-		return (GP_ERROR_LIBRARY);
-	}
+    /* Set up new port. */
+    port->pc->ops = ((info->library && info->library->operations) ? info->library->operations() : NULL);
+    if (!port->pc->ops) {
+        GP_LOG_E("Could not find suitable port library!");
+        return GP_ERROR_LIBRARY;
+    }
+    gp_port_init(port);
 
-	/* Load the operations */
-	ops_func = lt_dlsym (port->pc->lh, "gp_port_library_operations");
-	if (!ops_func) {
-		GP_LOG_E ("Could not find 'gp_port_library_operations' in '%s' ('%s')",
-			  info->library_filename, lt_dlerror ());
-		lt_dlclose (port->pc->lh);
-		lt_dlexit ();
-		port->pc->lh = NULL;
-		return (GP_ERROR_LIBRARY);
-	}
-	port->pc->ops = ops_func ();
-	gp_port_init (port);
+    /* Initialize the settings to some default ones */
+    switch (info->type) {
+    case GP_PORT_SERIAL:
+        port->settings.serial.speed = 0;
+        port->settings.serial.bits = 8;
+        port->settings.serial.parity = 0;
+        port->settings.serial.stopbits = 1;
+        gp_port_set_timeout (port, 500);
+        break;
+    case GP_PORT_USB:
+        if (sizeof (port->settings.usb.port) <= strlen(info->path)) {
+            GP_LOG_E ("Path is too long for static buffer '%s'.", info->path);
+            return GP_ERROR_LIBRARY;
+        }
+        strncpy (port->settings.usb.port, info->path,
+                 sizeof (port->settings.usb.port));
+        port->settings.usb.inep = -1;
+        port->settings.usb.outep = -1;
+        port->settings.usb.config = -1;
+        port->settings.usb.interface = 0;
+        port->settings.usb.altsetting = -1;
+        gp_port_set_timeout (port, 5000);
+        break;
+    case GP_PORT_USB_DISK_DIRECT:
+        snprintf(port->settings.usbdiskdirect.path,
+                 sizeof(port->settings.usbdiskdirect.path), "%s",
+                 strchr(info->path, ':') + 1);
+        break;
+    case GP_PORT_USB_SCSI:
+        snprintf(port->settings.usbscsi.path,
+                 sizeof(port->settings.usbscsi.path), "%s",
+                 strchr(info->path, ':') + 1);
+        break;
+    default:
+        /* Nothing in here */
+        break;
+    }
+    ret = gp_port_set_settings (port, port->settings);
+    if (ret != GP_ERROR_NOT_SUPPORTED)
+        CHECK_RESULT (ret);
 
-	/* Initialize the settings to some default ones */
-	switch (info->type) {
-	case GP_PORT_SERIAL:
-		port->settings.serial.speed = 0;
-		port->settings.serial.bits = 8;
-		port->settings.serial.parity = 0;
-		port->settings.serial.stopbits = 1;
-		gp_port_set_timeout (port, 500);
-		break;
-	case GP_PORT_USB:
-		if (sizeof (port->settings.usb.port) <= strlen(info->path)) {
-			GP_LOG_E ("Path is too long for static buffer '%s'.", info->path);
-			return GP_ERROR_LIBRARY;
-		}
-		strncpy (port->settings.usb.port, info->path,
-			 sizeof (port->settings.usb.port));
-		port->settings.usb.inep = -1;
-		port->settings.usb.outep = -1;
-		port->settings.usb.config = -1;
-		port->settings.usb.interface = 0;
-		port->settings.usb.altsetting = -1;
-		gp_port_set_timeout (port, 5000);
-		break;
-	case GP_PORT_USB_DISK_DIRECT:
-		snprintf(port->settings.usbdiskdirect.path,
-			 sizeof(port->settings.usbdiskdirect.path), "%s",
-			 strchr(info->path, ':') + 1);
-		break;
-	case GP_PORT_USB_SCSI:
-		snprintf(port->settings.usbscsi.path,
-			 sizeof(port->settings.usbscsi.path), "%s",
-			 strchr(info->path, ':') + 1);
-		break;
-	default:
-		/* Nothing in here */
-		break;
-	}
-	ret = gp_port_set_settings (port, port->settings);
-	if (ret != GP_ERROR_NOT_SUPPORTED)
-		CHECK_RESULT (ret);
-
-	return GP_OK;
+    return GP_OK;
 }
 
 /**
@@ -351,21 +323,11 @@ gp_port_free (GPPort *port)
 			gp_port_close (port);
 			gp_port_exit (port);
 
-			free (port->pc->ops);
 			port->pc->ops = NULL;
-		}
-
-		if (port->pc->lh) {
-#if !defined(VALGRIND)
-			lt_dlclose (port->pc->lh);
-			lt_dlexit ();
-#endif
-			port->pc->lh = NULL;
 		}
 
 		free (port->pc->info.name);
 		free (port->pc->info.path);
-		free (port->pc->info.library_filename);
 
 		free (port->pc);
 		port->pc = NULL;
@@ -606,19 +568,6 @@ gp_port_set_settings (GPPort *port, GPPortSettings settings)
         return (GP_OK);
 }
 
-/** Deprecated */
-int gp_port_settings_get (GPPort *, GPPortSettings *);
-int gp_port_settings_get (GPPort *port, GPPortSettings *settings)
-{
-	return (gp_port_get_settings (port, settings));
-}
-/** Deprecated */
-int gp_port_settings_set (GPPort *, GPPortSettings);
-int gp_port_settings_set (GPPort *port, GPPortSettings settings)
-{
-	return (gp_port_set_settings (port, settings));
-}
-
 /**
  * \brief Get the current port settings.
  * \param port a #GPPort
@@ -633,7 +582,7 @@ gp_port_get_settings (GPPort *port, GPPortSettings *settings)
 {
 	C_PARAMS (port);
 
-        memcpy (settings, &(port->settings), sizeof (gp_port_settings));
+        memcpy (settings, &(port->settings), sizeof (GPPortSettings));
 
         return GP_OK;
 }

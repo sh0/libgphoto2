@@ -22,12 +22,12 @@
 /* Boston, MA  02110-1301  USA					*/
 /****************************************************************/
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <_stdint.h>
+#include <stdint.h>
 
 #include "pccam300.h"
 

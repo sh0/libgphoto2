@@ -21,7 +21,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 
@@ -34,34 +34,6 @@ const char **gp_library_version(GPVersionVerbosity verbose)
 	static const char *shrt[] =
 		{
 			PACKAGE_VERSION,
-#if GP_CAMLIB_SET_IS_NONSTANDARD
-			"NON-STANDARD CAMLIB SET"
-			" ("
-			GP_CAMLIB_SET
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
-#endif
-			")",
-#else
-			"standard camlibs"
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" (SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
-			")"
-#endif
-			,
-#endif
-#ifdef HAVE_CC
-			HAVE_CC,
-#else
-			"unknown cc",
-#endif
-#ifdef HAVE_LTDL
-			"ltdl",
-#else
-			"no ltdl",
-#endif
 #ifdef HAVE_LIBEXIF
 			"EXIF",
 #else
@@ -72,41 +44,6 @@ const char **gp_library_version(GPVersionVerbosity verbose)
 	static const char *verb[] =
 		{
 			PACKAGE_VERSION,
-#if GP_CAMLIB_SET_IS_NONSTANDARD
-			"NON-STANDARD CAMLIB SET"
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING SOME"
-#endif
-			" ("
-			GP_CAMLIB_SET
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
-#endif
-			")",
-#else
-			"standard camlib set"
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING SOME"
-#endif
-			" ("
-			GP_CAMLIB_SET
-#ifdef GP_CAMLIB_SET_SKIPPING
-			" SKIPPING "
-			GP_CAMLIB_SET_SKIPPING
-#endif
-			")",
-#endif
-#ifdef HAVE_CC
-			HAVE_CC " (C compiler used)",
-#else
-			"unknown (C compiler used)",
-#endif
-#ifdef HAVE_LTDL
-			"ltdl (for portable loading of camlibs)",
-#else
-			"no ltdl (for portable loading of camlibs)",
-#endif
 #ifdef HAVE_LIBEXIF
 			"EXIF (for special handling of EXIF files)",
 #else
@@ -116,10 +53,3 @@ const char **gp_library_version(GPVersionVerbosity verbose)
 		};
 	return((verbose == GP_VERSION_VERBOSE)?verb:shrt);
 }
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */

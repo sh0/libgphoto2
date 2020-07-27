@@ -6,7 +6,7 @@
  *
  ****************************************************************************/
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,9 +21,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #endif /* CANON_EXPERIMENTAL_UPLOAD */
-#ifdef OS2
-#include <db.h>
-#endif
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -786,9 +783,7 @@ canon_usb_unlock_keys (Camera *camera, GPContext *context)
                         /* Your camera model does not need unlocking, cannot do unlocking or
                          * we don't know how to unlock its keys.
                          */
-                        GP_DEBUG ("canon_usb_unlock_keys: Key unlocking not implemented for this camera model. "
-                                  "If unlocking works when using the Windows software with your camera, "
-                                  "please contact %s.", MAIL_GPHOTO_DEVEL);
+                        GP_DEBUG ("canon_usb_unlock_keys: Key unlocking not implemented for this camera model.");
                 }
 
         return GP_OK;
@@ -858,9 +853,7 @@ canon_usb_get_body_id (Camera *camera, GPContext *context)
                 break;
         default:
                 /* As far as we know, only EOS models implement the "get body ID" function. */
-                GP_DEBUG ("canon_usb_get_body_id: \"Get body ID\" not implemented for this camera model. "
-                          "If the Windows software can read a body ID (hardware serial number) from your camera, "
-                          "please contact %s.", MAIL_GPHOTO_DEVEL);
+                GP_DEBUG ("canon_usb_get_body_id: \"Get body ID\" not implemented for this camera model.");
                 break;
         }
 
@@ -2610,15 +2603,15 @@ canon_usb_identify (Camera *camera, GPContext *context)
          * Now we just match USB Vendor/Product IDs to work around
          * the colon/space problem. (FIXME)
          */
-        for (i = 0; models[i].id_str != NULL; i++) {
-                if (models[i].usb_vendor
-                    && models[i].usb_product
-                    && (a.usb_vendor  == models[i].usb_vendor)
-                    && (a.usb_product == models[i].usb_product)) {
+        for (i = 0; canon_models[i].id_str != NULL; i++) {
+                if (canon_models[i].usb_vendor
+                    && canon_models[i].usb_product
+                    && (a.usb_vendor  == canon_models[i].usb_vendor)
+                    && (a.usb_product == canon_models[i].usb_product)) {
                         GP_DEBUG ("canon_usb_identify: USB ID match 0x%04x:0x%04x (model name \"%s\")",
-                                  models[i].usb_vendor, models[i].usb_product, models[i].id_str);
-                        gp_context_status (context, _("Detected a '%s'."), models[i].id_str);
-                        camera->pl->md = (struct canonCamModelData *) &models[i];
+                                  canon_models[i].usb_vendor, canon_models[i].usb_product, canon_models[i].id_str);
+                        gp_context_status (context, _("Detected a '%s'."), canon_models[i].id_str);
+                        camera->pl->md = (struct canonCamModelData *) &canon_models[i];
                         return GP_OK;
                 }
         }

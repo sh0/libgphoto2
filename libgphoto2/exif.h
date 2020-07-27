@@ -9,8 +9,8 @@
  * In the future, vendor-proprietary exif extensions might be supported.
  */
 
-#ifndef _gphoto_exif_
-#define _gphoto_exif_
+#ifndef GPHOTO2_EXIF_H
+#define GPHOTO2_EXIF_H
 
 /*
  * Not used anymore, use libexif if necessary.
@@ -23,4 +23,4 @@ unsigned char *gpi_exif_get_thumbnail_and_size(void *exifdat, long *size);
 int gpi_exif_stat(void *exifdata);
 
 
-#endif /* _gphoto_exif_ */
+#endif /* GPHOTO2_EXIF_H */

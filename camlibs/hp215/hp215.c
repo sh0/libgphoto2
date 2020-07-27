@@ -55,7 +55,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -802,15 +802,7 @@ camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
 	return GP_OK;
 }
 
-
-int
-camera_id (CameraText *id) {
-	strcpy(id->text, "hp215");
-	return (GP_OK);
-}
-
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list) {
 	CameraAbilities a;
 
@@ -834,7 +826,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	unsigned char *msg,*buf;
@@ -869,3 +861,9 @@ camera_init (Camera *camera, GPContext *context)
 		return GP_ERROR_IO;
 	return ret;
 }
+
+CameraLibrary camera_hp215_library = {
+    .id = "hp215",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

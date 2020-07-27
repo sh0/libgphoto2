@@ -17,7 +17,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 #include "library.h"
 
 #include <stdio.h>
@@ -455,7 +455,7 @@ sierra_write_packet (Camera *camera, char *packet, GPContext *context)
 	}
 
 	if (camera->pl->flags & SIERRA_WRAP_USB_MASK) {
-		CHECK (usb_wrap_write_packet (camera->port,
+		CHECK (sierra_usb_wrap_write_packet (camera->port,
 			(camera->pl->flags & SIERRA_WRAP_USB_MASK),
 			packet, length));
 	} else {
@@ -552,7 +552,7 @@ sierra_read_packet (Camera *camera, unsigned char *packet, GPContext *context)
 		 * try again.
 		 */
 		if ((camera->port->type & (GP_PORT_USB_SCSI|GP_PORT_USB)) && (camera->pl->flags & SIERRA_WRAP_USB_MASK))
-			result = usb_wrap_read_packet (camera->port,
+			result = sierra_usb_wrap_read_packet (camera->port,
 					(camera->pl->flags & SIERRA_WRAP_USB_MASK),
 					(char *)packet, blocksize);
 		else
@@ -740,8 +740,7 @@ sierra_read_packet_wait (Camera *camera, char *buf, GPContext *context)
 			if (++r > 2) {
 				gp_context_error (context, _("Transmission "
 					"of packet timed out even after "
-					"%i retries. Please contact "
-					"%s."), r, MAIL_GPHOTO_DEVEL);
+					"%i retries."), r);
 				return GP_ERROR;
 			}
 			GP_DEBUG ("Retrying...");
@@ -790,8 +789,7 @@ sierra_transmit_ack (Camera *camera, char *packet, GPContext *context)
 			return GP_OK;
 		case SIERRA_PACKET_INVALID:
 			gp_context_error (context, _("Packet was rejected "
-				"by camera. Please contact "
-				"%s."), MAIL_GPHOTO_DEVEL);
+				"by camera."));
 			return GP_ERROR;
 
 		case SIERRA_PACKET_SESSION_END:
@@ -817,9 +815,7 @@ sierra_transmit_ack (Camera *camera, char *packet, GPContext *context)
 		default:
 			if (++r > 2) {
 				gp_context_error (context, _("Could not "
-					"transmit packet (error code %i). "
-					"Please contact "
-					"%s."), buf[0], MAIL_GPHOTO_DEVEL);
+					"transmit packet (error code %i)."), buf[0]);
 				return GP_ERROR;
 			}
 			GP_DEBUG ("Did not receive ACK. Retrying...");
@@ -927,9 +923,8 @@ sierra_init (Camera *camera, GPContext *context)
 			if (++r > 3) {
 				gp_context_error (context,
 					_("Got unexpected result "
-					  "0x%x. Please contact "
-					  "%s."),
-					buf[0], MAIL_GPHOTO_DEVEL);
+					  "0x%x."),
+					buf[0]);
 				return GP_ERROR;
 			}
 			break;
@@ -1025,8 +1020,7 @@ int sierra_sub_action (Camera *camera, SierraAction action, int sub_action,
 	case SIERRA_PACKET_ENQ:
 		return (GP_OK);
 	default:
-		gp_context_error (context, _("Received unexpected answer "
-		"(%i). Please contact %s."), buf[0], MAIL_GPHOTO_DEVEL);
+		gp_context_error (context, _("Received unexpected answer (%i)."), buf[0]);
 		return (GP_ERROR);
 	}
 
@@ -1089,8 +1083,7 @@ int sierra_get_int_register (Camera *camera, int reg, int *value, GPContext *con
 		switch (buf[0]) {
 		case SIERRA_PACKET_INVALID:
 			gp_context_error (context, _("Could not get "
-				"register %i. Please contact "
-				"%s."), reg, MAIL_GPHOTO_DEVEL);
+				"register %i."), reg);
 			return GP_ERROR;
 		case SIERRA_PACKET_DATA_END:
 			r = ((unsigned char) buf[4]) +
@@ -1227,8 +1220,7 @@ int sierra_get_string_register (Camera *camera, int reg, int fnumber,
 
 	if (in_function != 0) {
 		gp_context_error (context, _("recursive calls are not"
-			" supported by the sierra driver! Please contact"
-			" %s."), MAIL_GPHOTO_DEVEL);
+			" supported by the sierra driver!"));
 		return GP_ERROR;
 	}
 	in_function = 1;
@@ -1281,8 +1273,7 @@ int sierra_get_string_register (Camera *camera, int reg, int fnumber,
 		switch (p[0]) {
 		case SIERRA_PACKET_INVALID:
 			gp_context_error (context, _("Could not get "
-				"string register %i. Please contact "
-				"%s."), reg, MAIL_GPHOTO_DEVEL);
+				"string register %i."), reg);
 			in_function = 0;
 			return GP_ERROR;
 		default:
@@ -1519,8 +1510,7 @@ int sierra_get_pic_info (Camera *camera, unsigned int n,
 	}
 
 	if (buf_len != 32) {
-		gp_context_error (context, _("Expected 32 bytes, got %i. "
-			"Please contact %s."), buf_len, MAIL_GPHOTO_DEVEL);
+		gp_context_error (context, _("Expected 32 bytes, got %i."), buf_len);
 		return (GP_ERROR_CORRUPTED_DATA);
 	}
 

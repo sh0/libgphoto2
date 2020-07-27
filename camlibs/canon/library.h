@@ -25,7 +25,7 @@
 /* #define CANON_PCK_IDENT			0x06 */
 
 
-void clear_readiness(Camera *camera);
+void canon_clear_readiness(Camera *camera);
 
 #define GP_MODULE "canon"
 

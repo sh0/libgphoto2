@@ -28,7 +28,7 @@
 /****************************************************************/
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +36,7 @@
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>
 #include <gphoto2/gphoto2-port-log.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #define GP_MODULE "spca50x"
 #include "spca50x.h"
@@ -589,12 +589,12 @@ spca50x_process_thumbnail (CameraPrivateLibrary *lib,	/*  context */
 		u = yuv_p[2];
 		v = yuv_p[3];
 
-		CHECK (yuv2rgb (y, u, v, &r, &g, &b));
+		CHECK (spca50x_yuv2rgb (y, u, v, &r, &g, &b));
 		*rgb_p++ = r;
 		*rgb_p++ = g;
 		*rgb_p++ = b;
 
-		CHECK (yuv2rgb (y2, u, v, &r, &g, &b));
+		CHECK (spca50x_yuv2rgb (y2, u, v, &r, &g, &b));
 		*rgb_p++ = r;
 		*rgb_p++ = g;
 		*rgb_p++ = b;
@@ -637,7 +637,7 @@ spca50x_flash_process_image (CameraPrivateLibrary *pl,	/*  context */
 	if (!lp_jpg)
 		return GP_ERROR_NO_MEMORY;
 
-	create_jpeg_from_data (lp_jpg, buf, qIndex, w,
+	spca50x_create_jpeg_from_data (lp_jpg, buf, qIndex, w,
 			       h, format, buf_size, &file_size,
 			       0, 0);
 	free (buf);

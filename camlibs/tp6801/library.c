@@ -19,7 +19,7 @@
  */
 
 #define _DEFAULT_SOURCE
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -52,16 +52,7 @@ static const struct tp6801_devinfo tp6801_devinfo[] = {
 	{}
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "TP6801 USB picture frame");
-
-	return GP_OK;
-}
-
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -476,7 +467,7 @@ camera_exit (Camera *camera, GPContext *context)
 	return GP_OK;
 }
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
     	CameraAbilities a;
@@ -539,3 +530,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_tp6801_library = {
+    .id = "TP6801 USB picture frame",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

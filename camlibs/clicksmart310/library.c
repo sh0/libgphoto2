@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -57,16 +57,7 @@ static const struct {
 	{NULL,0,0,0}
 };
 
-int
-camera_id (CameraText *id)
-{
-    	strcpy (id->text, "Logitech Clicksmart 310");
-
-    	return GP_OK;
-}
-
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
     	int i;
@@ -224,7 +215,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	}
 
 	GP_DEBUG("width:  %d, height:  %d, data size:  %d\n", w, h, b);
-	create_jpeg_from_data (jpeg_out, data, 3, w, h, jpeg_format,
+	clicksmart_create_jpeg_from_data (jpeg_out, data, 3, w, h, jpeg_format,
 		    b, &file_size, 0, 0);
 
 	gp_file_set_mime_type (file, GP_MIME_JPEG);
@@ -269,7 +260,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init(Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -318,3 +309,9 @@ camera_init(Camera *camera, GPContext *context)
 	};
 	return GP_OK;
 }
+
+CameraLibrary camera_clicksmart310_library = {
+    .id = "Logitech Clicksmart 310",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

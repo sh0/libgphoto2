@@ -28,7 +28,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "bayer.h"
 
 #include <gphoto2/gphoto2-port-log.h>

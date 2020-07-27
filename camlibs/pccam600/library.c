@@ -26,7 +26,7 @@
 /* Boston, MA  02110-1301  USA					*/
 /****************************************************************/
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include "pccam600.h"
 
@@ -72,13 +72,7 @@ static const struct models{
   {NULL,0,0,0}
 };
 
-int camera_id(CameraText *id)
-{
-  strcpy(id->text, "Creative PC-CAM600/750/350");
-  return (GP_OK);
-}
-
-int camera_abilities(CameraAbilitiesList *list)
+static int camera_abilities(CameraAbilitiesList *list)
 {
   int i;
   CameraAbilities a;
@@ -268,7 +262,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = delete_file_func,
 };
 
-int camera_init(Camera *camera, GPContext *context){
+static int camera_init(Camera *camera, GPContext *context) {
   GPPortSettings settings;
   camera->functions->exit         = camera_exit;
   camera->functions->summary      = camera_summary;
@@ -293,3 +287,9 @@ int camera_init(Camera *camera, GPContext *context){
   CHECK(pccam600_init(camera->port, context));
   return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
+
+CameraLibrary camera_pccam600_library = {
+    .id = "Creative PC-CAM600/750/350",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

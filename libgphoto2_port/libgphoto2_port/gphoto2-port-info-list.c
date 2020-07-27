@@ -22,9 +22,10 @@
  */
 #define _GNU_SOURCE
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 
 #include <gphoto2/gphoto2-port-info-list.h>
+#include <gphoto2/gphoto2-library.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -37,13 +38,10 @@
 #warning We need regex.h, but it has not been detected.
 #endif
 
-#include <ltdl.h>
-
 #include <gphoto2/gphoto2-port-result.h>
 #include <gphoto2/gphoto2-port-library.h>
 #include <gphoto2/gphoto2-port-log.h>
-
-#include "gphoto2-port-info.h"
+#include <gphoto2/gphoto2-port-info.h>
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -116,7 +114,7 @@ gp_port_info_list_new (GPPortInfoList **list)
 	 * We put this in here because everybody needs to call this function
 	 * before accessing ports...
 	 */
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bindtextdomain (GETTEXT_PACKAGE, GETTEXT_LOCALEDIR);
 
 	C_MEM (*list = calloc (1, sizeof (GPPortInfoList)));
 
@@ -144,8 +142,7 @@ gp_port_info_list_free (GPPortInfoList *list)
 			list->info[i]->name = NULL;
 			free (list->info[i]->path);
 			list->info[i]->path = NULL;
-			free (list->info[i]->library_filename);
-			list->info[i]->library_filename = NULL;
+			list->info[i]->library = NULL;
 			free (list->info[i]);
 		}
 		free (list->info);
@@ -191,73 +188,6 @@ gp_port_info_list_append (GPPortInfoList *list, GPPortInfo info)
         return (list->count - 1 - generic);
 }
 
-
-static int
-foreach_func (const char *filename, lt_ptr data)
-{
-	GPPortInfoList *list = data;
-	lt_dlhandle lh;
-	GPPortLibraryType lib_type;
-	GPPortLibraryList lib_list;
-	GPPortType type;
-	unsigned int j, old_size = list->count;
-	int result;
-
-	GP_LOG_D ("Called for filename '%s'.", filename );
-
-	lh = lt_dlopenext (filename);
-	if (!lh) {
-		GP_LOG_D ("Could not load '%s': '%s'.", filename, lt_dlerror ());
-		return (0);
-	}
-
-	lib_type = lt_dlsym (lh, "gp_port_library_type");
-	lib_list = lt_dlsym (lh, "gp_port_library_list");
-	if (!lib_type || !lib_list) {
-		GP_LOG_D ("Could not find some functions in '%s': '%s'.",
-			filename, lt_dlerror ());
-		lt_dlclose (lh);
-		return (0);
-	}
-
-	type = lib_type ();
-	for (j = 0; j < list->count; j++)
-		if (list->info[j]->type == type)
-			break;
-	if (j != list->count) {
-		GP_LOG_D ("'%s' already loaded", filename);
-		lt_dlclose (lh);
-		return (0);
-	}
-
-	result = lib_list (list);
-#if !defined(VALGRIND)
-	lt_dlclose (lh);
-#endif
-	if (result < 0) {
-		GP_LOG_E ("Error during assembling of port list: '%s' (%d).",
-			gp_port_result_as_string (result), result);
-	}
-
-	if (old_size != list->count) {
-		/*
-		 * It doesn't matter if lib_list returned a failure code,
-		 * at least some entries were added
-		 */
-		list->iolib_count++;
-
-		for (j = old_size; j < list->count; j++){
-			GP_LOG_D ("Loaded '%s' ('%s') from '%s'.",
-				list->info[j]->name, list->info[j]->path,
-				filename);
-			list->info[j]->library_filename = strdup (filename);
-		}
-	}
-
-	return (0);
-}
-
-
 /**
  * \brief Load system ports
  *
@@ -273,24 +203,27 @@ foreach_func (const char *filename, lt_ptr data)
 int
 gp_port_info_list_load (GPPortInfoList *list)
 {
-	const char *iolibs_env = getenv(IOLIBDIR_ENV);
-	const char *iolibs = (iolibs_env != NULL)?iolibs_env:IOLIBS;
-	int result;
+    C_PARAMS (list);
 
-	C_PARAMS (list);
+    /* Load port libraries. */
+    GPPortLibrary** libraries = gp_port_libraries_list();
+    for (int i = 0; libraries[i]; i++) {
+    	int found = FALSE;
+	    for (int j = 0; j < list->count; j++)
+	        found = found || (list->info[i]->type == libraries[i]->type);
+	    if (found)
+	    	continue;
+        int result = libraries[i]->list(list);
+        if (result < 0)
+            GP_LOG_E("Error assembling port list: '%s' (%d)", gp_port_result_as_string(result), result);
+    }
 
-	GP_LOG_D ("Using ltdl to load io-drivers from '%s'...", iolibs);
-	lt_dlinit ();
-	lt_dladdsearchdir (iolibs);
-	result = lt_dlforeachfile (iolibs, foreach_func, list);
-	lt_dlexit ();
-	if (result < 0)
-		return (result);
-	if (list->iolib_count == 0) {
-		GP_LOG_E ("No iolibs found in '%s'", iolibs);
-		return GP_ERROR_LIBRARY;
-	}
-        return (GP_OK);
+    /* Check if any libraries were loaded. */
+    if (list->iolib_count == 0) {
+        GP_LOG_E ("No iolibs found!");
+        return GP_ERROR_LIBRARY;
+    }
+    return GP_OK;
 }
 
 /**
@@ -405,12 +338,12 @@ gp_port_info_list_lookup_path (GPPortInfoList *list, const char *path)
 			continue;
 		}
 #endif
-		gp_port_info_new (&newinfo);
-		gp_port_info_set_type (newinfo, list->info[i]->type);
-		newinfo->library_filename = strdup(list->info[i]->library_filename);
-		gp_port_info_set_name (newinfo, _("Generic Port"));
-		gp_port_info_set_path (newinfo, path);
-		CR (result = gp_port_info_list_append (list, newinfo));
+		gp_port_info_new(&newinfo);
+		gp_port_info_set_type(newinfo, list->info[i]->type);
+		gp_port_info_set_library(newinfo, list->info[i]->library);
+		gp_port_info_set_name(newinfo, _("Generic Port"));
+		gp_port_info_set_path(newinfo, path);
+		CR (result = gp_port_info_list_append(list, newinfo));
 		return result;
 	}
 #endif /* HAVE_REGEX */
@@ -584,5 +517,17 @@ gp_port_info_set_type (GPPortInfo info, GPPortType type) {
 int
 gp_port_info_new (GPPortInfo *info) {
 	C_MEM (*info = calloc (1, sizeof(struct _GPPortInfo)));
+	return GP_OK;
+}
+
+int gp_port_info_get_library(GPPortInfo info, GPPortLibrary** library)
+{
+	*library = info->library;
+	return GP_OK;
+}
+
+int gp_port_info_set_library(GPPortInfo info, GPPortLibrary* library)
+{
+	info->library = library;
 	return GP_OK;
 }

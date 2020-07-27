@@ -27,14 +27,14 @@
 #define _DEFAULT_SOURCE
 
 #include <stdio.h>
-#include <_stdint.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #ifdef HAVE_LIBJPEG
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 #include "jl2005bcd_decompress.h"
 #include "jpeg_memsrcdest.h"
 #include <bayer.h>
@@ -140,7 +140,7 @@ jl2005bcd_decompress (unsigned char *output, unsigned char *input,
 				"255\n",
 				thumbnail_width,
 				thumbnail_height);
-			white_balance (out, thumbnail_width * thumbnail_height,
+			jl2005c_white_balance (out, thumbnail_width * thumbnail_height,
 									1.6);
 			memcpy(output + out_headerlen, out,
 				thumbnail_width * thumbnail_height * 3);
@@ -283,7 +283,7 @@ jl2005bcd_decompress (unsigned char *output, unsigned char *input,
 		free (out);
 		return ret;
 	}
-	white_balance (out, width*height, 1.6);
+	jl2005c_white_balance (out, width*height, 1.6);
 
 	out_headerlen = snprintf((char *)output, 256,
 				"P6\n"

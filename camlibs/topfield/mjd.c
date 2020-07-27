@@ -27,9 +27,9 @@
 #include "tf_bytes.h"
 
 /* Convert Topfield MJD date and time structure to time_t */
-time_t tfdt_to_time(struct tf_datetime * dt)
+time_t topfield_tfdt_to_time(struct tf_datetime * dt)
 {
-    int mjd = get_u16(&dt->mjd);
+    int mjd = topfield_get_u16(&dt->mjd);
     int y, m, d, k;
     struct tm tm;
     time_t result;
@@ -63,7 +63,7 @@ time_t tfdt_to_time(struct tf_datetime * dt)
 }
 
 /* Convert itime_t to Topfield MJD date and time structure */
-void time_to_tfdt(time_t t, struct tf_datetime *dt)
+void topfield_time_to_tfdt(time_t t, struct tf_datetime *dt)
 {
     int y, m, d, k, mjd;
     struct tm *tm = localtime(&t);
@@ -83,7 +83,7 @@ void time_to_tfdt(time_t t, struct tf_datetime *dt)
 
     mjd = 14956 + d +
         ((int) ((y - k) * 365.25)) + ((int) ((m + 1 + k * 12) * 30.6001));
-    put_u16(&dt->mjd, mjd);
+    topfield_put_u16(&dt->mjd, mjd);
     dt->hour = tm->tm_hour;
     dt->minute = tm->tm_min;
     dt->second = tm->tm_sec;

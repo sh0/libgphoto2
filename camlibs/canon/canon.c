@@ -16,7 +16,7 @@
  * file.
  */
 #define _DEFAULT_SOURCE
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,10 +28,6 @@
 #include <sys/time.h>
 #else
 #include <time.h>
-#endif
-
-#ifdef OS2
-#include <db.h>
 #endif
 
 #include <gphoto2/gphoto2.h>
@@ -114,7 +110,7 @@
                          PowerShot S80                                       August 2005
   Digital IXUS Wireless  PowerShot SD430                                     August 2005
   */
-const struct canonCamModelData models[] = {
+const struct canonCamModelData canon_models[] = {
 	/* *INDENT-OFF* */
 	{"Canon:PowerShot A5",		CANON_CLASS_3,	NO_USB, NO_USB, CAP_NON, SL_MOVIE_SMALL, SL_THUMB, SL_PICTURE, "DE300 Canon Inc."},
 	{"Canon:PowerShot A5 Zoom",	CANON_CLASS_3,	NO_USB, NO_USB, CAP_NON, SL_MOVIE_SMALL, SL_THUMB, SL_PICTURE, "Canon PowerShot A5 Zoom"},
@@ -484,14 +480,14 @@ canon_int_filename2audioname (Camera __unused__ *camera, const char *filename)
         /* We use the audio file itself as the audio file. In short:
          * audiofile = audiofile(audiofile)
          */
-        if (is_audio (filename)) {
+        if (canon_is_audio (filename)) {
                 GP_DEBUG ("canon_int_filename2audioname: \"%s\" IS an audio file",
                           filename);
                 return filename;
         }
 
         /* There are only audio files for images and movies */
-        if (!(is_movie (filename) || is_image (filename))) {
+        if (!(canon_is_movie (filename) || canon_is_image (filename))) {
                 GP_DEBUG ("canon_int_filename2audioname: "
                           "\"%s\" is neither movie nor image -> no audio file", filename);
                 return NULL;
@@ -527,17 +523,17 @@ canon_int_filename2thumbname (Camera __unused__ *camera, const char *filename)
         /* First handle cases where we shouldn't try to get extra .THM
          * file but use the special get_thumbnail_of_xxx function.
          */
-        if (!extra_file_for_thumb_of_jpeg && is_jpeg (filename)) {
+        if (!extra_file_for_thumb_of_jpeg && canon_is_jpeg (filename)) {
                 GP_DEBUG ("canon_int_filename2thumbname: thumbnail for JPEG \"%s\" is internal",
                           filename);
                 return nullstring;
         }
-        if (!extra_file_for_thumb_of_crw && is_crw (filename)) {
+        if (!extra_file_for_thumb_of_crw && canon_is_crw (filename)) {
                 GP_DEBUG ("canon_int_filename2thumbname: thumbnail for CRW \"%s\" is internal",
                           filename);
                 return nullstring;
         }
-        if (!extra_file_for_thumb_of_cr2 && is_cr2 (filename)) {
+        if (!extra_file_for_thumb_of_cr2 && canon_is_cr2 (filename)) {
                 GP_DEBUG ("canon_int_filename2thumbname: thumbnail for CR2 \"%s\" is internal",
                           filename);
                 return nullstring;
@@ -546,14 +542,14 @@ canon_int_filename2thumbname (Camera __unused__ *camera, const char *filename)
         /* We use the thumbnail file itself as the thumbnail of the
          * thumbnail file. In short thumbfile = thumbnail(thumbfile)
          */
-        if (is_thumbnail (filename)) {
+        if (canon_is_thumbnail (filename)) {
                 GP_DEBUG ("canon_int_filename2thumbname: \"%s\" IS a thumbnail file",
                           filename);
                 return filename;
         }
 
         /* There are only thumbnails for images and movies */
-        if (!is_movie (filename) && !is_image (filename)) {
+        if (!canon_is_movie (filename) && !canon_is_image (filename)) {
                 GP_DEBUG ("canon_int_filename2thumbname: "
                           "\"%s\" is neither movie nor image -> no thumbnail", filename);
                 return NULL;
@@ -1329,7 +1325,7 @@ void canon_int_find_new_image ( Camera *camera, unsigned char *initial_state, un
                            new file, but is it an
                            image file? */
                         GP_DEBUG ( "Found mismatch" );
-                        if ( is_image ( new_name ) ) {
+                        if ( canon_is_image ( new_name ) ) {
                                 /* Yup, we'll assume that this is the new image. */
                                 GP_DEBUG ( "  Found our new image file" );
                                 strcpy ( path->name, new_name );
@@ -3337,7 +3333,7 @@ canon_int_list_directory (Camera *camera, const char *folder, CameraList *list,
                                          */
 
                                         strncpy (info.file.type,
-                                                 filename2mimetype (filename),
+                                                 canon_filename2mimetype (filename),
                                                  sizeof (info.file.type));
                                         info.file.fields |= GP_FILE_INFO_TYPE;
 
@@ -3373,9 +3369,9 @@ canon_int_list_directory (Camera *camera, const char *folder, CameraList *list,
                                          * because we have additional information.
                                          */
                                         if (!camera->pl->list_all_files
-                                            && !is_image (filename)
-                                            && !is_movie (filename)
-                                            && !is_audio (filename)) {
+                                            && !canon_is_image (filename)
+                                            && !canon_is_movie (filename)
+                                            && !canon_is_audio (filename)) {
                                                 /* FIXME: Find associated main file and add it there */
                                                 /* do nothing */
                                                 GP_DEBUG ("Ignored %s/%s", folder,
@@ -3399,7 +3395,7 @@ canon_int_list_directory (Camera *camera, const char *folder, CameraList *list,
                                                         if (thumbname == NULL) {
                                                                 /* no thumbnail */
                                                         } else {
-                                                                if ( is_cr2 ( filename ) ) {
+                                                                if ( canon_is_cr2 ( filename ) ) {
                                                                         /* We get the first part of the raw file as the thumbnail;
                                                                            this is (almost) a valid EXIF file. */
                                                                         info.preview.fields =
@@ -3898,7 +3894,7 @@ canon_int_get_info_func (Camera *camera, const char *folder,
                                          */
 
                                         strncpy (info->file.type,
-                                                 filename2mimetype (filename),
+                                                 canon_filename2mimetype (filename),
                                                  sizeof (info->file.type));
                                         info->file.fields |= GP_FILE_INFO_TYPE;
 
@@ -3934,9 +3930,9 @@ canon_int_get_info_func (Camera *camera, const char *folder,
                                          * because we have additional information.
                                          */
                                         if (!camera->pl->list_all_files
-                                            && !is_image (filename)
-                                            && !is_movie (filename)
-                                            && !is_audio (filename)) {
+                                            && !canon_is_image (filename)
+                                            && !canon_is_movie (filename)
+                                            && !canon_is_audio (filename)) {
                                                 /* FIXME: Find associated main file and add it there */
                                                 /* do nothing */
                                                 GP_DEBUG ("Ignored %s/%s", folder, filename);
@@ -3949,7 +3945,7 @@ canon_int_get_info_func (Camera *camera, const char *folder,
                                                 if (thumbname == NULL) {
                                                         /* no thumbnail */
                                                 } else {
-                                                        if ( is_cr2 ( filename ) ) {
+                                                        if ( canon_is_cr2 ( filename ) ) {
                                                                 /* We get the first part of the raw file as the thumbnail;
                                                                    this is (almost) a valid EXIF file. */
                                                                 info->preview.fields = GP_FILE_INFO_TYPE;
@@ -4073,7 +4069,7 @@ canon_int_extract_jpeg_thumb (unsigned char *data, const unsigned int datalen,
                 int jpeg_offset = -1, jpeg_size = -1;
 
                 GP_DEBUG ( "canon_int_extract_jpeg_thumb: this is from a CR2 file.");
-                dump_hex ( stderr, data, 32 );
+                canon_dump_hex ( stderr, data, 32 );
                 ifd0_offset = exif_get_long ( data+4, EXIF_BYTE_ORDER_INTEL );
                 GP_DEBUG ( "canon_int_extract_jpeg_thumb: IFD 0 at 0x%x", ifd0_offset );
                 n_tags = exif_get_short ( data+ifd0_offset, EXIF_BYTE_ORDER_INTEL );
@@ -4117,7 +4113,7 @@ canon_int_extract_jpeg_thumb (unsigned char *data, const unsigned int datalen,
                 *retdatalen = jpeg_size;
                 *retdata = malloc ( *retdatalen );
                 memcpy ( *retdata, data + jpeg_offset, *retdatalen );
-                dump_hex ( stderr, *retdata, 32 );
+                canon_dump_hex ( stderr, *retdata, 32 );
 #else /* HAVE_LIBEXIF */
                 GP_DEBUG ( "canon_int_extract_jpeg_thumb: Can't grok thumbnail from a CR2 file without libexif");
                 return GP_ERROR_NOT_SUPPORTED;

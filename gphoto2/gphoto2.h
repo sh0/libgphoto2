@@ -21,26 +21,11 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#ifndef __GPHOTO2_H__
-#define __GPHOTO2_H__
+#ifndef GPHOTO2_H
+#define GPHOTO2_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef OS2
-#  include <db.h>
-#  include <sys/param.h>
-#  define CAMLIBS     getenv("CAMLIBS")
-#  define RTLD_LAZY   0x001
-#  define VERSION     "2"
-#  define usleep(t)   _sleep2(((t)+500)/ 1000)
-#endif
-
-#ifdef WIN32
-#ifndef CAMLIBS
-#define CAMLIBS "."
-#endif
 #endif
 
 #include <gphoto2/gphoto2-port.h>
@@ -55,4 +40,4 @@ extern "C" {
 }
 #endif
 
-#endif /* __GPHOTO2_H__ */
+#endif /* GPHOTO2_H */

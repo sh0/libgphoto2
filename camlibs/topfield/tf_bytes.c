@@ -36,7 +36,7 @@
  * The USB I/O layer then takes care of CRC generation and byte swapping.
  */
 
-unsigned short get_u16(void *addr)
+unsigned short topfield_get_u16(void *addr)
 {
     unsigned char *b = addr;
 
@@ -44,14 +44,14 @@ unsigned short get_u16(void *addr)
 }
 
 /* Retrieve a 16-bit integer from the raw buffer (prior to byteswapping) */
-unsigned short get_u16_raw(void *addr)
+unsigned short topfield_get_u16_raw(void *addr)
 {
     unsigned char *b = addr;
 
     return ((b[1] << 8) | (b[0] << 0));
 }
 
-void put_u16(void *addr, unsigned short val)
+void topfield_put_u16(void *addr, unsigned short val)
 {
     unsigned char *b = addr;
 
@@ -59,7 +59,7 @@ void put_u16(void *addr, unsigned short val)
     b[1] = (val & 0xFF);
 }
 
-unsigned int get_u32(void *addr)
+unsigned int topfield_get_u32(void *addr)
 {
     unsigned char *b = addr;
 
@@ -67,14 +67,14 @@ unsigned int get_u32(void *addr)
 }
 
 /* Retrieve a 32-bit integer from the raw buffer (prior to byteswapping) */
-unsigned int get_u32_raw(void *addr)
+unsigned int topfield_get_u32_raw(void *addr)
 {
     unsigned char *b = addr;
 
     return (b[1] << 24) | (b[0] << 16) | (b[3] << 8) | (b[2]);
 }
 
-void put_u32(void *addr, unsigned int val)
+void topfield_put_u32(void *addr, unsigned int val)
 {
     unsigned char *b = addr;
 
@@ -84,7 +84,7 @@ void put_u32(void *addr, unsigned int val)
     b[3] = (val & 0xFF);
 }
 
-uint64_t get_u64(void *addr)
+uint64_t topfield_get_u64(void *addr)
 {
     unsigned char *b = addr;
     uint64_t r = b[0];
@@ -99,7 +99,7 @@ uint64_t get_u64(void *addr)
     return r;
 }
 
-void put_u64(void *addr, uint64_t val)
+void topfield_put_u64(void *addr, uint64_t val)
 {
     unsigned char *b = addr;
 

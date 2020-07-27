@@ -1,4 +1,3 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /* ptpip.c
  *
  * Copyright (c) 2006 Marcus Meissner <marcus@jet.franken.de>
@@ -19,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-library.h>
 
 #include <stdlib.h>
@@ -64,12 +63,6 @@
 struct _GPPortPrivateLibrary {
 	int dummy;	/* unused yet */
 };
-
-GPPortType
-gp_port_library_type (void)
-{
-        return GP_PORT_PTPIP;
-}
 
 /* thanks to Avahi this makes more trouble than its worth */
 #undef HAVE_MDNS_BONJOUR
@@ -160,7 +153,7 @@ _ptpip_enumerate (
 }
 #endif
 
-int
+static int
 gp_port_library_list (GPPortInfoList *list)
 {
 	GPPortInfo info;
@@ -268,7 +261,7 @@ gp_port_ptpip_update (GPPort *port)
 }
 
 
-GPPortOperations *
+static GPPortOperations *
 gp_port_library_operations (void)
 {
 	GPPortOperations *ops;
@@ -286,3 +279,10 @@ gp_port_library_operations (void)
 	ops->update  = gp_port_ptpip_update;
 	return ops;
 }
+
+GPPortLibrary gp_port_ptpip_library = {
+	.type = GP_PORT_PTPIP,
+	.list = gp_port_library_list,
+	.operations = gp_port_library_operations
+};
+

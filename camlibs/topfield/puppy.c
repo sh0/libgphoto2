@@ -23,7 +23,7 @@
 */
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 
@@ -225,7 +225,7 @@ get_path (Camera *camera, const char *folder, const char *filename) {
 static char *
 decode_error(struct tf_packet *packet)
 {
-	uint32_t ecode = get_u32(packet->data);
+	uint32_t ecode = topfield_get_u32(packet->data);
 	switch (ecode) {
 	case 1: return "CRC error";
 		break;
@@ -266,15 +266,15 @@ do_cmd_turbo(Camera *camera, char *state, GPContext *context)
 	if(0 == strcasecmp("ON", state))
 		turbo_on = 1;
 
-	r = send_cmd_turbo(camera, turbo_on, context);
+	r = topfield_send_cmd_turbo(camera, turbo_on, context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
 
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		gp_log (GP_LOG_DEBUG, "topfield", "Turbo mode: %s\n", turbo_on ? "ON" : "OFF");
 		return GP_OK;
@@ -295,15 +295,15 @@ do_cmd_reset(Camera *camera, GPContext *context)
 	int r;
 	struct tf_packet reply;
 
-	r = send_cmd_reset(camera,context);
+	r = topfield_send_cmd_reset(camera,context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
 
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		gp_log (GP_LOG_DEBUG, "topfield", "TF5000PVRt should now reboot\n");
 		return GP_OK;
@@ -327,15 +327,15 @@ do_cmd_ready(Camera *camera, GPContext *context)
 	int r;
 	struct tf_packet reply;
 
-	r = send_cmd_ready(camera,context);
+	r = topfield_send_cmd_ready(camera,context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
 
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		gp_log (GP_LOG_DEBUG, "topfield", "Device reports ready.\n");
 		return GP_OK;
@@ -358,15 +358,15 @@ do_cancel(Camera *camera, GPContext *context)
 	int r;
 	struct tf_packet reply;
 
-	r = send_cancel(camera,context);
+	r = topfield_send_cancel(camera,context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
 
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		gp_log (GP_LOG_DEBUG, "topfield", "In progress operation cancelled\n");
 		return GP_OK;
@@ -387,7 +387,7 @@ do_cancel(Camera *camera, GPContext *context)
 static void
 decode_dir(Camera *camera, struct tf_packet *p, int listdirs, CameraList *list)
 {
-	unsigned short count = (get_u16(&p->length) - PACKET_HEAD_SIZE) / sizeof(struct typefile);
+	unsigned short count = (topfield_get_u16(&p->length) - PACKET_HEAD_SIZE) / sizeof(struct typefile);
 	struct typefile *entries = (struct typefile *) p->data;
 	int i;
 	char *name;
@@ -415,8 +415,8 @@ decode_dir(Camera *camera, struct tf_packet *p, int listdirs, CameraList *list)
         /* This makes the assumption that the timezone of the Toppy and the system
          * that puppy runs on are the same. Given the limitations on the length of
          * USB cables, this condition is likely to be satisfied. */
-        timestamp = tfdt_to_time(&entries[i].stamp);
-        printf("%c %20llu %24.24s %s\n", type, get_u64(&entries[i].size),
+        timestamp = topfield_tfdt_to_time(&entries[i].stamp);
+        printf("%c %20llu %24.24s %s\n", type, topfield_get_u64(&entries[i].size),
                ctime(&timestamp), entries[i].name);
 #endif
     }
@@ -426,7 +426,7 @@ static void
 decode_and_get_info(Camera *camera, const char *folder, struct tf_packet *p, const char *fn,
 		CameraFileInfo *info, GPContext *context)
 {
-	unsigned short count = (get_u16(&p->length) - PACKET_HEAD_SIZE) / sizeof(struct typefile);
+	unsigned short count = (topfield_get_u16(&p->length) - PACKET_HEAD_SIZE) / sizeof(struct typefile);
 	struct typefile *entries = (struct typefile *) p->data;
 	int i;
 	char *name;
@@ -443,16 +443,16 @@ decode_and_get_info(Camera *camera, const char *folder, struct tf_packet *p, con
 					info->file.fields |= GP_FILE_INFO_TYPE;
 					strcpy (info->file.type, GP_MIME_MPEG);
 				}
-				info->file.size = get_u64(&entries[i].size);
-				info->file.mtime = tfdt_to_time(&entries[i].stamp);
+				info->file.size = topfield_get_u64(&entries[i].size);
+				info->file.mtime = topfield_tfdt_to_time(&entries[i].stamp);
 			} else { /* cache the others to avoid further turnarounds */
 				CameraFileInfo	xinfo;
 
 				memset (&xinfo, 0, sizeof (xinfo));
 				xinfo.file.fields = GP_FILE_INFO_TYPE|GP_FILE_INFO_SIZE|GP_FILE_INFO_MTIME;
 				strcpy (xinfo.file.type, GP_MIME_MPEG);
-				xinfo.file.size = get_u64(&entries[i].size);
-				xinfo.file.mtime = tfdt_to_time(&entries[i].stamp);
+				xinfo.file.size = topfield_get_u64(&entries[i].size);
+				xinfo.file.mtime = topfield_tfdt_to_time(&entries[i].stamp);
 				gp_filesystem_append (camera->fs, folder, name, context); /* FIXME: might fail if exist? */
 				gp_filesystem_set_info_noop (camera->fs, folder, name, xinfo, context);
 			}
@@ -464,8 +464,8 @@ decode_and_get_info(Camera *camera, const char *folder, struct tf_packet *p, con
         /* This makes the assumption that the timezone of the Toppy and the system
          * that puppy runs on are the same. Given the limitations on the length of
          * USB cables, this condition is likely to be satisfied. */
-        timestamp = tfdt_to_time(&entries[i].stamp);
-        printf("%c %20llu %24.24s %s\n", type, get_u64(&entries[i].size),
+        timestamp = topfield_tfdt_to_time(&entries[i].stamp);
+        printf("%c %20llu %24.24s %s\n", type, topfield_get_u64(&entries[i].size),
                ctime(&timestamp), entries[i].name);
 #endif
     }
@@ -478,14 +478,14 @@ do_hdd_rename(Camera *camera, char *srcPath, char *dstPath, GPContext *context)
 	int r;
 	struct tf_packet reply;
 
-	r = send_cmd_hdd_rename(camera, srcPath, dstPath, context);
+	r = topfield_send_cmd_hdd_rename(camera, srcPath, dstPath, context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		return GP_OK;
 		break;
@@ -641,50 +641,50 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	do_cmd_turbo (camera, "ON", context);
 
 	path = get_path(camera, folder, filename);
-	r = send_cmd_hdd_file_send(camera, GET, path, context);
+	r = topfield_send_cmd_hdd_file_send(camera, GET, path, context);
 	free (path);
 	if(r < 0)
 		goto out;
 
 	state = START;
-	while(0 < (r = get_tf_packet(camera, &reply, context)))
+	while(0 < (r = topfield_get_tf_packet(camera, &reply, context)))
 	{
 		update = (update + 1) % 4;
-		switch (get_u32(&reply.cmd)) {
+		switch (topfield_get_u32(&reply.cmd)) {
 		case DATA_HDD_FILE_START:
 			if(state == START) {
 				struct typefile *tf = (struct typefile *) reply.data;
 
-				byteCount = get_u64(&tf->size);
+				byteCount = topfield_get_u64(&tf->size);
 				pid = gp_context_progress_start (context, byteCount, _("Downloading %s..."), filename);
 				mod_utime_buf.actime = mod_utime_buf.modtime =
-				tfdt_to_time(&tf->stamp);
+				topfield_tfdt_to_time(&tf->stamp);
 
-				send_success(camera,context);
+				topfield_send_success(camera,context);
 				state = DATA;
 			} else {
 				gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unexpected DATA_HDD_FILE_START packet in state %d\n", state);
-				send_cancel(camera,context);
+				topfield_send_cancel(camera,context);
 				state = ABORT;
 			}
 			break;
 
 		case DATA_HDD_FILE_DATA:
 			if(state == DATA) {
-				uint64_t offset = get_u64(reply.data);
-				uint16_t dataLen = get_u16(&reply.length) - (PACKET_HEAD_SIZE + 8);
+				uint64_t offset = topfield_get_u64(reply.data);
+				uint16_t dataLen = topfield_get_u16(&reply.length) - (PACKET_HEAD_SIZE + 8);
 				int w;
 
 				if (!update) { /* avoid doing it too often */
 					gp_context_progress_update (context, pid, offset + dataLen);
 					if (gp_context_cancel (context) == GP_CONTEXT_FEEDBACK_CANCEL) {
-						send_cancel(camera,context);
+						topfield_send_cancel(camera,context);
 						state = ABORT;
 					}
 				}
 
-				if(r < get_u16(&reply.length)) {
-					gp_log (GP_LOG_ERROR, "topfield", "ERROR: Short packet %d instead of %d\n", r, get_u16(&reply.length));
+				if(r < topfield_get_u16(&reply.length)) {
+					gp_log (GP_LOG_ERROR, "topfield", "ERROR: Short packet %d instead of %d\n", r, topfield_get_u16(&reply.length));
 					/* TODO: Fetch the rest of the packet */
 				}
 
@@ -693,25 +693,25 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 				if(w < GP_OK) {
 					/* Can't write data - abort transfer */
 					gp_log (GP_LOG_ERROR, "topfield", "ERROR: Can not write data: %d\n", w);
-					send_cancel(camera,context);
+					topfield_send_cancel(camera,context);
 					state = ABORT;
 				}
 			} else {
 				gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unexpected DATA_HDD_FILE_DATA packet in state %d\n", state);
-				send_cancel(camera,context);
+				topfield_send_cancel(camera,context);
 				state = ABORT;
 			}
 			break;
 
 		case DATA_HDD_FILE_END:
-			send_success(camera,context);
+			topfield_send_success(camera,context);
 			result = GP_OK;
 			goto out;
 			break;
 
 		case FAIL:
 			gp_log (GP_LOG_ERROR, "topfield", "ERROR: Device reports %s\n", decode_error(&reply));
-			send_cancel(camera,context);
+			topfield_send_cancel(camera,context);
 			state = ABORT;
 			break;
 
@@ -720,7 +720,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 			break;
 
 		default:
-			gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unhandled packet (cmd 0x%x)\n", get_u32(&reply.cmd));
+			gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unhandled packet (cmd 0x%x)\n", topfield_get_u32(&reply.cmd));
 			break;
 		}
 	}
@@ -775,31 +775,31 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 	}
 
 	path = get_path (camera, folder, filename);
-	r = send_cmd_hdd_file_send(camera, PUT, path, context);
+	r = topfield_send_cmd_hdd_file_send(camera, PUT, path, context);
 	if(r < 0)
 		goto out;
 
 	state = START;
-	while(0 < get_tf_packet(camera, &reply, context)) {
+	while(0 < topfield_get_tf_packet(camera, &reply, context)) {
 		update = (update + 1) % 16;
-		switch (get_u32(&reply.cmd)) {
+		switch (topfield_get_u32(&reply.cmd)) {
 		case SUCCESS:
 			switch (state) {
 			case START: {
 				/* Send start */
 				struct typefile *tf = (struct typefile *) packet.data;
 
-				put_u16(&packet.length, PACKET_HEAD_SIZE + 114);
-				put_u32(&packet.cmd, DATA_HDD_FILE_START);
-				time_to_tfdt(srcStat.st_mtime, &tf->stamp);
+				topfield_put_u16(&packet.length, PACKET_HEAD_SIZE + 114);
+				topfield_put_u32(&packet.cmd, DATA_HDD_FILE_START);
+				topfield_time_to_tfdt(srcStat.st_mtime, &tf->stamp);
 				tf->filetype = 2;
-				put_u64(&tf->size, srcStat.st_size);
+				topfield_put_u64(&tf->size, srcStat.st_size);
 				strncpy((char *) tf->name, path, 94);
 				tf->name[94] = '\0';
 				tf->unused = 0;
 				tf->attrib = 0;
 				gp_log (GP_LOG_DEBUG, "topfield", "%s: DATA_HDD_FILE_START\n", __func__);
-				r = send_tf_packet(camera, &packet, context);
+				r = topfield_send_tf_packet(camera, &packet, context);
 				if(r < 0)
 				{
 					gp_log (GP_LOG_ERROR, "topfield", "ERROR: Incomplete send.\n");
@@ -821,9 +821,9 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 					payloadSize -= 4;
 				}
 
-				put_u16(&packet.length, PACKET_HEAD_SIZE + 8 + w);
-				put_u32(&packet.cmd, DATA_HDD_FILE_DATA);
-				put_u64(packet.data, byteCount);
+				topfield_put_u16(&packet.length, PACKET_HEAD_SIZE + 8 + w);
+				topfield_put_u32(&packet.cmd, DATA_HDD_FILE_DATA);
+				topfield_put_u64(packet.data, byteCount);
 				byteCount += w;
 
 				/* Detect EOF and transition to END */
@@ -833,7 +833,7 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 
 				if(w > 0) {
 					gp_log (GP_LOG_DEBUG, "topfield", "%s: DATA_HDD_FILE_DATA\n", __func__);
-					r = send_tf_packet(camera, &packet, context);
+					r = topfield_send_tf_packet(camera, &packet, context);
 					if(r < w) {
 						gp_log (GP_LOG_ERROR, "topfield", "ERROR: Incomplete send.\n");
 						goto out;
@@ -848,10 +848,10 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 
 			case END:
 				/* Send end */
-				put_u16(&packet.length, PACKET_HEAD_SIZE);
-				put_u32(&packet.cmd, DATA_HDD_FILE_END);
+				topfield_put_u16(&packet.length, PACKET_HEAD_SIZE);
+				topfield_put_u32(&packet.cmd, DATA_HDD_FILE_END);
 				gp_log (GP_LOG_DEBUG, "topfield", "%s: DATA_HDD_FILE_END\n", __func__);
-				r = send_tf_packet(camera, &packet, context);
+				r = topfield_send_tf_packet(camera, &packet, context);
 				if(r < 0) {
 					gp_log (GP_LOG_ERROR, "topfield", "ERROR: Incomplete send.\n");
 					goto out;
@@ -872,7 +872,7 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 			break;
 
 		default:
-			gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unhandled packet (%d)\n", get_u32(&reply.cmd));
+			gp_log (GP_LOG_ERROR, "topfield", "ERROR: Unhandled packet (%d)\n", topfield_get_u32(&reply.cmd));
 			break;
 		}
 	}
@@ -893,15 +893,15 @@ delete_file_func (CameraFilesystem *fs, const char *folder,
 	char	*path = get_path (camera, folder, filename);
 	struct tf_packet reply;
 
-	r = send_cmd_hdd_del(camera, path, context);
+	r = topfield_send_cmd_hdd_del(camera, path, context);
 	free (path);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 		return GP_OK;
 		break;
@@ -945,16 +945,16 @@ get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 
 	backslash (xfolder);
 
-	r = send_cmd_hdd_dir(camera, xfolder, context);
+	r = topfield_send_cmd_hdd_dir(camera, xfolder, context);
 	free (xfolder);
 	if(r < GP_OK)
 		return r;
 
-	while(0 < get_tf_packet(camera, &reply, context)) {
-		switch (get_u32(&reply.cmd)) {
+	while(0 < topfield_get_tf_packet(camera, &reply, context)) {
+		switch (topfield_get_u32(&reply.cmd)) {
 		case DATA_HDD_DIR:
 			decode_and_get_info(camera, folder, &reply, filename, info, context);
-			send_success(camera,context);
+			topfield_send_success(camera,context);
 			break;
 		case DATA_HDD_DIR_END:
 			return GP_OK;
@@ -996,16 +996,16 @@ folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 	char *xfolder = strdup (folder);
 
 	backslash (xfolder);
-	r = send_cmd_hdd_dir(camera, xfolder, context);
+	r = topfield_send_cmd_hdd_dir(camera, xfolder, context);
 	free (xfolder);
 	if(r < GP_OK)
 		return r;
 
-	while(0 < get_tf_packet (camera, &reply, context)) {
-		switch (get_u32 (&reply.cmd)) {
+	while(0 < topfield_get_tf_packet (camera, &reply, context)) {
+		switch (topfield_get_u32 (&reply.cmd)) {
 		case DATA_HDD_DIR:
 			decode_dir (camera, &reply, 1, list);
-			send_success (camera,context);
+			topfield_send_success (camera,context);
 			break;
 		case DATA_HDD_DIR_END:
 			return GP_OK;
@@ -1034,16 +1034,16 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 
 	backslash (xfolder);
 
-	r = send_cmd_hdd_dir(camera, xfolder, context);
+	r = topfield_send_cmd_hdd_dir(camera, xfolder, context);
 	free (xfolder);
 	if(r < GP_OK)
 		return r;
 
-	while(0 < get_tf_packet (camera, &reply, context)) {
-		switch (get_u32 (&reply.cmd)) {
+	while(0 < topfield_get_tf_packet (camera, &reply, context)) {
+		switch (topfield_get_u32 (&reply.cmd)) {
 		case DATA_HDD_DIR:
 			decode_dir (camera, &reply, 0, list);
-			send_success (camera,context);
+			topfield_send_success (camera,context);
 			break;
 		case DATA_HDD_DIR_END:
 			return GP_OK;
@@ -1075,18 +1075,18 @@ storage_info_func (CameraFilesystem *fs,
 	/* List your storages here */
 	gp_log (GP_LOG_ERROR, "topfield", __func__);
 
-	r = send_cmd_hdd_size(camera,context);
+	r = topfield_send_cmd_hdd_size(camera,context);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
 
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case DATA_HDD_SIZE: {
-		unsigned int totalk = get_u32(&reply.data);
-		unsigned int freek = get_u32(&reply.data[4]);
+		unsigned int totalk = topfield_get_u32(&reply.data);
+		unsigned int freek = topfield_get_u32(&reply.data[4]);
 
 		sif = *storageinformations = calloc(sizeof(CameraStorageInformation),1);
 		*nrofstorageinformations = 1;
@@ -1127,15 +1127,15 @@ make_dir_func (CameraFilesystem *fs, const char *folder, const char *foldername,
 	struct tf_packet reply;
 	int r;
 
-	r = send_cmd_hdd_create_dir(camera, path, context);
+	r = topfield_send_cmd_hdd_create_dir(camera, path, context);
 	free (path);
 	if(r < 0)
 		return r;
 
-	r = get_tf_packet(camera, &reply, context);
+	r = topfield_get_tf_packet(camera, &reply, context);
 	if(r < 0)
 		return r;
-	switch (get_u32(&reply.cmd)) {
+	switch (topfield_get_u32(&reply.cmd)) {
 	case SUCCESS:
 	    return GP_OK;
 	    break;
@@ -1153,15 +1153,8 @@ make_dir_func (CameraFilesystem *fs, const char *folder, const char *foldername,
 
 
 /**********************************************************************/
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "Topfield 5000 PVR");
-	return GP_OK;
-}
 
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -1178,7 +1171,7 @@ camera_abilities (CameraAbilitiesList *list)
 	return gp_abilities_list_append(list, a);
 }
 
-CameraFilesystemFuncs fsfuncs = {
+static CameraFilesystemFuncs fsfuncs = {
 	.file_list_func = file_list_func,
 	.folder_list_func = folder_list_func,
 	.get_info_func = get_info_func,
@@ -1207,7 +1200,7 @@ camera_exit (Camera *camera, GPContext *context)
 	return GP_OK;
 }
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	char *curloc;
@@ -1239,3 +1232,9 @@ camera_init (Camera *camera, GPContext *context)
 	do_cmd_ready (camera, context);
 	return GP_OK;
 }
+
+CameraLibrary camera_topfield_library = {
+    .id = "Topfield 5000 PVR",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

@@ -1,5 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/* gphoto2-port-usb.c
+/* disk.c
  *
  * Copyright (c) 2001 Lutz Mueller <lutz@users.sf.net>
  * Copyright (c) 1999-2000 Johannes Erdfelt <johannes@erdfelt.com>
@@ -21,7 +20,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-library.h>
 
 #include <stdlib.h>
@@ -76,13 +75,7 @@ struct _GPPortPrivateLibrary {
 	char *mount_point;
 };
 
-GPPortType
-gp_port_library_type (void)
-{
-        return GP_PORT_DISK;
-}
-
-int
+static int
 gp_port_library_list (GPPortInfoList *list)
 {
 	GPPortInfo info;
@@ -348,7 +341,7 @@ gp_port_disk_read(GPPort *port, char *bytes, int size)
         return GP_OK;
 }
 
-GPPortOperations *
+static GPPortOperations *
 gp_port_library_operations (void)
 {
 	GPPortOperations *ops;
@@ -366,3 +359,10 @@ gp_port_library_operations (void)
 
 	return ops;
 }
+
+GPPortLibrary gp_port_disk_library = {
+	.type = GP_PORT_DISK,
+	.list = gp_port_library_list,
+	.operations = gp_port_library_operations
+};
+

@@ -19,12 +19,12 @@
  */
 #ifndef __TP6801_H__
 #define __TP6801_H__
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 
 #include <gphoto2/gphoto2-library.h>
-#include <gphoto2-endian.h>
+#include <gphoto2/gphoto2-endian.h>
 
 #define GP_MODULE "tp6801"
 

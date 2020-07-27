@@ -25,13 +25,13 @@
 /****************************************************************/
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <gphoto2/gphoto2.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "spca50x.h"
 #include "spca50x-sdram.h"
@@ -300,7 +300,7 @@ spca50x_get_image (CameraPrivateLibrary * lib, uint8_t ** buf,
 		free (mybuf);
 		return GP_ERROR_NO_MEMORY;
 	}
-	create_jpeg_from_data (lp_jpg, mybuf, qIndex, g_file->width,
+	spca50x_create_jpeg_from_data (lp_jpg, mybuf, qIndex, g_file->width,
 			       g_file->height, format, o_size, &file_size,
 			       0, omit_escape);
 
@@ -450,7 +450,7 @@ spca50x_get_avi (CameraPrivateLibrary * lib, uint8_t ** buf,
 				GP_DEBUG("BAD: accessing more than we read (%d vs total %d)", (data-mybuf)+frame_size , size);
 				return GP_ERROR_CORRUPTED_DATA;
 			}
-			create_jpeg_from_data (avi, data, qIndex, frame_width,
+			spca50x_create_jpeg_from_data (avi, data, qIndex, frame_width,
 					       frame_height, 0x22, frame_size,
 					       &length, 1, 0);
 
@@ -581,7 +581,7 @@ spca50x_get_avi_thumbnail (CameraPrivateLibrary * lib, uint8_t ** buf,
 		return GP_ERROR_NO_MEMORY;
 	}
 
-	create_jpeg_from_data (lp_jpg, mybuf, qIndex, g_file->width,
+	spca50x_create_jpeg_from_data (lp_jpg, mybuf, qIndex, g_file->width,
 			       g_file->height, 0x22, o_size, &file_size, 0, 0);
 	free (mybuf);
 	lp_jpg = realloc (lp_jpg, file_size);
@@ -675,12 +675,12 @@ spca50x_get_image_thumbnail (CameraPrivateLibrary * lib, uint8_t ** buf,
 		u = yuv_p[2];
 		v = yuv_p[3];
 
-		CHECK (yuv2rgb (y, u, v, &r, &g, &b));
+		CHECK (spca50x_yuv2rgb (y, u, v, &r, &g, &b));
 		*rgb_p++ = r;
 		*rgb_p++ = g;
 		*rgb_p++ = b;
 
-		CHECK (yuv2rgb (y2, u, v, &r, &g, &b));
+		CHECK (spca50x_yuv2rgb (y2, u, v, &r, &g, &b));
 		*rgb_p++ = r;
 		*rgb_p++ = g;
 		*rgb_p++ = b;

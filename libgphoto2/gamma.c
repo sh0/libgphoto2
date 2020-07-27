@@ -21,7 +21,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "gamma.h"
 
 #include <math.h>

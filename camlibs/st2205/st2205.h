@@ -19,7 +19,7 @@
  */
 #ifndef __ST2205_H__
 #define __ST2205_H__
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #if defined(HAVE_ICONV) && defined(HAVE_LANGINFO_H)
@@ -27,7 +27,7 @@
 #endif
 
 #include <gphoto2/gphoto2-library.h>
-#include <gphoto2-endian.h>
+#include <gphoto2/gphoto2-endian.h>
 
 #define GP_MODULE "st2205"
 

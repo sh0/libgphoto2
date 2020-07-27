@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "konica.h"
 
 #include <stdlib.h>
@@ -135,11 +135,8 @@ k_check (GPContext *c, const unsigned char *rb)
 		return (GP_ERROR);
         default:
 		gp_context_error (c, _("The camera has just sent an "
-			"error that has not yet been discovered. Please "
-			"report the following to %s "
-			"with additional information how you got this error: "
-			"(0x%x,0x%x). Thank you very much!"),
-			MAIL_GPHOTO_DEVEL, rb[2], rb[3]);
+			"error (0x%x,0x%x) that has not yet been discovered."),
+			rb[2], rb[3]);
 		return (GP_ERROR);
         }
 }

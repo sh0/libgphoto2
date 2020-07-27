@@ -32,8 +32,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-extern bool debug;
-extern void write_debug( const char* message, ... );
+extern bool pslr_debug;
+extern void pslr_write_debug( const char* message, ... );
 
 #ifdef ANDROID
 #include <android/log.h>
@@ -75,17 +75,17 @@ typedef enum {
 #define FDTYPE int
 #endif
 
-int scsi_read(FDTYPE sg_fd, uint8_t *cmd, uint32_t cmdLen,
+int pslr_scsi_read(FDTYPE sg_fd, uint8_t *cmd, uint32_t cmdLen,
               uint8_t *buf, uint32_t bufLen);
 
-int scsi_write(FDTYPE sg_fd, uint8_t *cmd, uint32_t cmdLen,
+int pslr_scsi_write(FDTYPE sg_fd, uint8_t *cmd, uint32_t cmdLen,
                uint8_t *buf, uint32_t bufLen);
 
-char **get_drives(int *drive_num);
+char **pslr_get_drives(int *drive_num);
 
-pslr_result get_drive_info(char* drive_name, FDTYPE* device,
+pslr_result pslr_get_drive_info(char* drive_name, FDTYPE* device,
                            char* vendor_id, int vendor_id_size_max,
                            char* product_id, int product_id_size_max);
 
-void close_drive(FDTYPE *device);
+void pslr_close_drive(FDTYPE *device);
 #endif

@@ -194,7 +194,7 @@ const char* pslr_scene_mode_str[PSLR_SCENE_MODE_MAX] = {
 
 
 /* case insenstive comparison - strnicmp */
-int str_comparison_i (const char *s1, const char *s2, int n) {
+int pslr_str_comparison_i (const char *s1, const char *s2, int n) {
     if ( s1 == NULL ) {
         return s2 == NULL ? 0 : -(*s2);
     }
@@ -215,14 +215,14 @@ int str_comparison_i (const char *s1, const char *s2, int n) {
     return c1 - c2;
 }
 
-int find_in_array( const char** array, int length, char* str ) {
+int pslr_find_in_array( const char** array, int length, char* str ) {
     int i;
     int found_index=-1;
     size_t found_index_length=0;
     size_t string_length;
     for ( i = 0; i<length; ++i ) {
         string_length = strlen(array[i]);
-        if ( (str_comparison_i( array[i], str, string_length ) == 0) && (string_length > found_index_length) ) {
+        if ( (pslr_str_comparison_i( array[i], str, string_length ) == 0) && (string_length > found_index_length) ) {
             found_index_length = string_length;
             found_index = i;
         }
@@ -243,7 +243,7 @@ const char *get_pslr_str( const char** array, int length, int value ) {
 
 
 pslr_color_space_t get_pslr_color_space( char *str ) {
-    return find_in_array( pslr_color_space_str, sizeof(pslr_color_space_str)/sizeof(pslr_color_space_str[0]),str);
+    return pslr_find_in_array( pslr_color_space_str, sizeof(pslr_color_space_str)/sizeof(pslr_color_space_str[0]),str);
 }
 
 const char *get_pslr_color_space_str( pslr_color_space_t value ) {
@@ -251,7 +251,7 @@ const char *get_pslr_color_space_str( pslr_color_space_t value ) {
 }
 
 pslr_af_mode_t get_pslr_af_mode( char *str ) {
-    return find_in_array( pslr_af_mode_str, sizeof(pslr_af_mode_str)/sizeof(pslr_af_mode_str[0]),str);
+    return pslr_find_in_array( pslr_af_mode_str, sizeof(pslr_af_mode_str)/sizeof(pslr_af_mode_str[0]),str);
 }
 
 const char *get_pslr_af_mode_str( pslr_af_mode_t value ) {
@@ -259,7 +259,7 @@ const char *get_pslr_af_mode_str( pslr_af_mode_t value ) {
 }
 
 pslr_ae_metering_t get_pslr_ae_metering( char *str ) {
-    return find_in_array( pslr_ae_metering_str, sizeof(pslr_ae_metering_str)/sizeof(pslr_ae_metering_str[0]),str);
+    return pslr_find_in_array( pslr_ae_metering_str, sizeof(pslr_ae_metering_str)/sizeof(pslr_ae_metering_str[0]),str);
 }
 
 const char *get_pslr_ae_metering_str( pslr_ae_metering_t value ) {
@@ -267,7 +267,7 @@ const char *get_pslr_ae_metering_str( pslr_ae_metering_t value ) {
 }
 
 pslr_flash_mode_t get_pslr_flash_mode( char *str ) {
-    return find_in_array( pslr_flash_mode_str, sizeof(pslr_flash_mode_str)/sizeof(pslr_flash_mode_str[0]),str);
+    return pslr_find_in_array( pslr_flash_mode_str, sizeof(pslr_flash_mode_str)/sizeof(pslr_flash_mode_str[0]),str);
 }
 
 const char *get_pslr_flash_mode_str( pslr_flash_mode_t value ) {
@@ -275,7 +275,7 @@ const char *get_pslr_flash_mode_str( pslr_flash_mode_t value ) {
 }
 
 pslr_drive_mode_t get_pslr_drive_mode( char *str ) {
-    return find_in_array( pslr_drive_mode_str, sizeof(pslr_drive_mode_str)/sizeof(pslr_drive_mode_str[0]),str);
+    return pslr_find_in_array( pslr_drive_mode_str, sizeof(pslr_drive_mode_str)/sizeof(pslr_drive_mode_str[0]),str);
 }
 
 const char *get_pslr_drive_mode_str( pslr_drive_mode_t value ) {
@@ -283,7 +283,7 @@ const char *get_pslr_drive_mode_str( pslr_drive_mode_t value ) {
 }
 
 pslr_af_point_sel_t get_pslr_af_point_sel( char *str ) {
-    return find_in_array( pslr_af_point_sel_str, sizeof(pslr_af_point_sel_str)/sizeof(pslr_af_point_sel_str[0]),str);
+    return pslr_find_in_array( pslr_af_point_sel_str, sizeof(pslr_af_point_sel_str)/sizeof(pslr_af_point_sel_str[0]),str);
 }
 
 const char *get_pslr_af_point_sel_str( pslr_af_point_sel_t value ) {
@@ -312,7 +312,7 @@ char *get_pslr_af11_point_str( uint32_t value ) {
 
 
 pslr_jpeg_image_tone_t get_pslr_jpeg_image_tone( char *str ) {
-    return find_in_array( pslr_jpeg_image_tone_str, sizeof(pslr_jpeg_image_tone_str)/sizeof(pslr_jpeg_image_tone_str[0]),str);
+    return pslr_find_in_array( pslr_jpeg_image_tone_str, sizeof(pslr_jpeg_image_tone_str)/sizeof(pslr_jpeg_image_tone_str[0]),str);
 }
 
 const char *get_pslr_jpeg_image_tone_str( pslr_jpeg_image_tone_t value ) {
@@ -320,7 +320,7 @@ const char *get_pslr_jpeg_image_tone_str( pslr_jpeg_image_tone_t value ) {
 }
 
 pslr_white_balance_mode_t get_pslr_white_balance_mode( char *str ) {
-    return find_in_array( pslr_white_balance_mode_str, sizeof(pslr_white_balance_mode_str)/sizeof(pslr_white_balance_mode_str[0]),str);
+    return pslr_find_in_array( pslr_white_balance_mode_str, sizeof(pslr_white_balance_mode_str)/sizeof(pslr_white_balance_mode_str[0]),str);
 }
 
 const char *get_pslr_white_balance_mode_str( pslr_white_balance_mode_t value ) {

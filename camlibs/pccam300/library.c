@@ -23,7 +23,7 @@
 /* Boston, MA  02110-1301  USA					*/
 /****************************************************************/
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 #include "pccam300.h"
 
@@ -70,15 +70,7 @@ models[] =
 static int delete_all_func (CameraFilesystem *fs, const char *folder,
 			    void *data, GPContext *context);
 
-
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "Creative PC-CAM 300");
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -271,7 +263,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -302,3 +294,9 @@ camera_init (Camera *camera, GPContext *context)
 	CHECK (pccam300_init (camera->port, context));
 	return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
+
+CameraLibrary camera_pccam300_library = {
+    .id = "Creative PC-CAM 300",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

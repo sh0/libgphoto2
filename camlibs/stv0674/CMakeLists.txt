@@ -1,0 +1,12 @@
+#
+# libgphoto2
+#
+
+# Library
+add_library(gphoto2-stv0674 OBJECT library.h library.c stv0674.h stv0674.c)
+target_link_libraries(gphoto2-stv0674 gphoto2-camlib)
+set_target_properties(gphoto2-stv0674 PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    C_STANDARD 11
+)
+set_compiler_settings(gphoto2-stv0674)

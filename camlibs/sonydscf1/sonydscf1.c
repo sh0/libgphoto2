@@ -21,7 +21,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -484,12 +484,7 @@ retry:
   return(len);
 }
 
-int camera_id (CameraText *id) {
-        strcpy(id->text, "sonydscf1-bvl");
-        return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list) {
+static int camera_abilities (CameraAbilitiesList *list) {
         CameraAbilities a;
 
 	memset (&a, 0, sizeof(a));
@@ -602,7 +597,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = delete_file_func,
 };
 
-int camera_init (Camera *camera, GPContext *context) {
+static int camera_init (Camera *camera, GPContext *context) {
         GPPortSettings settings;
 
         camera->functions->exit         = camera_exit;
@@ -621,3 +616,8 @@ int camera_init (Camera *camera, GPContext *context) {
 	return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
 
+CameraLibrary camera_sonydscf1_library = {
+    .id = "sonydscf1-bvl",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

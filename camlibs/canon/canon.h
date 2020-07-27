@@ -464,7 +464,7 @@ struct canonCamModelData
 	char *serial_id_string; /* set to NULL if camera doesn't support serial connections */
 };
 
-extern const struct canonCamModelData models[];
+extern const struct canonCamModelData canon_models[];
 
 struct _CameraPrivateLibrary
 {

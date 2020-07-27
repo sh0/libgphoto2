@@ -21,7 +21,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -474,7 +474,7 @@ int sonix_cols_reverse (unsigned char *imagedata, int width, int height)
  */
 
 static int
-histogram (unsigned char *data, unsigned int size, int *htable_r,
+sonix_histogram (unsigned char *data, unsigned int size, int *htable_r,
 						int *htable_g, int *htable_b)
 {
 	int x;
@@ -496,7 +496,7 @@ histogram (unsigned char *data, unsigned int size, int *htable_r,
 
 
 int
-white_balance (unsigned char *data, unsigned int size, float saturation)
+sonix_white_balance (unsigned char *data, unsigned int size, float saturation)
 {
 	int x, r, g, b, max, d;
 	double r_factor, g_factor, b_factor, max_factor, MAX_FACTOR=1.6;
@@ -506,7 +506,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 
 	/* ------------------- GAMMA CORRECTION ------------------- */
 
-	histogram(data, size, htable_r, htable_g, htable_b);
+	sonix_histogram(data, size, htable_r, htable_g, htable_b);
 	x = 1;
 	for (r = 64; r < 192; r++)
 	{
@@ -532,7 +532,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 
 	/* ---------------- BRIGHT DOTS ------------------- */
 	max = size / 200;
-	histogram(data, size, htable_r, htable_g, htable_b);
+	sonix_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r=254, x=0; (r > 64) && (x < max); r--)
 		x += htable_r[r];
@@ -574,7 +574,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 
 	max = size / 200;  /*  1/200 = 0.5%  */
 
-	histogram(data, size, htable_r, htable_g, htable_b);
+	sonix_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r=0, x=0; (r < 64) && (x < max); r++)
 		x += htable_r[r];

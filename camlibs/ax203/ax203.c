@@ -17,12 +17,12 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <_stdint.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
 #include <fcntl.h>

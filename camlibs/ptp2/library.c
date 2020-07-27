@@ -22,7 +22,7 @@
  */
 
 #define _DEFAULT_SOURCE
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -2726,7 +2726,7 @@ is_mtp_capable(Camera *camera) {
 	return 0;
 }
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	unsigned int i;
@@ -2853,14 +2853,6 @@ camera_abilities (CameraAbilitiesList *list)
 		a.device_type       = GP_DEVICE_STILL_CAMERA;
 		CR (gp_abilities_list_append (list, a));
 	}
-
-	return (GP_OK);
-}
-
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "PTP");
 
 	return (GP_OK);
 }
@@ -8883,7 +8875,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.storage_info_func	= storage_info_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
     	CameraAbilities a;
@@ -9331,3 +9323,9 @@ camera_init (Camera *camera, GPContext *context)
 	SET_CONTEXT(camera, NULL);
 	return GP_OK;
 }
+
+CameraLibrary camera_ptp2_library = {
+    .id = "PTP",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

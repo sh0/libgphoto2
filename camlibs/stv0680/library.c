@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,7 +32,6 @@
 #include "sharpen.h"
 #include "bayer.h"
 #include "saturate.h"
-#include "../../libgphoto2/bayer.h"
 #include "demosaic_sharpen.h"
 
 #ifdef ENABLE_NLS
@@ -291,11 +290,11 @@ int stv0680_get_image(GPPort *port, int image_no, CameraFile *file)
 		return GP_ERROR_NO_MEMORY;
 	}
 	gp_bayer_expand (raw, w, h, tmpdata1, BAYER_TILE_GBRG_INTERLACED);
-	light_enhance(w,h,coarse,imghdr.avg_pixel_value,fine,tmpdata1);
+	stv0680_light_enhance(w,h,coarse,imghdr.avg_pixel_value,fine,tmpdata1);
 	/* gp_bayer_interpolate (tmpdata1, w, h, BAYER_TILE_GBRG_INTERLACED); */
 	stv680_hue_saturation (w, h, tmpdata1, tmpdata2 );
-	demosaic_sharpen (w, h, tmpdata2, tmpdata1, 2, BAYER_TILE_GBRG_INTERLACED);
-	sharpen (w, h, tmpdata1, data, 16);
+	stv0680_demosaic_sharpen (w, h, tmpdata2, tmpdata1, 2, BAYER_TILE_GBRG_INTERLACED);
+	stv0680_sharpen (w, h, tmpdata1, data, 16);
 	free(tmpdata2);
 	free(tmpdata1);
 	free(raw);
@@ -354,7 +353,7 @@ int stv0680_get_image_preview(GPPort *port, int image_no, CameraFile *file)
 	if (!scale)
 	    gp_bayer_decode(raw, rw, rh, data, BAYER_TILE_GBRG_INTERLACED);
 	else
-	    bayer_unshuffle_preview(rw, rh, scale, raw, data);
+	    stv0680_bayer_unshuffle_preview(rw, rh, scale, raw, data);
 	free(raw);
 	gp_file_append(file, (char *)data, size*3);
 	free(data);
@@ -444,9 +443,9 @@ int stv0680_capture_preview(GPPort *port, char **data, int *size)
 	strcpy(*data, header);
 	bayerpre = malloc(((*size)*3));
 	gp_bayer_expand (raw, w, h, bayerpre, BAYER_TILE_GBRG_INTERLACED);
-	light_enhance(w,h,coarse,fine,imghdr.avg_pixel_value,bayerpre);
+	stv0680_light_enhance(w,h,coarse,fine,imghdr.avg_pixel_value,bayerpre);
 	/* gp_bayer_interpolate (bayerpre, w, h, BAYER_TILE_GBRG_INTERLACED); */
-	demosaic_sharpen (w, h, bayerpre, *data + strlen(header), 2, BAYER_TILE_GBRG_INTERLACED);
+	stv0680_demosaic_sharpen (w, h, bayerpre, *data + strlen(header), 2, BAYER_TILE_GBRG_INTERLACED);
 	/* sharpen (w, h, bayerpre,*data + strlen(header), 20); */
 	free(bayerpre);
 	free(raw);
@@ -521,7 +520,7 @@ int stv0680_capture_preview(GPPort *port, char **data, int *size)
 	bayerpre = malloc(((*size)*3));
 	/* no light enhancement here, we do not get the exposure values? */
 	gp_bayer_decode (raw, w, h, bayerpre, BAYER_TILE_GBRG_INTERLACED);
-	demosaic_sharpen (w, h, bayerpre, (unsigned char *)*data + strlen(header), 2, BAYER_TILE_GBRG_INTERLACED);
+	stv0680_demosaic_sharpen (w, h, bayerpre, (unsigned char *)*data + strlen(header), 2, BAYER_TILE_GBRG_INTERLACED);
 	/* sharpen (w, h, bayerpre,*data + strlen(header), 20); */
 	free(raw);
 	free(bayerpre);

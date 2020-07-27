@@ -27,7 +27,7 @@
 #define _POSIX_SOURCE
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <gphoto2/gphoto2-file.h>
 
 #include <stdlib.h>

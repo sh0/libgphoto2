@@ -23,14 +23,14 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #ifdef HAVE_LIBXML2
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <_stdint.h>
+#include <stdint.h>
 
 #include <libxml/parser.h>
 

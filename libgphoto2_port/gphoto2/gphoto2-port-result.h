@@ -18,8 +18,12 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_PORT_RESULT_H__
-#define __GPHOTO2_PORT_RESULT_H__
+#ifndef GPHOTO2_PORT_RESULT_H
+#define GPHOTO2_PORT_RESULT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /* Return values. gphoto2-port should only return values from 0 to -99 */
 /**
@@ -119,15 +123,10 @@
  */
 #define GP_ERROR_HAL                    -70
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 const char *gp_port_result_as_string (int result);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __GPHOTO2_PORT_RESULT_H__ */
-
+#endif /* GPHOTO2_PORT_RESULT_H */

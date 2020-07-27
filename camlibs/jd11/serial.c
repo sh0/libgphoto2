@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <assert.h>
@@ -513,13 +513,13 @@ jd11_get_image_full(
     uncomp[1] = malloc(320*480/2);
     uncomp[2] = malloc(320*480/2);
     if (sizes[0]!=115200) {
-	    picture_decomp_v1(imagebufs[0],uncomp[0],320,480);
-	    picture_decomp_v1(imagebufs[1],uncomp[1],320,480/2);
-	    picture_decomp_v1(imagebufs[2],uncomp[2],320,480/2);
+	    jd11_picture_decomp_v1(imagebufs[0],uncomp[0],320,480);
+	    jd11_picture_decomp_v1(imagebufs[1],uncomp[1],320,480/2);
+	    jd11_picture_decomp_v1(imagebufs[2],uncomp[2],320,480/2);
     } else {
-	    picture_decomp_v2(imagebufs[0],uncomp[0],320,480);
-	    picture_decomp_v2(imagebufs[1],uncomp[1],320,480/2);
-	    picture_decomp_v2(imagebufs[2],uncomp[2],320,480/2);
+	    jd11_picture_decomp_v2(imagebufs[0],uncomp[0],320,480);
+	    jd11_picture_decomp_v2(imagebufs[1],uncomp[1],320,480/2);
+	    jd11_picture_decomp_v2(imagebufs[2],uncomp[2],320,480/2);
     }
     gp_file_append(file, IMGHEADER, strlen(IMGHEADER));
     data = malloc(640*480*3);

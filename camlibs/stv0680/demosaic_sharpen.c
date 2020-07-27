@@ -67,7 +67,7 @@
  *
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <stdlib.h>
 #include "demosaic_sharpen.h"
 
@@ -237,7 +237,7 @@ static inline int weight (const unsigned char dx, const int alpha)
 }
 
 /* alpha controls the strength of the weighting; 1 = strongest, 64 = weak */
-void demosaic_sharpen (const int width, const int height,
+void stv0680_demosaic_sharpen (const int width, const int height,
 		       const unsigned char * const src_region,
 		       unsigned char * const dest_region,
 		       const int alpha, const BayerTile bt)

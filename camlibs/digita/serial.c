@@ -23,17 +23,14 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 #include "digita.h"
 
 #define GP_MODULE "digita"
@@ -101,7 +98,7 @@ static unsigned int checksum(const unsigned char *buffer, int len)
 	return sum & 0xff;
 }
 
-static int poll_and_wait(gp_port *dev, int length, int bob, int eob)
+static int poll_and_wait(GPPort *dev, int length, int bob, int eob)
 {
 	unsigned short s, poll, poll_reply;
 
@@ -148,7 +145,7 @@ static int digita_serial_send(CameraPrivateLibrary *dev, void *_buffer, int len)
 	return len;
 }
 
-static int poll_and_reply(gp_port *dev, int *length, int *eob, int nak)
+static int poll_and_reply(GPPort *dev, int *length, int *eob, int nak)
 {
 	unsigned short s, poll;
 

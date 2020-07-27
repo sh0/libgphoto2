@@ -22,7 +22,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -148,11 +148,7 @@ get_mime_type (const char *filename)
         dot = strrchr(filename, '.');
         if (dot) {
 		for (x = 0; mime_table[x].extension; x++) {
-#ifdef OS2
-			if (!stricmp(mime_table[x].extension, dot+1))
-#else
 			if (!strcasecmp (mime_table[x].extension, dot+1))
-#endif
 				return (mime_table[x].mime_type);
                 }
 	}
@@ -160,15 +156,7 @@ get_mime_type (const char *filename)
         return (NULL);
 }
 
-int camera_id (CameraText *id)
-{
-        strcpy(id->text, "directory");
-
-        return (GP_OK);
-}
-
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
         CameraAbilities a;
 
@@ -801,7 +789,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.storage_info_func = storage_info_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
         /* First, set up all the function pointers */
@@ -809,3 +797,9 @@ camera_init (Camera *camera, GPContext *context)
         camera->functions->about                = camera_about;
         return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
+
+CameraLibrary camera_directory_library = {
+    .id = "directory",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

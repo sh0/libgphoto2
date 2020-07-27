@@ -43,16 +43,17 @@
  * please just try.
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "sierra-usbwrap.h"
 #include "sierra.h"
 
 #include <string.h>
 #include <stdlib.h>
 
-#include <_stdint.h>
+#include <stdint.h>
 
 #include <gphoto2/gphoto2-result.h>
+#include <gphoto2/gphoto2-port-info-list.h>
 #include <gphoto2/gphoto2-port-log.h>
 
 #define GP_MODULE "sierra"
@@ -104,8 +105,8 @@ cmdbyte (unsigned int type, unsigned char nr) {
  *
  * These requests always appear in a specific order:
  *
- * usb_wrap_write_packet: RDY(OK),              CMND(OK), STAT(OK)
- * usb_wrap_read_packet:  RDY(OK), GETSIZE(OK), DATA(OK), STAT(OK)
+ * sierra_usb_wrap_write_packet: RDY(OK),              CMND(OK), STAT(OK)
+ * sierra_usb_wrap_read_packet:  RDY(OK), GETSIZE(OK), DATA(OK), STAT(OK)
  */
 /* Test if camera ready */
 #define MAKE_UW_REQUEST_RDY(req,type)	MAKE_UW_REQUEST_OUT(req,0x0c,cmdbyte(type, 0))
@@ -299,7 +300,7 @@ scsi_wrap_cmd(
 #define gp_port_send_scsi_cmd scsi_wrap_cmd
 
 static int
-usb_wrap_RDY(gp_port* dev, unsigned int type)
+usb_wrap_RDY(GPPort* dev, unsigned int type)
 {
    uw_pkout_rdy_t msg;
    int ret;
@@ -323,7 +324,7 @@ usb_wrap_RDY(gp_port* dev, unsigned int type)
 }
 
 static int
-usb_wrap_STAT(gp_port* dev, unsigned int type)
+usb_wrap_STAT(GPPort* dev, unsigned int type)
 {
    uw_stat_t msg;
    uw32_t xlen;
@@ -367,7 +368,7 @@ usb_wrap_STAT(gp_port* dev, unsigned int type)
 }
 
 static int
-usb_wrap_CMND(gp_port* dev, unsigned int type, char* sierra_msg, int sierra_len)
+usb_wrap_CMND(GPPort* dev, unsigned int type, char* sierra_msg, int sierra_len)
 {
    uw_pkout_sierra_hdr_t* msg;
    int ret, msg_len = sizeof(*msg) + sierra_len;
@@ -401,7 +402,7 @@ usb_wrap_CMND(gp_port* dev, unsigned int type, char* sierra_msg, int sierra_len)
 }
 
 static int
-usb_wrap_SIZE(gp_port* dev, unsigned int type, uw32_t* size)
+usb_wrap_SIZE(GPPort* dev, unsigned int type, uw32_t* size)
 {
    uw32_t xlen;
    uw_size_t msg;
@@ -461,7 +462,7 @@ usb_wrap_DATA (GPPort *dev, unsigned int type, char *sierra_response, int *sierr
 
    if (*sierra_len < msg_len - sizeof(*msg))
    {
-      GP_DEBUG( "usb_wrap_read_packet buffer too small! (%i < %i) *** FAILED", *sierra_len, msg_len);
+      GP_DEBUG( "sierra_usb_wrap_read_packet buffer too small! (%i < %i) *** FAILED", *sierra_len, msg_len);
       return GP_ERROR;
    }
    *sierra_len = msg_len - sizeof(*msg);
@@ -492,9 +493,9 @@ usb_wrap_DATA (GPPort *dev, unsigned int type, char *sierra_response, int *sierr
  * -------------------------------------------------------------------------
  */
 int
-usb_wrap_write_packet (GPPort *dev, unsigned int type, char *sierra_msg, int sierra_len)
+sierra_usb_wrap_write_packet (GPPort *dev, unsigned int type, char *sierra_msg, int sierra_len)
 {
-	GP_DEBUG ("usb_wrap_write_packet");
+	GP_DEBUG ("sierra_usb_wrap_write_packet");
 
 	CR (usb_wrap_RDY (dev, type));
 	CR (usb_wrap_CMND (dev, type, sierra_msg, sierra_len));
@@ -504,11 +505,11 @@ usb_wrap_write_packet (GPPort *dev, unsigned int type, char *sierra_msg, int sie
 }
 
 int
-usb_wrap_read_packet (GPPort *dev, unsigned int type, char *sierra_response, int sierra_len)
+sierra_usb_wrap_read_packet (GPPort *dev, unsigned int type, char *sierra_response, int sierra_len)
 {
 	uw32_t uw_size;
 
-	GP_DEBUG ("usb_wrap_read_packet");
+	GP_DEBUG ("sierra_usb_wrap_read_packet");
 
 	CR (usb_wrap_RDY (dev, type));
 	CR (usb_wrap_SIZE (dev, type, &uw_size));

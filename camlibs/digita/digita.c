@@ -21,7 +21,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,9 +30,6 @@
 #include <string.h>
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
-#ifdef OS2
-#include <db.h>
 #endif
 
 #define GP_MODULE "digita"
@@ -54,7 +51,7 @@
 #  define N_(String) (String)
 #endif
 
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 #include "digita.h"
 
 #ifndef MAX
@@ -79,7 +76,7 @@ static const struct {
 	{"HP:PhotoSmart C500 2",0xf003, 0x6002 },
 };
 
-int camera_abilities(CameraAbilitiesList *list)
+static int camera_abilities(CameraAbilitiesList *list)
 {
 	unsigned int i;
 	CameraAbilities a;
@@ -104,13 +101,6 @@ int camera_abilities(CameraAbilitiesList *list)
 
 		gp_abilities_list_append(list, a);
 	}
-
-	return GP_OK;
-}
-
-int camera_id(CameraText *id)
-{
-	strcpy(id->text, "digita");
 
 	return GP_OK;
 }
@@ -442,7 +432,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = delete_file_func
 };
 
-int camera_init(Camera *camera, GPContext *context)
+static int camera_init(Camera *camera, GPContext *context)
 {
 	int ret = 0;
 
@@ -488,3 +478,8 @@ int camera_init(Camera *camera, GPContext *context)
 	return GP_OK;
 }
 
+CameraLibrary camera_digita_library = {
+    .id = "digita",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

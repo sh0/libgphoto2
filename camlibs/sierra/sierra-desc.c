@@ -17,10 +17,10 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
-#include <_stdint.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -194,15 +194,15 @@ camera_cam_desc_get_widget (Camera *camera, CameraRegisterType *reg_p,
 }
 
 int
-camera_get_config_cam_desc (Camera *camera, CameraWidget **window,
+sierra_camera_get_config_cam_desc (Camera *camera, CameraWidget **window,
 			    GPContext *context)
 {
 	CameraWidget *section;
 	int indw, indr;
 	const CameraDescType *cam_desc = NULL;
 
-	GP_DEBUG ("*** camera_get_config_cam_desc");
-	CHECK (camera_start (camera, context));
+	GP_DEBUG ("*** sierra_camera_get_config_cam_desc");
+	CHECK (sierra_camera_start (camera, context));
 	gp_widget_new (GP_WIDGET_WINDOW, _("Camera Configuration"), window);
 
 	cam_desc = camera->pl->cam_desc;
@@ -420,14 +420,14 @@ camera_cam_desc_set_widget (Camera *camera, CameraRegisterType *reg_p,
 }
 
 int
-camera_set_config_cam_desc (Camera *camera, CameraWidget *window,
+sierra_camera_set_config_cam_desc (Camera *camera, CameraWidget *window,
 			    GPContext *context)
 {
 	int wind, rind;
 	const CameraDescType *cam_desc = NULL;
 
-	GP_DEBUG ("*** camera_set_config_cam_desc");
-	CHECK (camera_start (camera, context));
+	GP_DEBUG ("*** sierra_camera_set_config_cam_desc");
+	CHECK (sierra_camera_start (camera, context));
 
 	cam_desc = camera->pl->cam_desc;
 	for (wind = 0; wind < 2 /* XXX sizeof () */; wind++) {

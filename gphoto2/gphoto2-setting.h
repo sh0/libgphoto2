@@ -21,8 +21,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_SETTING_H__
-#define __GPHOTO2_SETTING_H__
+#ifndef GPHOTO2_SETTING_H
+#define GPHOTO2_SETTING_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ int gp_setting_get (char *id, char *key, char *value);
 }
 #endif /* __cplusplus */
 
-#endif /* __GPHOTO2_SETTING_H__ */
+#endif /* GPHOTO2_SETTING_H */

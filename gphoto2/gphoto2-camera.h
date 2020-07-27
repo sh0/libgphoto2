@@ -23,8 +23,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_CAMERA_H__
-#define __GPHOTO2_CAMERA_H__
+#ifndef GPHOTO2_CAMERA_H
+#define GPHOTO2_CAMERA_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +47,7 @@ typedef struct _Camera Camera;
 #endif /* __cplusplus */
 
 
-#include <gphoto2/gphoto2-abilities-list.h>
+#include <gphoto2/gphoto2-abilities.h>
 #include <gphoto2/gphoto2-port.h>
 
 #include <gphoto2/gphoto2-widget.h>
@@ -156,8 +156,8 @@ typedef int (*CameraExitFunc)      (Camera *camera, GPContext *context);
  *
  * \returns a gphoto error code
  */
-typedef int (*CameraGetConfigFunc) (Camera *camera, CameraWidget **widget,
-				    GPContext *context);
+typedef int (*CameraGetConfigFunc) (Camera *camera, CameraWidget **widget, GPContext *context);
+
 /**
  * \brief Get a configuration widget for a specific configuration
  *
@@ -181,8 +181,8 @@ typedef int (*CameraGetConfigFunc) (Camera *camera, CameraWidget **widget,
  *
  * \returns a gphoto error code
  */
-typedef int (*CameraGetSingleConfigFunc) (Camera *camera, const char *name, CameraWidget **widget,
-				    GPContext *context);
+typedef int (*CameraGetSingleConfigFunc) (Camera *camera, const char *name, CameraWidget **widget, GPContext *context);
+
 /**
  * \brief List all configuration widgets for a specific configuration
  *
@@ -207,6 +207,7 @@ typedef int (*CameraGetSingleConfigFunc) (Camera *camera, const char *name, Came
  * \returns a gphoto error code
  */
 typedef int (*CameraListConfigFunc) (Camera *camera, CameraList *list, GPContext *context);
+
 /**
  * \brief Set the configuration in the camera
  *
@@ -220,8 +221,7 @@ typedef int (*CameraListConfigFunc) (Camera *camera, CameraList *list, GPContext
  *
  * \returns a gphoto error code
  */
-typedef int (*CameraSetConfigFunc) (Camera *camera, CameraWidget  *widget,
-				    GPContext *context);
+typedef int (*CameraSetConfigFunc) (Camera *camera, CameraWidget  *widget, GPContext *context);
 /**
  * \brief Set a single configuration variable in the camera
  *
@@ -234,23 +234,14 @@ typedef int (*CameraSetConfigFunc) (Camera *camera, CameraWidget  *widget,
  *
  * \returns a gphoto error code
  */
-typedef int (*CameraSetSingleConfigFunc) (Camera *camera, const char *name, CameraWidget  *widget,
-				    GPContext *context);
-
-typedef int (*CameraCaptureFunc)   (Camera *camera, CameraCaptureType type,
-				    CameraFilePath *path, GPContext *context);
+typedef int (*CameraSetSingleConfigFunc) (Camera *camera, const char *name, CameraWidget  *widget, GPContext *context);
+typedef int (*CameraCaptureFunc)   (Camera *camera, CameraCaptureType type, CameraFilePath *path, GPContext *context);
 typedef int (*CameraTriggerCaptureFunc)   (Camera *camera, GPContext *context);
-typedef int (*CameraCapturePreviewFunc) (Camera *camera, CameraFile *file,
-					 GPContext *context);
-typedef int (*CameraSummaryFunc)   (Camera *camera, CameraText *text,
-				    GPContext *context);
-typedef int (*CameraManualFunc)    (Camera *camera, CameraText *text,
-				    GPContext *context);
-typedef int (*CameraAboutFunc)     (Camera *camera, CameraText *text,
-				    GPContext *context);
-typedef int (*CameraWaitForEvent)  (Camera *camera, int timeout,
-				    CameraEventType *eventtype, void **eventdata,
-				    GPContext *context);
+typedef int (*CameraCapturePreviewFunc) (Camera *camera, CameraFile *file, GPContext *context);
+typedef int (*CameraSummaryFunc)   (Camera *camera, CameraText *text, GPContext *context);
+typedef int (*CameraManualFunc)    (Camera *camera, CameraText *text, GPContext *context);
+typedef int (*CameraAboutFunc)     (Camera *camera, CameraText *text, GPContext *context);
+typedef int (*CameraWaitForEvent)  (Camera *camera, int timeout, CameraEventType *eventtype, void **eventdata, GPContext *context);
 /**@}*/
 
 
@@ -459,20 +450,11 @@ int gp_camera_file_delete     	(Camera *camera, const char *folder,
  * \name Some cameras need 'keep-alive-messages'.
  * @{
  */
-typedef int          (* CameraTimeoutFunc)      (Camera *camera,
-						 GPContext *context);
-typedef unsigned int (* CameraTimeoutStartFunc) (Camera *camera,
-						 unsigned int timeout,
-						 CameraTimeoutFunc func,
-						 void *data);
-typedef void         (* CameraTimeoutStopFunc)  (Camera *camera,
-						 unsigned int id, void *data);
-void         gp_camera_set_timeout_funcs (Camera *camera,
-				          CameraTimeoutStartFunc start_func,
-				          CameraTimeoutStopFunc  stop_func,
-				          void *data);
-int          gp_camera_start_timeout     (Camera *camera, unsigned int timeout,
-					  CameraTimeoutFunc func);
+typedef int          (* CameraTimeoutFunc)      (Camera *camera, GPContext *context);
+typedef unsigned int (* CameraTimeoutStartFunc) (Camera *camera, unsigned int timeout, CameraTimeoutFunc func, void *data);
+typedef void         (* CameraTimeoutStopFunc)  (Camera *camera, unsigned int id, void *data);
+void         gp_camera_set_timeout_funcs (Camera *camera, CameraTimeoutStartFunc start_func, CameraTimeoutStopFunc stop_func, void *data);
+int          gp_camera_start_timeout     (Camera *camera, unsigned int timeout, CameraTimeoutFunc func);
 void         gp_camera_stop_timeout      (Camera *camera, unsigned int id);
 
 /**@}*/
@@ -481,4 +463,4 @@ void         gp_camera_stop_timeout      (Camera *camera, unsigned int id);
 #endif /* __cplusplus */
 
 
-#endif /* __GPHOTO2_CAMERA_H__ */
+#endif /* GPHOTO2_CAMERA_H */

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -126,14 +126,7 @@ static const struct camera_to_usb {
 	{ "Creative:Go Mini",		0x041e, 0x4007, 1 }
 };
 
-int camera_id (CameraText *id)
-{
-	strcpy(id->text, "STV0680");
-
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
 	unsigned int i;
@@ -346,7 +339,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.storage_info_func = storage_info_func
 };
 
-int camera_init (Camera *camera, GPContext *context)
+static int camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
 
@@ -380,3 +373,9 @@ int camera_init (Camera *camera, GPContext *context)
         /* test camera */
         return stv0680_ping(camera->port);
 }
+
+CameraLibrary camera_stv0680_library = {
+    .id = "STV0680",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

@@ -17,7 +17,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 #include "casio-qv-commands.h"
 
 #include <stdlib.h>
@@ -412,7 +412,7 @@ int
 QVsetspeed (Camera *camera, int speed)
 {
 	unsigned char cmd[3];
-        gp_port_settings settings;
+    GPPortSettings settings;
 
 	cmd[0] = 'C';
 	cmd[1] = 'B';

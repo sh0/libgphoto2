@@ -31,7 +31,7 @@
 								\
 	if (res < 0) {						\
 		GP_DEBUG ("Operation failed in %s (%i)!", __FUNCTION__, res);	\
-		camera_stop (camera, context);			\
+		sierra_camera_stop (camera, context);			\
 		return (res);					\
 	}							\
 }
@@ -42,7 +42,7 @@
 								\
 	if (res < 0) {						\
 		GP_DEBUG ("Operation failed in %s (%i)!", __FUNCTION__, res);	\
-		camera_stop (camera, context);			\
+		sierra_camera_stop (camera, context);			\
 		free (camera->pl);				\
 		camera->pl = NULL;				\
 		return (res);					\
@@ -136,8 +136,8 @@ int sierra_change_folder          (Camera *camera, const char *folder,
 				   GPContext *context);
 int sierra_get_size		  (Camera *camera, int reg, unsigned int n,
 				   int *value, GPContext *context);
-int camera_start		  (Camera *camera, GPContext *context);
-int camera_stop			  (Camera *camera, GPContext *context);
+int sierra_camera_start		  (Camera *camera, GPContext *context);
+int sierra_camera_stop			  (Camera *camera, GPContext *context);
 
 /* Filesystem functions */
 int sierra_list_files         (Camera *camera, const char *folder, CameraList *list, GPContext *context);
@@ -147,8 +147,8 @@ int sierra_upload_file        (Camera *camera, CameraFile *file,
 			       GPContext *context);
 
 /* Camera desc functions in sierra-desc.c */
-int camera_set_config_cam_desc	  (Camera *camera, CameraWidget *window,
+int sierra_camera_set_config_cam_desc	  (Camera *camera, CameraWidget *window,
 				   GPContext *context);
-int camera_get_config_cam_desc	  (Camera *camera, CameraWidget **window,
+int sierra_camera_get_config_cam_desc	  (Camera *camera, CameraWidget **window,
 				   GPContext *context);
 #endif /* __LIBRARY_H__ */

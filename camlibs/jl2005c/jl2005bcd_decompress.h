@@ -18,8 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __jl2005bcd_decompress_H__
-#define __jl2005bcd_decompress_H__
+#ifndef JL2005BCD_DECOMPRESS_H
+#define JL2005BCD_DECOMPRESS_H
 
 
 int

@@ -14,7 +14,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -105,7 +105,7 @@ serial_flush_output (GPPort __unused__ *gdev)
 static int
 canon_serial_change_speed (GPPort *gdev, int speed)
 {
-	gp_port_settings settings;
+	GPPortSettings settings;
 
 	/* set speed */
 	gp_port_get_settings (gdev, &settings);
@@ -630,7 +630,7 @@ canon_serial_send_msg (Camera *camera, unsigned char mtype, unsigned char dir, v
 					if (good_ack == 0) {
 						camera->pl->receive_error = FATAL_ERROR;
 						GP_DEBUG ("ERROR: FATAL ERROR");
-						clear_readiness (camera);
+						canon_clear_readiness (camera);
 						return -1;
 					}
 				}
@@ -1367,19 +1367,19 @@ canon_serial_ready (Camera *camera, GPContext *context)
 	 * We iterate over the model list testing id_str, even if we
 	 * don't actually use id_str, but serial_id_string.
 	 */
-	for (i = 0; models[i].id_str != NULL; i++) {
-		if ((models[i].serial_id_string != NULL) &&
-		    !strcmp (models[i].serial_id_string, cam_id_str)) {
+	for (i = 0; canon_models[i].id_str != NULL; i++) {
+		if ((canon_models[i].serial_id_string != NULL) &&
+		    !strcmp (canon_models[i].serial_id_string, cam_id_str)) {
 			GP_DEBUG ("canon_serial_ready: Serial ID string matches '%s'",
-				  models[i].serial_id_string);
+				  canon_models[i].serial_id_string);
 			gp_context_status (context, _("Detected a \"%s\" aka \"%s\""),
-					   models[i].id_str, models[i].serial_id_string);
-			camera->pl->md = (struct canonCamModelData *) &models[i];
+					   canon_models[i].id_str, canon_models[i].serial_id_string);
+			camera->pl->md = (struct canonCamModelData *) &canon_models[i];
 			break;
 		}
 	}
 
-	if (models[i].id_str == NULL) {
+	if (canon_models[i].id_str == NULL) {
 		gp_context_error (context, _("Unknown model \"%s\""), cam_id_str);
 		return GP_ERROR_MODEL_NOT_FOUND;
 	}

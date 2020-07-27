@@ -22,7 +22,7 @@
  * Boston, MA  02110-1301  USA
  *
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 
 #include <string.h>
@@ -84,10 +84,10 @@
 #endif
 
 
-char* CDS_Control  = ":60606/Server0/CDS_control";
-int ReadoutMode = 2; // this should be picked up from the settings.... 0-> JPG; 1->RAW; 2 -> Thumbnails
-char* cameraShutterSpeed = "B"; // //placeholder to store the value of the shutterspeed set in camera; "B" is for bulb.
-int captureDuration = 10; //placeholder to store the value of the bulb shot this should be taken as input. note that my primary goal is in fact to perform bulb captures. but this should be extended for sure to take Shutter Speed capture as set in camera
+static char* CDS_Control  = ":60606/Server0/CDS_control";
+static int ReadoutMode = 2; // this should be picked up from the settings.... 0-> JPG; 1->RAW; 2 -> Thumbnails
+static char* cameraShutterSpeed = "B"; // //placeholder to store the value of the shutterspeed set in camera; "B" is for bulb.
+static int captureDuration = 10; //placeholder to store the value of the bulb shot this should be taken as input. note that my primary goal is in fact to perform bulb captures. but this should be extended for sure to take Shutter Speed capture as set in camera
 
 static int NumberPix(Camera *camera);
 static char* loadCmd (Camera *camera,char* cmd);
@@ -203,10 +203,10 @@ static int camera_about (Camera *camera, CameraText *about, GPContext *context);
  *
  * This function is a CameraFilesystem method.
  */
-int
+static int
 put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
 	       CameraFileType type, CameraFile *file, void *data, GPContext *context);
-int
+static int
 put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
 	       CameraFileType type, CameraFile *file, void *data, GPContext *context)
 {
@@ -225,10 +225,10 @@ put_file_func (CameraFilesystem *fs, const char *folder, const char *name,
  *
  * This function is a CameraFilesystem method.
  */
-int
+static int
 delete_file_func (CameraFilesystem *fs, const char *folder,
 		  const char *filename, void *data, GPContext *context);
-int
+static int
 delete_file_func (CameraFilesystem *fs, const char *folder,
 		  const char *filename, void *data, GPContext *context)
 {
@@ -245,10 +245,10 @@ delete_file_func (CameraFilesystem *fs, const char *folder,
  *
  * This function is a CameraFilesystem method.
  */
-int
+static int
 delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
 		 GPContext *context);
-int
+static int
 delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
 		 GPContext *context)
 {
@@ -270,10 +270,10 @@ delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
  *
  * This function is a CameraFilesystem method.
  */
-int
+static int
 get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	       CameraFileInfo *info, void *data, GPContext *context);
-int
+static int
 get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	       CameraFileInfo *info, void *data, GPContext *context)
 {
@@ -342,12 +342,12 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
  *
  * This function is a CameraFilesystem method.
  */
-int
+static int
 storage_info_func (CameraFilesystem *fs,
 		CameraStorageInformation **storageinformations,
 		int *nrofstorageinformations, void *data,
 		GPContext *context);
-int
+static int
 storage_info_func (CameraFilesystem *fs,
 		CameraStorageInformation **storageinformations,
 		int *nrofstorageinformations, void *data,
@@ -1835,7 +1835,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename, C
 }
 
 
-int camera_abilities (CameraAbilitiesList *list) {
+static int camera_abilities (CameraAbilitiesList *list) {
 	CameraAbilities a;
 
 	memset(&a, 0, sizeof(a));
@@ -1857,7 +1857,7 @@ int camera_abilities (CameraAbilitiesList *list) {
 * are NULL.
 *
 */
-CameraFilesystemFuncs fsfuncs = {
+static CameraFilesystemFuncs fsfuncs = {
 	.file_list_func = file_list_func,
 	.folder_list_func = folder_list_func,
 //	.get_info_func = get_info_func,
@@ -1878,7 +1878,7 @@ CameraFilesystemFuncs fsfuncs = {
 *
 * This is a camlib API function.
 */
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortInfo      info;
@@ -1932,11 +1932,8 @@ camera_init (Camera *camera, GPContext *context)
 		return GP_ERROR_IO;
 }
 
-
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "Lumix Wifi");
-
-	return GP_OK;
-}
+CameraLibrary camera_lumix_library = {
+    .id = "Lumix Wifi",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

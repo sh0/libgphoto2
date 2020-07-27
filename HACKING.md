@@ -64,7 +64,7 @@ Source Files
 Every source file (`file_name.c`) should have the following layout:
 
     /* Licence, author, etc. */
-    #include "config.h"
+    #include <gphoto2-config.h>
     #include "file_name.h"
 
     #include <std*.h> (i.e. stdlib, stdio, string, etc.)
@@ -268,7 +268,7 @@ for more details.
 * A char can be signed or unsigned.
 
   Use `signed char` or `unsigned char`, or `int8_t` or `uint8_t` from
-  `_stdint.h`, to be sure to get the type you want when it is
+  `stdint.h`, to be sure to get the type you want when it is
   important.
 
 
@@ -281,7 +281,7 @@ for more details.
 
   Don't assume that it's 32 or 16 bits or any other value.  Instead,
   if you need a variable of a certain size, include the gphoto2 header
-  file `_stdint.h` (or `gphoto2-endian.h`) and use the C99-style
+  file `stdint.h` (or `gphoto2-endian.h`) and use the C99-style
   fixed-width types declared therein.  If you don't really care about
   the size of a variable (e.g. as the index variable in a small for
   loop), you can still use an `int` as it's often the most efficient

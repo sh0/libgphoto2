@@ -19,7 +19,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,7 +48,7 @@
 
 #define GP_MODULE "jl2005c"
 
-struct {
+static struct {
 	char *name;
 	CameraDriverStatus status;
 	unsigned short idVendor;
@@ -92,14 +92,7 @@ struct {
 	{NULL,0,0,0}
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "JL2005B/C/D camera");
-	return GP_OK;
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -446,7 +439,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -501,3 +494,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_jl2005c_library = {
+    .id = "JL2005B/C/D camera",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

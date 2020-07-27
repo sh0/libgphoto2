@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -30,7 +30,7 @@
 
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "jl2005c.h"
 
@@ -61,7 +61,7 @@ restart:
 		gp_port_open(port);
 	}
 
-	set_usb_in_endpoint	(camera, 0x84);
+	jl2005c_set_usb_in_endpoint	(camera, 0x84);
 	gp_port_write (port, "\x08\x00", 2);
 	usleep (10000);
 	gp_port_write (port, "\x95\x60", 2);
@@ -115,7 +115,7 @@ restart:
 	gp_port_write (port, "\x0a\x00", 2);
 	usleep (10000);
 	/* Switch the inep over to 0x82. It stays there ever after. */
-	set_usb_in_endpoint	(camera, 0x82);
+	jl2005c_set_usb_in_endpoint	(camera, 0x82);
 
 	/* Read the first block of the allocation table. */
 	jl2005c_read_data (port, (char *)info, 0x200);
@@ -220,7 +220,7 @@ jl2005c_get_start_of_photo(CameraPrivateLibrary *priv, Info *table,
 
 
 int
-set_usb_in_endpoint	(Camera *camera, int inep)
+jl2005c_set_usb_in_endpoint	(Camera *camera, int inep)
 {
 	GPPortSettings settings;
 	gp_port_get_settings ( camera ->port, &settings);

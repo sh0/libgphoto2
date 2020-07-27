@@ -9,7 +9,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-const char *js0n(const char *key, size_t klen,
+const char *pslr_js0n(const char *key, size_t klen,
                  const char *json, size_t jlen, size_t *vlen);
 #ifdef __cplusplus
 } /* extern "C" */

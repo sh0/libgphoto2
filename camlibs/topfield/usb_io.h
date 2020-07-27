@@ -28,6 +28,7 @@
 #define _USB_IO_H 1
 
 #include <gphoto2/gphoto2-camera.h>
+#include <gphoto2/gphoto2-port-log.h>
 #include <sys/types.h>
 
 #define BITS_PER_LONG sizeof(long)*8
@@ -96,19 +97,19 @@ struct typefile
 #pragma pack()
 
 
-ssize_t send_success(Camera *camera, GPContext *context);
-ssize_t send_cancel(Camera *camera, GPContext *context);
-ssize_t send_cmd_ready(Camera *camera, GPContext *context);
-ssize_t send_cmd_reset(Camera *camera, GPContext *context);
-ssize_t send_cmd_turbo(Camera *camera, int turbo_on, GPContext *context);
-ssize_t send_cmd_hdd_size(Camera *camera, GPContext *context);
-ssize_t send_cmd_hdd_dir(Camera *camera, char *path, GPContext *context);
-ssize_t send_cmd_hdd_file_send(Camera *camera, uint8_t dir, char *path, GPContext *context);
-ssize_t send_cmd_hdd_del(Camera *camera, char *path, GPContext *context);
-ssize_t send_cmd_hdd_rename(Camera *camera, char *src, char *dst, GPContext *context);
-ssize_t send_cmd_hdd_create_dir(Camera *camera, char *path, GPContext *context);
+ssize_t topfield_send_success(Camera *camera, GPContext *context);
+ssize_t topfield_send_cancel(Camera *camera, GPContext *context);
+ssize_t topfield_send_cmd_ready(Camera *camera, GPContext *context);
+ssize_t topfield_send_cmd_reset(Camera *camera, GPContext *context);
+ssize_t topfield_send_cmd_turbo(Camera *camera, int turbo_on, GPContext *context);
+ssize_t topfield_send_cmd_hdd_size(Camera *camera, GPContext *context);
+ssize_t topfield_send_cmd_hdd_dir(Camera *camera, char *path, GPContext *context);
+ssize_t topfield_send_cmd_hdd_file_send(Camera *camera, uint8_t dir, char *path, GPContext *context);
+ssize_t topfield_send_cmd_hdd_del(Camera *camera, char *path, GPContext *context);
+ssize_t topfield_send_cmd_hdd_rename(Camera *camera, char *src, char *dst, GPContext *context);
+ssize_t topfield_send_cmd_hdd_create_dir(Camera *camera, char *path, GPContext *context);
 
-ssize_t get_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context);
-ssize_t send_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context);
+ssize_t topfield_get_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context);
+ssize_t topfield_send_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context);
 
 #endif /* _USB_IO_H */

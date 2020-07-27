@@ -19,7 +19,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-library.h>
 #include <gphoto2/gphoto2-port-portability.h>
 

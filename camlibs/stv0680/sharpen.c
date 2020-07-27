@@ -119,7 +119,7 @@ static void rgb_filter (int    width,	/* I - Width of line in pixels */
 }
 
 /** 'sharpen()' - Sharpen an image using a convolution filter. **/
-void  sharpen(int width, int height,
+void  stv0680_sharpen(int width, int height,
 	unsigned char *src_region, unsigned char *dest_region,
 	int sharpen_percent
 ) {

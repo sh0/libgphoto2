@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -452,7 +452,7 @@ sony_converse(Camera * camera, Packet * out, unsigned char *str, int len)
 static int
 sony_baud_port_set(Camera * camera, long baud)
 {
-	gp_port_settings settings;
+	GPPortSettings settings;
 
 	gp_port_get_settings(camera->port, &settings);
 	settings.serial.speed = baud;
@@ -502,7 +502,7 @@ sony_baud_set(Camera * camera, long baud)
 static int
 sony_init_port (Camera *camera)
 {
-	gp_port_settings settings;
+	GPPortSettings settings;
 	int rc;
 
 	rc = gp_port_set_timeout (camera->port, 5000);
@@ -890,12 +890,3 @@ sony_image_info(Camera * camera, int imageid, SonyFileType file_type,
 	}
 	return rc;
 }
-
-
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */

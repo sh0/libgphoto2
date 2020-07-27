@@ -20,8 +20,6 @@
 #ifndef SONY_H
 #define SONY_H
 
-#define SONY_CAMERA_ID "sonydscf55"
-
 typedef enum {
 	SONY_MODEL_MSAC_SR1 = 0,
 	SONY_MODEL_DCR_PC100,
@@ -67,10 +65,3 @@ int sony_file_name_get(Camera *camera, int imageid, SonyFileType file_type, char
 int sony_is_mpeg_file_name(const char * file_name);
 
 #endif /* SONY_H */
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */

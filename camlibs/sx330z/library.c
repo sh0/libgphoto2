@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -92,7 +92,7 @@ static const struct
 /*
  * camera abilities
  */
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
  int i;
@@ -219,20 +219,6 @@ del_file_func(CameraFilesystem *fs,const char *folder,const char *filename,
  return(sx330z_delete_file(camera,context,filename));
 } /* delete  file func */
 
-
-/*
- * Camera ID
- */
-int
-camera_id(CameraText *id)
-{
- strcpy(id->text,"Traveler SX330z");
- return (GP_OK);
-} /* camera id */
-
-
-
-
 /*
  * Camera about
  */
@@ -248,11 +234,11 @@ camera_about(Camera *camera,CameraText *about,GPContext *context)
 
 
 /*
- * camera_exit
+ * sx330z_camera_exit
  * release allocated memory
  */
 int
-camera_exit(Camera *camera, GPContext *context)
+sx330z_camera_exit(Camera *camera, GPContext *context)
 {
  if (camera->pl)
   free(camera->pl);
@@ -266,10 +252,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.del_file_func = del_file_func
 };
 
-/*
- * OK, lets get serious !
- */
-int
+static int
 camera_init(Camera *camera,GPContext *context)
 {
  GPPortSettings settings;
@@ -278,7 +261,7 @@ camera_init(Camera *camera,GPContext *context)
  /*CR(gp_port_get_settings(camera->port,&settings));*/
 
  camera->functions->about=camera_about;
- camera->functions->exit=camera_exit;
+ camera->functions->exit=sx330z_camera_exit;
  gp_port_get_settings(camera->port,&settings);
  if (camera->port->type!=GP_PORT_USB)
  {
@@ -300,5 +283,10 @@ camera_init(Camera *camera,GPContext *context)
 /* GP_DEBUG("sx330z Camera_init : sx init %04x",camera->pl->usb_product); */
  return(sx330z_init(camera,context));
 
-} /* camera init */
+}
 
+CameraLibrary camera_sx330z_library = {
+    .id = "Traveler SX330z",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

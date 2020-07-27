@@ -18,18 +18,17 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_PORT_VERSION_H__
-#define __GPHOTO2_PORT_VERSION_H__
-
-typedef enum {
-  GP_VERSION_SHORT = 0,
-  GP_VERSION_VERBOSE = 1
-} GPVersionVerbosity;
-
+#ifndef GPHOTO2_PORT_VERSION_H
+#define GPHOTO2_PORT_VERSION_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef enum {
+    GP_VERSION_SHORT = 0,
+    GP_VERSION_VERBOSE = 1
+} GPVersionVerbosity;
 
 typedef const char **(*GPVersionFunc)(GPVersionVerbosity verbose);
 const char **gp_port_library_version(GPVersionVerbosity verbose);
@@ -38,11 +37,4 @@ const char **gp_port_library_version(GPVersionVerbosity verbose);
 }
 #endif
 
-#endif /* __GPHOTO2_PORT_VERSION_H__ */
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */
+#endif /* GPHOTO2_PORT_VERSION_H */

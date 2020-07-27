@@ -41,14 +41,7 @@
 #  define N_(String) (String)
 #endif
 
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "Mustek MDC 800");
-	return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -313,7 +306,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
         /* First, set up all the function pointers */
@@ -341,3 +334,9 @@ camera_init (Camera *camera, GPContext *context)
 	}
 	return mdc800_openCamera(camera);
 }
+
+CameraLibrary camera_mustek_library = {
+    .id = "Mustek MDC 800",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

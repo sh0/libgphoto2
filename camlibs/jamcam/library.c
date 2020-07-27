@@ -22,7 +22,7 @@
 /* Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,*/
 /* Boston, MA  02110-1301  USA					*/
 /****************************************************************/
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -716,4 +716,3 @@ static int jamcam_query_mmc_card (Camera *camera)
 	}
 	return (GP_ERROR_TIMEOUT);
 }
-

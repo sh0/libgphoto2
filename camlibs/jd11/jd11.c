@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -43,13 +43,7 @@
 
 #include "serial.h"
 
-int camera_id (CameraText *id)
-{
-	strcpy(id->text, "JD11");
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
 
@@ -282,9 +276,9 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func,
 };
 
-int camera_init (Camera *camera, GPContext *context)
+static int camera_init (Camera *camera, GPContext *context)
 {
-        gp_port_settings settings;
+        GPPortSettings settings;
 
         /* First, set up all the function pointers */
         camera->functions->manual	= camera_manual;
@@ -306,3 +300,9 @@ int camera_init (Camera *camera, GPContext *context)
         /* test camera */
         return jd11_ping(camera->port);
 }
+
+CameraLibrary camera_jd11_library = {
+    .id = "JD11",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

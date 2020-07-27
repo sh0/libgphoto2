@@ -27,13 +27,13 @@
 /****************************************************************/
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <gphoto2/gphoto2.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "spca50x.h"
 #include "spca50x-registers.h"
@@ -160,7 +160,7 @@ spca50x_reset (CameraPrivateLibrary * lib)
 
 
 int
-yuv2rgb (uint32_t y, uint32_t u, uint32_t v, uint32_t *_r, uint32_t *_g, uint32_t *_b)
+spca50x_yuv2rgb (uint32_t y, uint32_t u, uint32_t v, uint32_t *_r, uint32_t *_g, uint32_t *_b)
 {
 	double r, g, b;
 
@@ -203,7 +203,7 @@ spca50x_capture (CameraPrivateLibrary * lib)
 }
 
 int
-create_jpeg_from_data (uint8_t * dst, uint8_t * src, int qIndex, int w,
+spca50x_create_jpeg_from_data (uint8_t * dst, uint8_t * src, int qIndex, int w,
 		       int h, uint8_t format, int o_size, int *size,
 		       int omit_huffman_table, int omit_escape)
 {

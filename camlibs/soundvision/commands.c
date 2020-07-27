@@ -22,19 +22,16 @@
  * Copyright 2001-2003 Vince Weaver <vince@deater.net>
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
 #include <gphoto2/gphoto2.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "soundvision.h"
 #include "commands.h"

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -99,7 +99,7 @@ build_huffmann_tree(struct compstate *cs) {
 #define F4	0.0
 
 void
-picture_decomp_v1(unsigned char *compressed,unsigned char *uncompressed,int width,int height) {
+jd11_picture_decomp_v1(unsigned char *compressed,unsigned char *uncompressed,int width,int height) {
 	struct	compstate cs;
 	unsigned char xbyte;
 	int	i=0,curbyte=0,diff,lastval;
@@ -154,7 +154,7 @@ picture_decomp_v1(unsigned char *compressed,unsigned char *uncompressed,int widt
 
 /* Just blow up the picture from 6 bit uncompressed to 8 bit uncompressed */
 void
-picture_decomp_v2(unsigned char *compressed,unsigned char *uncompressed,int width,int height) {
+jd11_picture_decomp_v2(unsigned char *compressed,unsigned char *uncompressed,int width,int height) {
 	struct	compstate cs;
 	int	i,j;
 	unsigned char xbyte;

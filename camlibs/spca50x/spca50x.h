@@ -26,7 +26,7 @@
 
 #ifndef __SPCA50X_H__
 #define __SPCA50X_H__
-#include <_stdint.h>
+#include <stdint.h>
 #include <gphoto2/gphoto2-camera.h>
 
 #define SPCA50X_FAT_PAGE_SIZE 0x100
@@ -85,8 +85,8 @@ int spca50x_get_firmware_revision (CameraPrivateLibrary *lib);
 int spca50x_detect_storage_type (CameraPrivateLibrary *lib);
 int spca50x_reset (CameraPrivateLibrary * lib);
 int spca50x_capture (CameraPrivateLibrary * lib);
-int yuv2rgb (uint32_t y, uint32_t u, uint32_t v, uint32_t *r, uint32_t *g, uint32_t *b);
-int create_jpeg_from_data (uint8_t * dst, uint8_t * src, int qIndex,
+int spca50x_yuv2rgb (uint32_t y, uint32_t u, uint32_t v, uint32_t *r, uint32_t *g, uint32_t *b);
+int spca50x_create_jpeg_from_data (uint8_t * dst, uint8_t * src, int qIndex,
 				   int w, int h, uint8_t format,
 				   int original_size, int *size,
 				   int omit_huffman_table, int omit_escape);

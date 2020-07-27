@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -184,15 +184,7 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
         return (GP_OK);
 }
 
-int
-camera_id (CameraText* id)
-{
-        strcpy (id->text, "konica");
-
-        return (GP_OK);
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList* list)
 {
         int i;
@@ -1212,7 +1204,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.delete_all_func = delete_all_func,
 };
 
-int
+static int
 camera_init (Camera* camera, GPContext *context)
 {
         int i, speed;
@@ -1285,3 +1277,8 @@ camera_init (Camera* camera, GPContext *context)
         return (GP_OK);
 }
 
+CameraLibrary camera_konica_library = {
+    .id = "konica",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

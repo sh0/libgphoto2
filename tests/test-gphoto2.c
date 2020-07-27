@@ -17,7 +17,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #ifdef HAVE_MCHECK_H
@@ -25,6 +25,7 @@
 #endif
 
 #include <gphoto2/gphoto2-camera.h>
+#include <gphoto2/gphoto2-abilities-list.h>
 
 #define CHECK(f) {int res = f; if (res < 0) {printf ("ERROR: %s\n", gp_result_as_string (res)); return (1);}}
 

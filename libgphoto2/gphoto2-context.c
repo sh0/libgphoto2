@@ -23,7 +23,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include <gphoto2/gphoto2-context.h>
 
 #include <stdio.h>

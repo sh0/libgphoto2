@@ -19,12 +19,12 @@
  */
 #ifndef __AX203_H__
 #define __AX203_H__
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 
 #include <gphoto2/gphoto2-library.h>
-#include <gphoto2-endian.h>
+#include <gphoto2/gphoto2-endian.h>
 
 #include "tinyjpeg.h"
 

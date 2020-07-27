@@ -45,8 +45,7 @@ int digi_decompress (unsigned char *out_data, unsigned char *data,
 int digi_postprocess	(int width, int height, unsigned char* rgb);
 int digi_delete_all	(GPPort *, CameraPrivateLibrary *priv);
 
-int
-white_balance (unsigned char *data, unsigned int size, float saturation);
+int digi_white_balance (unsigned char *data, unsigned int size, float saturation);
 
 
 #endif

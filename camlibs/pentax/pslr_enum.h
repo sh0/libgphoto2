@@ -198,8 +198,8 @@ typedef enum {
     PSLR_SCENE_MODE_MAX
 } pslr_scene_mode_t;
 
-int str_comparison_i (const char *s1, const char *s2, int n);
-int find_in_array( const char** array, int length, char* str );
+int pslr_str_comparison_i (const char *s1, const char *s2, int n);
+int pslr_find_in_array( const char** array, int length, char* str );
 
 pslr_color_space_t get_pslr_color_space( char *str );
 const char *get_pslr_color_space_str( pslr_color_space_t value );

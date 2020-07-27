@@ -23,7 +23,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-log.h>
 
 #include <stdlib.h>
@@ -413,9 +413,6 @@ gp_log_with_source_location(GPLogLevel level, const char *file, int line, const 
 }
 #endif /* DISABLE_DEBUGGING */
 
-
-#ifdef _GPHOTO2_INTERNAL_CODE
-
 /**
  * \brief (Internal) translate a enumeration code to a string
  */
@@ -511,13 +508,3 @@ gpi_string_list_to_flags(const char *str[],
 	}
 	return flags;
 }
-
-#endif /* _GPHOTO2_INTERNAL_CODE */
-
-
-/*
- * Local Variables:
- * c-file-style:"linux"
- * indent-tabs-mode:t
- * End:
- */

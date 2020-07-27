@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -28,7 +28,7 @@
 
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #include "jl2005a.h"
 
@@ -107,7 +107,7 @@ jl2005a_get_pic_height (GPPort *port)
 }
 
 int
-set_usb_in_endpoint	(Camera *camera, int inep)
+jl2005a_set_usb_in_endpoint	(Camera *camera, int inep)
 {
 	GPPortSettings settings;
 	gp_port_get_settings ( camera ->port, &settings);
@@ -146,7 +146,7 @@ jl2005a_read_picture_data (Camera *camera, GPPort *port,
         gp_port_write (port, "\xa2\x08", 2);
 
 	/* Switch the inep over to 0x81. */
-	set_usb_in_endpoint	(camera, 0x81);
+	jl2005a_set_usb_in_endpoint	(camera, 0x81);
 	while (size > maxdl) {
 		ret = gp_port_read(port, (char *)to_read, maxdl);
 		if (ret < GP_OK) return ret;
@@ -158,7 +158,7 @@ jl2005a_read_picture_data (Camera *camera, GPPort *port,
 	if (ret < GP_OK) return ret;
 	if (ret < size) return GP_ERROR;
 	/* Switch the inep back to 0x84. */
-	set_usb_in_endpoint	(camera, 0x84);
+	jl2005a_set_usb_in_endpoint	(camera, 0x84);
 	return GP_OK;
 }
 

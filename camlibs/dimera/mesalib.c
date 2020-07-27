@@ -19,7 +19,7 @@
 *									  GDB
 * $Id$
 */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include "mesalib.h"
 
@@ -29,7 +29,7 @@
 #include <string.h>
 
 #include <gphoto2/gphoto2.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #define GP_MODULE "dimera"
 #define debuglog(e) GP_DEBUG( "%s", (e))
@@ -199,7 +199,7 @@ int
 mesa_set_speed( GPPort *port, int speed )
 {
 	uint8_t	b[2];
-	gp_port_settings settings;
+	GPPortSettings settings;
 
 	if (speed == 0)
 		speed = 115200;		/* use default speed */

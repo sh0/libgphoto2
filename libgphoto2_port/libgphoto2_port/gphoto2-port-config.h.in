@@ -1,0 +1,105 @@
+/** \file
+ *
+ * \brief Configuration definitions.
+ *
+ * \note
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * \note
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * \note
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301  USA
+ */
+
+#ifndef GPHOTO2_PORT_CONFIG_H
+#define GPHOTO2_PORT_CONFIG_H
+
+/* Define to 1 if translation of program messages to the user's native language is requested. */
+#cmakedefine ENABLE_NLS 1
+/* The gettext domain we're using */
+#cmakedefine GETTEXT_PACKAGE "@GETTEXT_PACKAGE@"
+#cmakedefine GETTEXT_LOCALEDIR "@GETTEXT_LOCALEDIR@"
+
+/* Define to the version of this package. */
+#cmakedefine PACKAGE_VERSION "@PACKAGE_VERSION@"
+
+/* Whether we compile with Avahi support. */
+#cmakedefine HAVE_MDNS_BONJOUR 1
+/* Whether we compile with libexif support. */
+#cmakedefine HAVE_LIBEXIF 1
+
+/* Whether we have the va_copy() function. */
+#cmakedefine HAVE_VA_COPY 1
+
+/* Whether we have regex.h */
+#cmakedefine HAVE_REGEX 1
+/* Define if you have GNU regex. */
+#cmakedefine HAVE_GNU_REGEX 1
+
+/* Define to 1 if you have the <mntent.h> header file. */
+#cmakedefine HAVE_MNTENT_H 1
+/* Define to 1 if you have the <sys/mntent.h> header file. */
+#cmakedefine HAVE_SYS_MNTENT_H 1
+/* Define to 1 if you have the <sys/mnttab.h> header file. */
+#cmakedefine HAVE_SYS_MNTTAB_H 1
+/* Define to 1 if you have the `setmntent' function. */
+#cmakedefine HAVE_SETMNTENT 1
+/* Define to 1 if you have the `endmntent' function. */
+#cmakedefine HAVE_ENDMNTENT 1
+/* Whether struct mnttag has mnt_mountp field. */
+#cmakedefine HAVE_MNTTAB 1
+
+/* Define to 1 if you have the <termios.h> header file. */
+#cmakedefine HAVE_TERMIOS_H 1
+/* Define to 1 if you have the <fcntl.h> header file. */
+#cmakedefine HAVE_FCNTL_H 1
+/* Define to 1 if you have the <errno.h> header file. */
+#cmakedefine HAVE_ERRNO_H 1
+/* Define to 1 if you have the <sys/time.h> header file. */
+#cmakedefine HAVE_SYS_TIME_H 1
+/* Define to 1 if you have the <sys/file.h> header file. */
+#cmakedefine HAVE_SYS_FILE_H 1
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#cmakedefine HAVE_SYS_IOCTL_H 1
+/* Define to 1 if you have the <sys/select.h> header file. */
+#cmakedefine HAVE_SYS_SELECT_H 1
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine HAVE_SYS_PARAM_H 1
+/* Define to 1 if you have the <limits.h> header file. */
+#cmakedefine HAVE_LIMITS_H 1
+/* Define to 1 if you have the <scsi/sg.h> header file. */
+#cmakedefine HAVE_SCSI_SG_H 1
+
+/* Define if you have ttylock based tty locking. */
+#cmakedefine HAVE_TTYLOCK 1
+/* Define if you have dev_lock/lockdev based locking. */
+#cmakedefine HAVE_LOCKDEV 1
+/* Define to 1 if you have the `flock' function. */
+#cmakedefine HAVE_FLOCK 1
+
+/* Build disk port support. */
+#cmakedefine BUILD_PORT_DISK 1
+/* Build ptpip port support. */
+#cmakedefine BUILD_PORT_PTPIP 1
+/* Build serial port support. */
+#cmakedefine BUILD_PORT_SERIAL 1
+/* Build libusb1 port support. */
+#cmakedefine BUILD_PORT_LIBUSB1 1
+/* Build rawusb port support. */
+#cmakedefine BUILD_PORT_RAWUSB 1
+/* Build usbdiskdirect port support. */
+#cmakedefine BUILD_PORT_USBDISKDIRECT 1
+/* Build usbscsi port support. */
+#cmakedefine BUILD_PORT_USBSCSI 1
+
+#endif /* GPHOTO2_PORT_CONFIG_H */

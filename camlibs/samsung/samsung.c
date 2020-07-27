@@ -19,7 +19,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -128,14 +128,6 @@ SDSC_initialize (GPPort *port)
 	return (GP_OK);
 }
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "samsung");
-
-	return (GP_OK);
-}
-
 static const struct {
 	const char *model;
 } models[] = {
@@ -146,7 +138,7 @@ static const struct {
 	{NULL}
 };
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	int i;
@@ -317,7 +309,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.get_info_func = get_info_func
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -340,3 +332,9 @@ camera_init (Camera *camera, GPContext *context)
 	CHECK_RESULT (SDSC_initialize (camera->port));
 	return (GP_OK);
 }
+
+CameraLibrary camera_samsung_library = {
+    .id = "samsung",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

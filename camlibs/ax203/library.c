@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -56,16 +56,7 @@ static const struct ax203_devinfo ax203_devinfo[] = {
 	{}
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "AX203 USB picture frame");
-
-	return GP_OK;
-}
-
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -482,7 +473,7 @@ camera_exit (Camera *camera, GPContext *context)
 	return GP_OK;
 }
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
     	CameraAbilities a;
@@ -563,3 +554,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_ax203_library = {
+    .id = "AX203 USB picture frame",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 #define _DEFAULT_SOURCE
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -49,15 +49,7 @@
 #  define N_(String) (String)
 #endif
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "ST2205 USB picture frame");
-
-	return GP_OK;
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -605,7 +597,7 @@ camera_exit (Camera *camera, GPContext *context)
 	return GP_OK;
 }
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	int i, j, ret;
@@ -722,3 +714,9 @@ camera_init (Camera *camera, GPContext *context)
 
 	return GP_OK;
 }
+
+CameraLibrary camera_st2205_library = {
+    .id = "ST2205 USB picture frame",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

@@ -14,7 +14,7 @@
  * COPYING in the main source tree of libgphoto2.
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 
 #include <stdlib.h>
@@ -23,9 +23,6 @@
 #include <fcntl.h>
 #include <string.h>
 #include <math.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>
@@ -243,7 +240,7 @@ digi_decompress (unsigned char *out_data, unsigned char *data,
 }
 
 /* Brightness correction routine adapted from
- * camlibs/polaroid/jd350e.c, copyright © 2001 Michael Trawny
+ * camlibs/polaroid/jd350e.c, copyright (C) 2001 Michael Trawny
  * <trawny99@users.sourceforge.net>
  */
 
@@ -333,7 +330,7 @@ digi_postprocess(int width, int height,
 	===================================================================== */
 
 static int
-histogram (unsigned char *data, unsigned int size, int *htable_r,
+digi_histogram (unsigned char *data, unsigned int size, int *htable_r,
 					    int *htable_g, int *htable_b)
 {
 	int x;
@@ -354,7 +351,7 @@ histogram (unsigned char *data, unsigned int size, int *htable_r,
 }
 
 int
-white_balance (unsigned char *data, unsigned int size, float saturation)
+digi_white_balance (unsigned char *data, unsigned int size, float saturation)
 {
 	int x, r, g, b, max, d;
 	double r_factor, g_factor, b_factor, max_factor;
@@ -364,7 +361,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 
 	/* ------------------- GAMMA CORRECTION ------------------- */
 
-	histogram(data, size, htable_r, htable_g, htable_b);
+	digi_histogram(data, size, htable_r, htable_g, htable_b);
 	x = 1;
 	for (r = 64; r < 192; r++)
 	{
@@ -388,7 +385,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 
 	/* ---------------- BRIGHT DOTS ------------------- */
 	max = size / 200;
-	histogram(data, size, htable_r, htable_g, htable_b);
+	digi_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r = 0xfe, x = 0; (r > 32) && (x < max); r--)
 		x += htable_r[r];
@@ -444,7 +441,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 	}
 	/* ---------------- DARK DOTS ------------------- */
 	max = size / 200;  /*  1/200 = 0.5%  */
-	histogram(data, size, htable_r, htable_g, htable_b);
+	digi_histogram(data, size, htable_r, htable_g, htable_b);
 
 	for (r = 0, x = 0; r < 96 && x < max; r++)
 		x += htable_r[r];

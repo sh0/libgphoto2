@@ -60,7 +60,7 @@ static void byte_swap(unsigned char * d, int count)
 /* Byte swap an incoming packet. */
 static void swap_in_packet(struct tf_packet *packet)
 {
-    int size = (get_u16_raw(packet) + 1) & ~1;
+    int size = (topfield_get_u16_raw(packet) + 1) & ~1;
 
     if(size > MAXIMUM_PACKET_SIZE)
     {
@@ -73,7 +73,7 @@ static void swap_in_packet(struct tf_packet *packet)
 /* Byte swap an outgoing packet. */
 static void swap_out_packet(struct tf_packet *packet)
 {
-    int size = (get_u16(packet) + 1) & ~1;
+    int size = (topfield_get_u16(packet) + 1) & ~1;
 
     byte_swap((unsigned char *) packet, size);
 }
@@ -87,65 +87,65 @@ static const unsigned char success_packet[8] = {
 };
 
 /* Optimised packet handling to reduce overhead during bulk file transfers. */
-ssize_t send_cancel(Camera *camera,GPContext *context)
+ssize_t topfield_send_cancel(Camera *camera,GPContext *context)
 {
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
     return gp_port_write (camera->port, (char *)cancel_packet, 8);
 }
 
-ssize_t send_success(Camera *camera, GPContext *context)
+ssize_t topfield_send_success(Camera *camera, GPContext *context)
 {
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
     return gp_port_write (camera->port, (char *)success_packet, 8);
 }
 
-ssize_t send_cmd_ready(Camera *camera, GPContext *context)
+ssize_t topfield_send_cmd_ready(Camera *camera, GPContext *context)
 {
     struct tf_packet req;
 
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
-    put_u16(&req.length, 8);
-    put_u32(&req.cmd, CMD_READY);
-    return send_tf_packet(camera, &req, context);
+    topfield_put_u16(&req.length, 8);
+    topfield_put_u32(&req.cmd, CMD_READY);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_reset(Camera *camera, GPContext *context)
+ssize_t topfield_send_cmd_reset(Camera *camera, GPContext *context)
 {
     struct tf_packet req;
 
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
-    put_u16(&req.length, 8);
-    put_u32(&req.cmd, CMD_RESET);
-    return send_tf_packet(camera, &req, context);
+    topfield_put_u16(&req.length, 8);
+    topfield_put_u32(&req.cmd, CMD_RESET);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_turbo(Camera *camera, int turbo_on, GPContext *context)
+ssize_t topfield_send_cmd_turbo(Camera *camera, int turbo_on, GPContext *context)
 {
     struct tf_packet req;
 
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
-    put_u16(&req.length, 12);
-    put_u32(&req.cmd, CMD_TURBO);
-    put_u32(&req.data, turbo_on);
-    return send_tf_packet(camera, &req, context);
+    topfield_put_u16(&req.length, 12);
+    topfield_put_u32(&req.cmd, CMD_TURBO);
+    topfield_put_u32(&req.data, turbo_on);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_hdd_size(Camera *camera, GPContext *context)
+ssize_t topfield_send_cmd_hdd_size(Camera *camera, GPContext *context)
 {
     struct tf_packet req;
 
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
-    put_u16(&req.length, 8);
-    put_u32(&req.cmd, CMD_HDD_SIZE);
-    return send_tf_packet(camera, &req, context);
+    topfield_put_u16(&req.length, 8);
+    topfield_put_u32(&req.cmd, CMD_HDD_SIZE);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
 static unsigned short get_crc(struct tf_packet * packet)
 {
-    return crc16_ansi(&(packet->cmd), get_u16(&packet->length) - 4);
+    return topfield_crc16_ansi(&(packet->cmd), topfield_get_u16(&packet->length) - 4);
 }
 
-ssize_t send_cmd_hdd_dir(Camera *camera, char *path, GPContext *context)
+ssize_t topfield_send_cmd_hdd_dir(Camera *camera, char *path, GPContext *context)
 {
     struct tf_packet req;
     unsigned short packetSize;
@@ -161,19 +161,19 @@ ssize_t send_cmd_hdd_dir(Camera *camera, char *path, GPContext *context)
 
     packetSize = PACKET_HEAD_SIZE + pathLen;
     packetSize = (packetSize + 1) & ~1;
-    put_u16(&req.length, packetSize);
-    put_u32(&req.cmd, CMD_HDD_DIR);
+    topfield_put_u16(&req.length, packetSize);
+    topfield_put_u32(&req.cmd, CMD_HDD_DIR);
     strcpy((char *) req.data, path);
-    return send_tf_packet(camera, &req,context);
+    return topfield_send_tf_packet(camera, &req,context);
 }
 
-ssize_t send_cmd_hdd_file_send(Camera *camera, unsigned char dir, char *path, GPContext *context)
+ssize_t topfield_send_cmd_hdd_file_send(Camera *camera, unsigned char dir, char *path, GPContext *context)
 {
     struct tf_packet req;
     unsigned short packetSize;
     int pathLen = strlen(path) + 1;
 
-    gp_log (GP_LOG_DEBUG, "topfield", "send_cmd_hdd_file_send(dir = %d, path = %s)", dir, path);
+    gp_log (GP_LOG_DEBUG, "topfield", "topfield_send_cmd_hdd_file_send(dir = %d, path = %s)", dir, path);
     if((PACKET_HEAD_SIZE + 1 + 2 + pathLen) >= MAXIMUM_PACKET_SIZE) {
         fprintf(stderr, "ERROR: Path is too long.\n");
         return -1;
@@ -181,15 +181,15 @@ ssize_t send_cmd_hdd_file_send(Camera *camera, unsigned char dir, char *path, GP
 
     packetSize = PACKET_HEAD_SIZE + 1 + 2 + pathLen;
     packetSize = (packetSize + 1) & ~1;
-    put_u16(&req.length, packetSize);
-    put_u32(&req.cmd, CMD_HDD_FILE_SEND);
+    topfield_put_u16(&req.length, packetSize);
+    topfield_put_u32(&req.cmd, CMD_HDD_FILE_SEND);
     req.data[0] = dir;
-    put_u16(&req.data[1], pathLen);
+    topfield_put_u16(&req.data[1], pathLen);
     strcpy((char *) &req.data[3], path);
-    return send_tf_packet(camera, &req, context);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_hdd_del(Camera *camera, char *path, GPContext *context)
+ssize_t topfield_send_cmd_hdd_del(Camera *camera, char *path, GPContext *context)
 {
     struct tf_packet req;
     unsigned short packetSize;
@@ -204,13 +204,13 @@ ssize_t send_cmd_hdd_del(Camera *camera, char *path, GPContext *context)
 
     packetSize = PACKET_HEAD_SIZE + pathLen;
     packetSize = (packetSize + 1) & ~1;
-    put_u16(&req.length, packetSize);
-    put_u32(&req.cmd, CMD_HDD_DEL);
+    topfield_put_u16(&req.length, packetSize);
+    topfield_put_u32(&req.cmd, CMD_HDD_DEL);
     strcpy((char *) req.data, path);
-    return send_tf_packet(camera, &req, context);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_hdd_rename(Camera *camera, char *src, char *dst, GPContext *context)
+ssize_t topfield_send_cmd_hdd_rename(Camera *camera, char *src, char *dst, GPContext *context)
 {
     struct tf_packet req;
     unsigned short packetSize;
@@ -227,16 +227,16 @@ ssize_t send_cmd_hdd_rename(Camera *camera, char *src, char *dst, GPContext *con
 
     packetSize = PACKET_HEAD_SIZE + 2 + srcLen + 2 + dstLen;
     packetSize = (packetSize + 1) & ~1;
-    put_u16(&req.length, packetSize);
-    put_u32(&req.cmd, CMD_HDD_RENAME);
-    put_u16(&req.data[0], srcLen);
+    topfield_put_u16(&req.length, packetSize);
+    topfield_put_u32(&req.cmd, CMD_HDD_RENAME);
+    topfield_put_u16(&req.data[0], srcLen);
     strcpy((char *) &req.data[2], src);
-    put_u16(&req.data[2 + srcLen], dstLen);
+    topfield_put_u16(&req.data[2 + srcLen], dstLen);
     strcpy((char *) &req.data[2 + srcLen + 2], dst);
-    return send_tf_packet(camera, &req, context);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
-ssize_t send_cmd_hdd_create_dir(Camera *camera, char *path, GPContext *context)
+ssize_t topfield_send_cmd_hdd_create_dir(Camera *camera, char *path, GPContext *context)
 {
     struct tf_packet req;
     unsigned short packetSize;
@@ -251,22 +251,22 @@ ssize_t send_cmd_hdd_create_dir(Camera *camera, char *path, GPContext *context)
 
     packetSize = PACKET_HEAD_SIZE + 2 + pathLen;
     packetSize = (packetSize + 1) & ~1;
-    put_u16(&req.length, packetSize);
-    put_u32(&req.cmd, CMD_HDD_CREATE_DIR);
-    put_u16(&req.data[0], pathLen);
+    topfield_put_u16(&req.length, packetSize);
+    topfield_put_u32(&req.cmd, CMD_HDD_CREATE_DIR);
+    topfield_put_u16(&req.data[0], pathLen);
     strcpy((char *) &req.data[2], path);
-    return send_tf_packet(camera, &req, context);
+    return topfield_send_tf_packet(camera, &req, context);
 }
 
 /* Given a Topfield protocol packet, this function will calculate the required
  * CRC and send the packet out over a bulk pipe. */
-ssize_t send_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context)
+ssize_t topfield_send_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *context)
 {
-    unsigned int pl = get_u16(&packet->length);
+    unsigned int pl = topfield_get_u16(&packet->length);
     ssize_t byte_count = (pl + 1) & ~1;
 
     gp_log (GP_LOG_DEBUG, "topfield", __func__);
-    put_u16(&packet->crc, get_crc(packet));
+    topfield_put_u16(&packet->crc, get_crc(packet));
     swap_out_packet(packet);
     return gp_port_write (camera->port, (char *) packet, byte_count);
 }
@@ -274,7 +274,7 @@ ssize_t send_tf_packet(Camera *camera, struct tf_packet *packet, GPContext *cont
 /* Receive a Topfield protocol packet.
  * Returns a negative number if the packet read failed for some reason.
  */
-ssize_t get_tf_packet(Camera *camera, struct tf_packet * packet, GPContext *context)
+ssize_t topfield_get_tf_packet(Camera *camera, struct tf_packet * packet, GPContext *context)
 {
     unsigned char *buf = (unsigned char *) packet;
     int r;
@@ -290,22 +290,22 @@ ssize_t get_tf_packet(Camera *camera, struct tf_packet * packet, GPContext *cont
     }
 
     /* Send SUCCESS as soon as we see a data transfer packet */
-    if(DATA_HDD_FILE_DATA == get_u32_raw(&packet->cmd))
-        send_success(camera,context);
+    if(DATA_HDD_FILE_DATA == topfield_get_u32_raw(&packet->cmd))
+        topfield_send_success(camera,context);
 
     swap_in_packet(packet);
 
     {
         unsigned short crc;
         unsigned short calc_crc;
-        unsigned short len = get_u16(&packet->length);
+        unsigned short len = topfield_get_u16(&packet->length);
 
         if(len < PACKET_HEAD_SIZE) {
             gp_log (GP_LOG_DEBUG, "topfield", "Invalid packet length %04x\n", len);
             return -1;
         }
 
-        crc = get_u16(&packet->crc);
+        crc = topfield_get_u16(&packet->crc);
         calc_crc = get_crc(packet);
 
         /* Complain about CRC mismatch */

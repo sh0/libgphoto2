@@ -14,7 +14,7 @@
  * COPYING in the main source tree of libgphoto2.
  */
 
-#include <config.h>
+#include <gphoto2-config.h>
 
 
 #include <stdlib.h>
@@ -23,9 +23,6 @@
 #include <fcntl.h>
 #include <string.h>
 #include <math.h>
-#ifdef OS2
-#include <db.h>
-#endif
 
 #include <gphoto2/gphoto2.h>
 #include <gphoto2/gphoto2-port.h>

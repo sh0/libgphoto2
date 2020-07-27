@@ -19,7 +19,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-library.h>
 
 #include "vcamera.h"
@@ -64,14 +64,7 @@ struct _GPPortPrivateLibrary {
 	vcamera	*vcamera;
 };
 
-GPPortType
-gp_port_library_type (void)
-{
-	gp_log(GP_LOG_DEBUG,__FUNCTION__,"()");
-        return GP_PORT_USB;
-}
-
-int
+static int
 gp_port_library_list (GPPortInfoList *list)
 {
 	GPPortInfo info;
@@ -367,7 +360,7 @@ gp_port_vusb_find_device_by_class_lib(GPPort *port, int class, int subclass, int
 
 
 
-GPPortOperations *
+static GPPortOperations *
 gp_port_library_operations (void)
 {
 	GPPortOperations *ops;
@@ -402,3 +395,10 @@ gp_port_library_operations (void)
         ops->find_device_by_class	= gp_port_vusb_find_device_by_class_lib;
 	return ops;
 }
+
+GPPortLibrary gp_port_vusb_library = {
+	.type = GP_PORT_USB,
+	.list = gp_port_library_list,
+	.operations = gp_port_library_operations
+};
+

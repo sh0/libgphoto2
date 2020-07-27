@@ -19,11 +19,11 @@
  */
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "sierra.h"
 
 #include <stdlib.h>
-#include <_stdint.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -261,14 +261,7 @@ static struct {
 	{0, 0}
 };
 
-int camera_id (CameraText *id)
-{
-	strcpy(id->text, "sierra");
-
-	return (GP_OK);
-}
-
-int camera_abilities (CameraAbilitiesList *list)
+static int camera_abilities (CameraAbilitiesList *list)
 {
 	int x;
 	CameraAbilities a;
@@ -332,9 +325,9 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 {
 	Camera *camera = data;
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_list_files (camera, folder, list, context));
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -343,9 +336,9 @@ folder_list_func (CameraFilesystem *fs, const char *folder,
 {
 	Camera *camera = data;
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_list_folders (camera, folder, list, context));
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -373,7 +366,7 @@ get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	 * Get information about this image. Don't make this fatal as
 	 * at least the "Agfa ePhoto307" doesn't support this command.
 	 */
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_change_folder (camera, folder, context));
 	memset (&i, 0, sizeof (SierraPicInfo));
 	CHECK_STOP (camera, sierra_get_pic_info (camera, n, &i, context));
@@ -425,7 +418,7 @@ get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	if (i.locked == SIERRA_LOCKED_NO)
 		info->file.permissions |= GP_FILE_PERM_DELETE;
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -439,7 +432,7 @@ set_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	CHECK (n = gp_filesystem_number (camera->fs, folder, filename, context));
 	n++;
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_change_folder (camera, folder, context));
 	CHECK_STOP (camera, sierra_get_pic_info (camera, n, &i, context));
 
@@ -457,11 +450,11 @@ set_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		}
 	}
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 int
-camera_start (Camera *camera, GPContext *context)
+sierra_camera_start (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
 	unsigned int i;
@@ -502,7 +495,7 @@ camera_start (Camera *camera, GPContext *context)
 }
 
 int
-camera_stop (Camera *camera, GPContext *context)
+sierra_camera_stop (Camera *camera, GPContext *context)
 {
 	GP_DEBUG ("Closing connection");
 
@@ -568,7 +561,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	}
 
 	/* Set the working folder */
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_change_folder (camera, folder, context));
 
 	/*
@@ -611,7 +604,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		 */
 		return (GP_ERROR_NOT_SUPPORTED);
 	}
-	CHECK (camera_stop (camera, context));
+	CHECK (sierra_camera_stop (camera, context));
 
 	/* Now get the data and do some post-processing */
 	CHECK (gp_file_get_data_and_size (file, &data, &size));
@@ -673,7 +666,7 @@ delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
 	GP_DEBUG ("*** folder: %s", folder);
 
 	/* Set the working folder and delete all pictures there */
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_change_folder (camera, folder, context));
 	CHECK_STOP (camera, sierra_delete_all (camera, context));
 
@@ -690,7 +683,7 @@ delete_all_func (CameraFilesystem *fs, const char *folder, void *data,
 	if (count > 0)
 		return (GP_ERROR);
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -713,7 +706,7 @@ delete_file_func (CameraFilesystem *fs, const char *folder,
 	gp_context_progress_update (context, id, 0);
 	CHECK (n = gp_filesystem_number (camera->fs, folder, filename, context));
 	/* Set the working folder and delete the file */
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_change_folder (camera, folder, context));
 	/*
 	 * The following command takes a while, and there is no way to add
@@ -722,7 +715,7 @@ delete_file_func (CameraFilesystem *fs, const char *folder,
 	 * anything.
 	 */
 	CHECK_STOP (camera, sierra_delete (camera, n + 1, context));
-	CHECK (camera_stop (camera, context));
+	CHECK (sierra_camera_stop (camera, context));
 	gp_context_progress_stop (context, id);
 	return (GP_OK);
 }
@@ -731,9 +724,9 @@ static int
 camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
 		GPContext *context)
 {
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_capture (camera, type, path, context));
-	CHECK (camera_stop (camera, context));
+	CHECK (sierra_camera_stop (camera, context));
 
 	return (GP_OK);
 }
@@ -741,9 +734,9 @@ camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
 static int
 camera_capture_preview (Camera *camera, CameraFile *file, GPContext *context)
 {
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 	CHECK_STOP (camera, sierra_capture_preview (camera, file, context));
-	CHECK (camera_stop (camera, context));
+	CHECK (sierra_camera_stop (camera, context));
 
 	return (GP_OK);
 }
@@ -775,7 +768,7 @@ put_file_func (CameraFilesystem * fs, const char *folder, const char *filename,
 	}
 
 	/* Initialize the camera */
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 
 	/* Check the battery capacity */
 	CHECK (sierra_check_battery_capacity (camera, context));
@@ -812,7 +805,7 @@ put_file_func (CameraFilesystem * fs, const char *folder, const char *filename,
 	/* Upload the file */
 	CHECK_STOP (camera, sierra_upload_file (camera, file, context));
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 #ifdef UNUSED_CODE
@@ -910,7 +903,7 @@ camera_get_config_olympus (Camera *camera, CameraWidget **window, GPContext *con
 
 	GP_DEBUG ("*** camera_get_config_olympus");
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 
 	gp_widget_new (GP_WIDGET_WINDOW, _("Camera Configuration"), window);
 	gp_widget_new (GP_WIDGET_SECTION, _("Picture Settings"), &section);
@@ -1237,7 +1230,7 @@ camera_get_config_olympus (Camera *camera, CameraWidget **window, GPContext *con
 		gp_widget_append (section, child);
 	}
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -1250,7 +1243,7 @@ camera_set_config_olympus (Camera *camera, CameraWidget *window, GPContext *cont
 
 	GP_DEBUG ("*** camera_set_config");
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 
 	/* Resolution */
 	GP_DEBUG ("*** setting resolution");
@@ -1488,7 +1481,7 @@ camera_set_config_olympus (Camera *camera, CameraWidget *window, GPContext *cont
 		CHECK_STOP (camera, sierra_set_int_register (camera, 38, i, context));
         }
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 
@@ -1502,7 +1495,7 @@ camera_get_config_epson (Camera *camera, CameraWidget **window, GPContext *conte
 
 	GP_DEBUG ("*** camera_get_config_epson");
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 
 	gp_widget_new (GP_WIDGET_WINDOW, _("Camera Configuration"), window);
 
@@ -1737,7 +1730,7 @@ camera_get_config_epson (Camera *camera, CameraWidget **window, GPContext *conte
 		gp_widget_append (section, child);
 	}
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 static int
@@ -1749,7 +1742,7 @@ camera_set_config_epson (Camera *camera, CameraWidget *window, GPContext *contex
 
 	GP_DEBUG ("*** camera_set_config_epson");
 
-	CHECK (camera_start (camera, context));
+	CHECK (sierra_camera_start (camera, context));
 
 	/* Aperture */
 	GP_DEBUG ("*** setting aperture");
@@ -1922,7 +1915,7 @@ camera_set_config_epson (Camera *camera, CameraWidget *window, GPContext *contex
 		CHECK_STOP (camera, sierra_set_int_register (camera, 2, i, context));
 	}
 
-	return (camera_stop (camera, context));
+	return (sierra_camera_stop (camera, context));
 }
 
 
@@ -1949,7 +1942,7 @@ camera_summary (Camera *camera, CameraText *summary, GPContext *c)
 
 	GP_DEBUG ("*** sierra camera_summary");
 
-	CHECK (camera_start (camera, c));
+	CHECK (sierra_camera_start (camera, c));
 
 	strcpy(buf, "");
 
@@ -2007,7 +2000,7 @@ camera_summary (Camera *camera, CameraText *summary, GPContext *c)
 		sprintf (buf+strlen(buf), _("Date: %s"), ctime (&vtime));
 	}
 	strcpy (summary->text, buf);
-	return (camera_stop (camera, c));
+	return (sierra_camera_stop (camera, c));
 }
 
 static int
@@ -2023,7 +2016,7 @@ storage_info_func (CameraFilesystem *fs,
 
 	GP_DEBUG ("*** sierra storage_info");
 
-	CHECK (camera_start (camera, c));
+	CHECK (sierra_camera_start (camera, c));
 
 	sif = malloc(sizeof(CameraStorageInformation));
 	if (!sif)
@@ -2054,7 +2047,7 @@ storage_info_func (CameraFilesystem *fs,
 		sif->fields |= GP_STORAGEINFO_FREESPACEKBYTES;
 		sif->freekbytes = v/1024;
 	}
-	return camera_stop (camera, c);
+	return sierra_camera_stop (camera, c);
 }
 
 static int
@@ -2076,10 +2069,7 @@ camera_manual (Camera *camera, CameraText *manual, GPContext *context)
 			  "- Some parameters are not controllable remotely:\n"
 			  "  * zoom\n"
 			  "  * focus\n"
-			  "  * custom white balance setup\n"
-			  "- Configuration has been reverse-engineered with\n"
-			  "  a PhotoPC 3000z, if your camera acts differently\n"
-			  "  please send a mail to %s (in English)\n"), MAIL_GPHOTO_DEVEL);
+			  "  * custom white balance setup\n"));
 		break;
 	case SIERRA_MODEL_OLYMPUS:
 	default:
@@ -2177,7 +2167,7 @@ static CameraFilesystemFuncs fsfuncs = {
 	.storage_info_func = storage_info_func,
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
         int x = 0, ret, value;
@@ -2231,8 +2221,8 @@ camera_init (Camera *camera, GPContext *context)
                         return (GP_ERROR_MODEL_NOT_FOUND);
 		}
 		camera->pl->flags |= camera->pl->cam_desc->flags;
-		camera->functions->get_config = camera_get_config_cam_desc;
-		camera->functions->set_config = camera_set_config_cam_desc;
+		camera->functions->get_config = sierra_camera_get_config_cam_desc;
+		camera->functions->set_config = sierra_camera_set_config_cam_desc;
 		break;
 	default:
 		camera->functions->get_config = camera_get_config_default;
@@ -2306,7 +2296,7 @@ camera_init (Camera *camera, GPContext *context)
 		CHECK (sierra_init (camera, context));
 
         /* Establish a connection */
-        CHECK_FREE (camera, camera_start (camera, context));
+        CHECK_FREE (camera, sierra_camera_start (camera, context));
 
         /*
 	 * USB cameras seem to need this request. If we don't request the
@@ -2340,9 +2330,14 @@ camera_init (Camera *camera, GPContext *context)
         strcpy (camera->pl->folder, "");
         CHECK_STOP_FREE (camera, gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera));
 
-        CHECK (camera_stop (camera, context));
+        CHECK (sierra_camera_stop (camera, context));
 
 	GP_DEBUG ("****************** sierra initialization OK");
 	return (GP_OK);
 }
 
+CameraLibrary camera_sierra_library = {
+    .id = "sierra",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

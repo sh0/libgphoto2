@@ -20,7 +20,7 @@
 
 #define _DEFAULT_SOURCE
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #define GP_MODULE "pentax"
 
@@ -51,7 +51,7 @@
 #  define N_(String) (String)
 #endif
 
-bool debug = true;
+bool pslr_debug = true;
 
 struct _CameraPrivateLibrary {
 	ipslr_handle_t	pslr;
@@ -59,14 +59,7 @@ struct _CameraPrivateLibrary {
 	int		capcnt;
 };
 
-int
-camera_id (CameraText *id)
-{
-	strcpy (id->text, "pentax");
-	return GP_OK;
-}
-
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -164,7 +157,7 @@ camera_abilities (CameraAbilitiesList *list)
 
 }
 
-int scsi_write(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
+int pslr_scsi_write(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
                uint8_t *buf, uint32_t bufLen) {
         int ret;
         char sense_buffer[32];
@@ -175,7 +168,7 @@ int scsi_write(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
         return PSLR_SCSI_ERROR;
 }
 
-int scsi_read(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
+int pslr_scsi_read(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
               uint8_t *buf, uint32_t bufLen)
 {
         int ret;
@@ -187,7 +180,7 @@ int scsi_read(GPPort *port, uint8_t *cmd, uint32_t cmdLen,
         return -PSLR_SCSI_ERROR;
 }
 
-void close_drive(GPPort **port) {
+void pslr_close_drive(GPPort **port) {
 	/* is going to be closed by other means */
 	return;
 }
@@ -202,7 +195,7 @@ camera_summary (Camera *camera, CameraText *summary, GPContext *context)
 
 	pslr_get_status (&camera->pl->pslr, &status);
 
-	statusinfo = collect_status_info( &camera->pl->pslr, status );
+	statusinfo = pslr_collect_status_info( &camera->pl->pslr, status );
 
 	sprintf (summary->text, _(
 		"Pentax K DSLR capture driver.\n"
@@ -982,20 +975,19 @@ camera_exit (Camera *camera, GPContext *context)
 }
 
 char **
-get_drives(int *driveNum) {
+pslr_get_drives(int *driveNum) {
 	/* should not be called */
 	return NULL;
 }
 
-pslr_result get_drive_info(char* driveName, FDTYPE* hDevice,
+pslr_result pslr_get_drive_info(char* driveName, FDTYPE* hDevice,
                            char* vendorId, int vendorIdSizeMax,
                            char* productId, int productIdSizeMax) {
 	/* should not be called */
 	return PSLR_NO_MEMORY;
 }
 
-
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	CameraPrivateLibrary	*cpl;
@@ -1017,3 +1009,9 @@ camera_init (Camera *camera, GPContext *context)
 	camera->functions->wait_for_event = camera_wait_for_event;
 	return gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 }
+
+CameraLibrary camera_pentax_library = {
+    .id = "pentax",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};

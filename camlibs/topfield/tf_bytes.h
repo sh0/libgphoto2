@@ -24,16 +24,16 @@
 #ifndef _TF_BYTES_H
 #define _TF_BYTES_H 1
 
-#include <_stdint.h>
+#include <stdint.h>
 
-unsigned short get_u16(void *addr);
-unsigned short get_u16_raw(void *addr);
-unsigned int get_u32(void *addr);
-unsigned int get_u32_raw(void *addr);
-uint64_t get_u64(void *addr);
+unsigned short topfield_get_u16(void *addr);
+unsigned short topfield_get_u16_raw(void *addr);
+unsigned int topfield_get_u32(void *addr);
+unsigned int topfield_get_u32_raw(void *addr);
+uint64_t topfield_get_u64(void *addr);
 
-void put_u16(void *addr, unsigned short val);
-void put_u32(void *addr, unsigned int val);
-void put_u64(void *addr, uint64_t val);
+void topfield_put_u16(void *addr, unsigned short val);
+void topfield_put_u32(void *addr, unsigned int val);
+void topfield_put_u64(void *addr, uint64_t val);
 
 #endif /* _TF_BYTES_H */

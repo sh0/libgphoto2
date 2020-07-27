@@ -23,8 +23,8 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef __GPHOTO2_LIST_H__
-#define __GPHOTO2_LIST_H__
+#ifndef GPHOTO2_LIST_H
+#define GPHOTO2_LIST_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,4 +90,4 @@ int gp_list_populate  (CameraList *list, const char *format, int count);
 }
 #endif /* __cplusplus */
 
-#endif /* __GPHOTO2_LIST_H__ */
+#endif /* GPHOTO2_LIST_H */

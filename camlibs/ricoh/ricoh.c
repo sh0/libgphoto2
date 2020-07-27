@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "ricoh.h"
 
 #include <stdlib.h>
@@ -63,9 +63,8 @@
 #define C_CMD(context,cmd,target) 			\
 {							\
 	if (cmd != target) {				\
-		gp_context_error (context, _("Expected %i, got %i. Please "\
-			"report this error to %s."),\
-			cmd, target, MAIL_GPHOTO_DEVEL);			\
+		gp_context_error (context, _("Expected %i, got %i."),\
+			cmd, target);			\
 		return (GP_ERROR_CORRUPTED_DATA);	\
 	}						\
 }
@@ -73,10 +72,8 @@
 {							\
 	if (len != target) {				\
 		gp_context_error (context, _("Expected "\
-			"%i bytes, got %i. "		\
-			"Please report this error to "	\
-			"%s."),	\
-			target, len, MAIL_GPHOTO_DEVEL);			\
+			"%i bytes, got %i."),	\
+			target, len);			\
 		return (GP_ERROR_CORRUPTED_DATA);	\
 	}						\
 }
@@ -177,9 +174,8 @@ ricoh_recv (Camera *camera, GPContext *context, unsigned char *cmd,
 			CR (gp_port_read (camera->port, (char *)buf, 2));
 			if (buf[0] != DLE) {
 				gp_context_error (context, _("We expected "
-					"0x%x but received 0x%x. Please "
-					"contact %s."),
-						DLE, buf[0], MAIL_GPHOTO_DEVEL);
+					"0x%x but received 0x%x."),
+						DLE, buf[0]);
 				return (GP_ERROR_CORRUPTED_DATA);
 			}
 			if (buf[1] != ACK)
@@ -191,9 +187,8 @@ ricoh_recv (Camera *camera, GPContext *context, unsigned char *cmd,
 		case NAK:
 		default:
 			gp_context_error (context, _("We expected "
-				"0x%x but received 0x%x. Please "
-				"contact %s."),
-					STX, buf[1], MAIL_GPHOTO_DEVEL);
+				"0x%x but received 0x%x."),
+					STX, buf[1]);
 			return GP_ERROR_CORRUPTED_DATA;
 		}
 
@@ -220,9 +215,8 @@ ricoh_recv (Camera *camera, GPContext *context, unsigned char *cmd,
 					    data[r + 1] != DLE) {
 						gp_context_error (context,
 							_("Bad characters "
-							"(0x%x, 0x%x). Please "
-							"contact %s."),
-							data[r], data[r + 1], MAIL_GPHOTO_DEVEL);
+							"(0x%x, 0x%x)."),
+							data[r], data[r + 1]);
 						return (GP_ERROR_CORRUPTED_DATA);
 					}
 					memmove (&data[r], &data[r +1],
@@ -260,9 +254,7 @@ ricoh_recv (Camera *camera, GPContext *context, unsigned char *cmd,
 				   (data[1] == 0x04) &&
 				   (data[2] == 0xff)) {
 			if (ii >= 4) {
-				gp_context_error (context, _("Camera busy. "
-					"If the problem persists, please "
-					"contact %s."), MAIL_GPHOTO_DEVEL);
+				gp_context_error (context, _("Camera busy."));
 				return (GP_ERROR);
 			}
 			continue;
@@ -296,8 +288,7 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
 		case GP_ERROR_TIMEOUT:
 			if (++r > 2) {
 				gp_context_error (context, _("Timeout "
-					"even after 2 retries. Please "
-					"contact %s."), MAIL_GPHOTO_DEVEL);
+					"even after 2 retries."));
 				return (GP_ERROR_TIMEOUT);
 			}
 			GP_DEBUG ("Timeout! Retrying...");
@@ -312,8 +303,7 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
 				  "got 0x%02x)!", cmd, ret_cmd);
 			if (++r > 2) {
 				gp_context_error (context, _("Communication "
-					"error even after 2 retries. Please "
-					"contact %s."), MAIL_GPHOTO_DEVEL);
+					"error even after 2 retries."));
 				return (GP_ERROR);
 			}
 			continue;
@@ -335,9 +325,7 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
 				       (ret_data[1] == 0x04) &&
 				       (ret_data[2] == 0xff)) {
 			if (++r >= 4) {
-				gp_context_error (context, _("Camera busy. "
-					"If the problem persists, please "
-					"contact %s."), MAIL_GPHOTO_DEVEL);
+				gp_context_error (context, _("Camera busy."));
 				return (GP_ERROR);
 			}
 			continue;
@@ -349,23 +337,18 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
 		 */
 		if ((*ret_len == 2) && (ret_data[0] == 0x06) &&
 				       (ret_data[1] == 0x00)) {
-			gp_context_error (context, _("Camera is in wrong "
-				"mode. Please contact "
-				"%s."), MAIL_GPHOTO_DEVEL);
+			gp_context_error (context, _("Camera is in wrong mode."));
 			return (GP_ERROR);
 		}
 
 		/* Invalid parameters? */
 		if ((*ret_len == 2) && (ret_data[0] == 0x04) &&
 				       (ret_data[1] == 0x00)) {
-			gp_context_error (context, _("Camera did not "
-				"accept the parameters. Please contact "
-				"%s."), MAIL_GPHOTO_DEVEL);
+			gp_context_error (context, _("Camera did not accept the parameters."));
 			return (GP_ERROR);
 		}
 
-		gp_context_error (context, _("An unknown error occurred. "
-			"Please contact %s."), MAIL_GPHOTO_DEVEL);
+		gp_context_error (context, _("An unknown error occurred."));
 		return (GP_ERROR);
         }
 

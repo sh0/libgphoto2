@@ -45,7 +45,7 @@
 #include <math.h>
 #include <time.h>
 
-#include "config.h"
+#include <gphoto2-config.h>
 #include "bayer.h"
 #include <gphoto2/gphoto2-result.h>
 #include <gphoto2/gphoto2-port-log.h>

@@ -1,5 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/* gphoto2-port-usb.c
+/* libusb1.c
  *
  * Copyright 2001 Lutz Mueller <lutz@users.sf.net>
  * Copyright 1999-2000 Johannes Erdfelt <johannes@erdfelt.com>
@@ -20,7 +19,8 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
-#include "config.h"
+
+#include <gphoto2-port-config.h>
 #include <gphoto2/gphoto2-port-library.h>
 
 #include <stdlib.h>
@@ -158,13 +158,6 @@ struct _GPPortPrivateLibrary {
 	struct _PrivateIrqCompleted	*irqs_tail;
 };
 
-GPPortType
-gp_port_library_type (void)
-{
-	return (GP_PORT_USB);
-}
-
-
 static ssize_t
 load_devicelist (GPPortPrivateLibrary *pl) {
 	time_t	xtime;
@@ -190,7 +183,7 @@ load_devicelist (GPPortPrivateLibrary *pl) {
 	return pl->nrofdevs;
 }
 
-int
+static int
 gp_port_library_list (GPPortInfoList *list)
 {
 	GPPortInfo	info;
@@ -1196,8 +1189,8 @@ gp_libusb1_find_device_lib(GPPort *port, int idvendor, int idproduct)
 		if (confdesc->interface[interface].altsetting[altsetting].bInterfaceClass
 		    == LIBUSB_CLASS_MASS_STORAGE) {
 			GP_LOG_D ("USB device (vendor 0x%x, product 0x%x) is a mass"
-				  " storage device, and might not function with gphoto2."
-				  " Reference: %s", idvendor, idproduct, URL_USB_MASSSTORAGE);
+				  " storage device, and might not function with gphoto2.",
+				  idvendor, idproduct);
 		}
 		port->settings.usb.config = confdesc->bConfigurationValue;
 		port->settings.usb.interface = confdesc->interface[interface].altsetting[altsetting].bInterfaceNumber;
@@ -1519,7 +1512,7 @@ gp_libusb1_find_device_by_class_lib(GPPort *port, int class, int subclass, int p
 	return GP_ERROR_IO_USB_FIND;
 }
 
-GPPortOperations *
+static GPPortOperations *
 gp_port_library_operations (void)
 {
 	GPPortOperations *ops;
@@ -1549,3 +1542,9 @@ gp_port_library_operations (void)
 
 	return (ops);
 }
+
+GPPortLibrary gp_port_libusb1_library = {
+	.type = GP_PORT_USB,
+	.list = gp_port_library_list,
+	.operations = gp_port_library_operations
+};

@@ -19,7 +19,7 @@
  *
  */
 
-#include "config.h"
+#include <gphoto2-config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@
 #include <gphoto2/gphoto2-library.h>
 #include <gphoto2/gphoto2-port-log.h>
 #include <gphoto2/gphoto2-result.h>
-#include "gphoto2-endian.h"
+#include <gphoto2/gphoto2-endian.h>
 
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 #define sleep(x)
@@ -372,7 +372,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
         return (GP_OK);
 }
 
-int
+static int
 camera_abilities (CameraAbilitiesList *list)
 {
 	CameraAbilities a;
@@ -391,20 +391,13 @@ camera_abilities (CameraAbilitiesList *list)
 	return (GP_OK);
 }
 
-int
-camera_id (CameraText *id)
-{
-	strcpy(id->text, "Digital Dream Enigma 1.3");
-	return (GP_OK);
-}
-
 static CameraFilesystemFuncs fsfuncs = {
 	.file_list_func = file_list_func,
 	.get_file_func = get_file_func,
 	.delete_all_func = enigma13_flash_delete_all
 };
 
-int
+static int
 camera_init (Camera *camera, GPContext *context)
 {
 	GPPortSettings settings;
@@ -425,7 +418,8 @@ camera_init (Camera *camera, GPContext *context)
 
 }
 
-
-
-
-
+CameraLibrary camera_enigma13_library = {
+    .id = "Digital Dream Enigma 1.3",
+    .abilities = &camera_abilities,
+    .init = &camera_init
+};
