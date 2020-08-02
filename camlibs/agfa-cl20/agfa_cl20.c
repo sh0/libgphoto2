@@ -155,8 +155,8 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	int n = -1;
 	int size = -1;
 	unsigned char hb, lb;
-	unsigned long j;
-	unsigned int app1len = -1;
+	int j;
+	int app1len = -1;
 	unsigned char resolution;
 	unsigned char indata[ 0x100 ];
 
