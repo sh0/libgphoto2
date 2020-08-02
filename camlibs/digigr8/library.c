@@ -247,7 +247,7 @@ get_file_func(CameraFilesystem *fs, const char *folder, const char *filename,
 		camera->pl->last_fetched_entry = k;
 		return GP_OK;
 	}
-	if (b < w*h) {
+	if ((int)b < w*h) {
 		GP_DEBUG("need %d bytes, supposed to read only %d", w*h, b);
 		return GP_ERROR;
 	}
