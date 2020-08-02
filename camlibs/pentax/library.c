@@ -831,22 +831,22 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	ret = gp_widget_get_child_by_label (window, _("Shooting Mode"), &w);
 	if ((ret == GP_OK) && gp_widget_changed (w)) {
-		pslr_gui_exposure_mode_t exposuremode;
+		pslr_exposure_mode_t exposuremode;
 
 	        gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &sval);
 
-		exposuremode = PSLR_GUI_EXPOSURE_MODE_MAX;
-		if (!strcmp(sval,_("GREEN")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_GREEN;
-		if (!strcmp(sval,_("M")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_M;
-		if (!strcmp(sval,_("B")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_B;
-		if (!strcmp(sval,_("P")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_P;
-		if (!strcmp(sval,_("SV")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_SV;
-		if (!strcmp(sval,_("TV")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_TV;
-		if (!strcmp(sval,_("AV")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_AV;
-		if (!strcmp(sval,_("TAV")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_TAV;
-		if (!strcmp(sval,_("X")))	exposuremode = PSLR_GUI_EXPOSURE_MODE_TAV;
-		if (exposuremode != PSLR_GUI_EXPOSURE_MODE_MAX) {
+		exposuremode = PSLR_EXPOSURE_MODE_MAX;
+		if (!strcmp(sval,_("GREEN")))	exposuremode = PSLR_EXPOSURE_MODE_GREEN;
+		if (!strcmp(sval,_("M")))	exposuremode = PSLR_EXPOSURE_MODE_M;
+		if (!strcmp(sval,_("B")))	exposuremode = PSLR_EXPOSURE_MODE_B;
+		if (!strcmp(sval,_("P")))	exposuremode = PSLR_EXPOSURE_MODE_P;
+		if (!strcmp(sval,_("SV")))	exposuremode = PSLR_EXPOSURE_MODE_SV;
+		if (!strcmp(sval,_("TV")))	exposuremode = PSLR_EXPOSURE_MODE_TV;
+		if (!strcmp(sval,_("AV")))	exposuremode = PSLR_EXPOSURE_MODE_AV;
+		if (!strcmp(sval,_("TAV")))	exposuremode = PSLR_EXPOSURE_MODE_TAV;
+		if (!strcmp(sval,_("X")))	exposuremode = PSLR_EXPOSURE_MODE_TAV;
+		if (exposuremode != PSLR_EXPOSURE_MODE_MAX) {
 			pslr_set_exposure_mode(&camera->pl->pslr, exposuremode);
 			pslr_get_status(&camera->pl->pslr, &status);
 		} else {

@@ -512,6 +512,7 @@ char *get_white_balance_adjust_str( uint32_t adjust_mg, uint32_t adjust_ba ) {
     return ret;
 }
 
+static
 char *pslr_get_af_name(pslr_handle_t h, uint32_t af_point) {
     ipslr_handle_t *p = (ipslr_handle_t *) h;
     if (p->model->af_point_num==11) {
@@ -1059,7 +1060,7 @@ int pslr_buffer_open(pslr_handle_t h, int bufno, pslr_buffer_type buftype, int b
 
 uint32_t pslr_buffer_read(pslr_handle_t h, uint8_t *buf, uint32_t size) {
     ipslr_handle_t *p = (ipslr_handle_t *) h;
-    int i;
+    uint32_t i;
     uint32_t pos = 0;
     uint32_t seg_offs;
     uint32_t addr;
@@ -1114,7 +1115,7 @@ uint32_t pslr_fullmemory_read(pslr_handle_t h, uint8_t *buf, uint32_t offset, ui
 
 uint32_t pslr_buffer_get_size(pslr_handle_t h) {
     ipslr_handle_t *p = (ipslr_handle_t *) h;
-    int i;
+    uint32_t i;
     uint32_t len = 0;
     for (i = 0; i < p->segment_count; i++) {
         len += p->segments[i].length;
@@ -1693,7 +1694,7 @@ static int _ipslr_write_args(uint8_t cmd_2, ipslr_handle_t *p, int n, ...) {
 }
 
 static int command(FDTYPE fd, int a, int b, int c) {
-    DPRINT("[C]\t\t\tcommand(fd=%x, %x, %x, %x)\n", fd, a, b, c);
+    DPRINT("[C]\t\t\tcommand(%x, %x, %x)\n", a, b, c);
     uint8_t cmd[8] = {0xf0, 0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     cmd[2] = a;
@@ -1720,7 +1721,7 @@ static int read_status(FDTYPE fd, uint8_t *buf) {
 }
 
 static int get_status(FDTYPE fd) {
-    DPRINT("[C]\t\t\tget_status(0x%x)\n", fd);
+    DPRINT("[C]\t\t\tget_status()\n");
 
     uint8_t statusbuf[8];
     memset(statusbuf,0,8);
@@ -1740,7 +1741,7 @@ static int get_status(FDTYPE fd) {
 }
 
 static int get_result(FDTYPE fd) {
-    DPRINT("[C]\t\t\tget_result(0x%x)\n", fd);
+    DPRINT("[C]\t\t\tget_result()\n");
     uint8_t statusbuf[8];
     while (1) {
         //DPRINT("read out status\n");
@@ -1764,13 +1765,13 @@ static int get_result(FDTYPE fd) {
 }
 
 static int read_result(FDTYPE fd, uint8_t *buf, uint32_t n) {
-    DPRINT("[C]\t\t\tread_result(0x%x, size=%d)\n", fd, n);
+    DPRINT("[C]\t\t\tread_result(size=%d)\n", n);
     uint8_t cmd[8] = {0xf0, 0x49, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     int r;
-    int i;
+    uint32_t i;
     set_uint32_le(n, &cmd[4]);
     r = scsi_read(fd, cmd, sizeof (cmd), buf, n);
-    if (r != n) {
+    if (r != (int)n) {
         return PSLR_READ_ERROR;
     }  else {
         //  Print first 32 bytes of the result.
