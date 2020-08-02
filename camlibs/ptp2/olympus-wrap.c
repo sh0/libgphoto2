@@ -983,14 +983,16 @@ traverse_input_tree (PTPParams *params, xmlNodePtr node, PTPContainer *resp) {
 		next = xmlNextElementSibling (next);
 	}
 	resp->Nparam = curpar;
-	switch (curpar) {
-	case 5: resp->Param5 = pars[4];
-	case 4: resp->Param4 = pars[3];
-	case 3: resp->Param3 = pars[2];
-	case 2: resp->Param2 = pars[1];
-	case 1: resp->Param1 = pars[0];
-	case 0: break;
-	}
+	if (curpar >= 5)
+		resp->Param5 = pars[4];
+	if (curpar >= 4)
+		resp->Param4 = pars[3];
+	if (curpar >= 3)
+		resp->Param3 = pars[2];
+	if (curpar >= 2)
+		resp->Param2 = pars[1];
+	if (curpar >= 1)
+		resp->Param1 = pars[0];
 	/* FIXME: decode content and inject into PTP event queue. */
 	return TRUE;
 }

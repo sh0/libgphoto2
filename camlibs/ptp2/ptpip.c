@@ -131,16 +131,16 @@ ptp_ptpip_sendreq (PTPParams* params, PTPContainer* req, int dataphase)
 	htod16a(&request[ptpip_cmd_code],req->Code);
 	htod32a(&request[ptpip_cmd_transid],req->Transaction_ID);
 
-	switch (req->Nparam) {
-	case 5: htod32a(&request[ptpip_cmd_param5],req->Param5);
-	case 4: htod32a(&request[ptpip_cmd_param4],req->Param4);
-	case 3: htod32a(&request[ptpip_cmd_param3],req->Param3);
-	case 2: htod32a(&request[ptpip_cmd_param2],req->Param2);
-	case 1: htod32a(&request[ptpip_cmd_param1],req->Param1);
-	case 0:
-	default:
-		break;
-	}
+	if (req->Nparam >= 5)
+		htod32a(&request[ptpip_cmd_param5],req->Param5);
+	if (req->Nparam >= 4)
+		htod32a(&request[ptpip_cmd_param4],req->Param4);
+	if (req->Nparam >= 3)
+		htod32a(&request[ptpip_cmd_param3],req->Param3);
+	if (req->Nparam >= 2)
+		htod32a(&request[ptpip_cmd_param2],req->Param2);
+	if (req->Nparam >= 1)
+		htod32a(&request[ptpip_cmd_param1],req->Param1);
 	GP_LOG_DATA ( (char*)request, len, "ptpip/oprequest data:");
 	ret = write (params->cmdfd, request, len);
 	free (request);
@@ -408,17 +408,18 @@ retry:
 		resp->Code		= dtoh16a(&data[ptpip_resp_code]);
 		resp->Transaction_ID	= dtoh32a(&data[ptpip_resp_transid]);
 		n = (dtoh32(hdr.length) - sizeof(hdr) - ptpip_resp_param1)/sizeof(uint32_t);
-		switch (n) {
-		case 5: resp->Param5 = dtoh32a(&data[ptpip_resp_param5]);
-		case 4: resp->Param4 = dtoh32a(&data[ptpip_resp_param4]);
-		case 3: resp->Param3 = dtoh32a(&data[ptpip_resp_param3]);
-		case 2: resp->Param2 = dtoh32a(&data[ptpip_resp_param2]);
-		case 1: resp->Param1 = dtoh32a(&data[ptpip_resp_param1]);
-		case 0: break;
-		default:
+		if (n >= 5)
+			resp->Param5 = dtoh32a(&data[ptpip_resp_param5]);
+		if (n >= 4)
+			resp->Param4 = dtoh32a(&data[ptpip_resp_param4]);
+		if (n >= 3)
+			resp->Param3 = dtoh32a(&data[ptpip_resp_param3]);
+		if (n >= 2)
+			resp->Param2 = dtoh32a(&data[ptpip_resp_param2]);
+		if (n >= 1)
+			resp->Param1 = dtoh32a(&data[ptpip_resp_param1]);
+		if (n > 5 || n < 0)
 			GP_LOG_E ("response got %d parameters?", n);
-			break;
-		}
 		break;
 	default:
 		GP_LOG_E ("response type %d packet?", dtoh32(hdr.type));
@@ -612,15 +613,14 @@ ptp_ptpip_event (PTPParams* params, PTPContainer* event, int wait)
 	event->Code		= dtoh16a(&data[ptpip_event_code]);
 	event->Transaction_ID	= dtoh32a(&data[ptpip_event_transid]);
 	n = (dtoh32(hdr.length) - sizeof(hdr) - ptpip_event_param1)/sizeof(uint32_t);
-	switch (n) {
-	case 3: event->Param3 = dtoh32a(&data[ptpip_event_param3]);
-	case 2: event->Param2 = dtoh32a(&data[ptpip_event_param2]);
-	case 1: event->Param1 = dtoh32a(&data[ptpip_event_param1]);
-	case 0: break;
-	default:
+	if (n >= 3)
+		event->Param3 = dtoh32a(&data[ptpip_event_param3]);
+	if (n >= 2)
+		event->Param2 = dtoh32a(&data[ptpip_event_param2]);
+	if (n >= 1)
+		event->Param1 = dtoh32a(&data[ptpip_event_param1]);
+	if (n > 3 || n < 0)
 		GP_LOG_E ("response got %d parameters?", n);
-		break;
-	}
 	free (data);
 	return PTP_RC_OK;
 #else

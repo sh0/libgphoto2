@@ -360,7 +360,7 @@ fd_putfunc(PTPParams* params, void* private,
 	PTPFDHandlerPrivate* priv = (PTPFDHandlerPrivate*)private;
 
 	written = write (priv->fd, data, sendlen);
-	if (written != sendlen)
+	if (written != (ssize_t)sendlen)
 		return PTP_ERROR_IO;
 	return PTP_RC_OK;
 }
@@ -1190,7 +1190,7 @@ ptp_panasonic_getdeviceproperty (PTPParams *params, uint32_t propcode, uint16_t 
 	if(size < 8) return PTP_RC_GeneralError;
 	*valuesize = dtoh32a( (data + 4) );
 
-	if(size < 8 + (*valuesize)) return PTP_RC_GeneralError;
+	if(size < 8 + (unsigned int)(*valuesize)) return PTP_RC_GeneralError;
 	if(*valuesize == 4) {
 		*currentValue = dtoh32a( (data + 8) );
 	} else if(*valuesize == 2) {
@@ -2896,7 +2896,7 @@ handle_event_internal (PTPParams *params, PTPContainer *event)
 	}
 	case PTP_EC_StoreAdded:
 	case PTP_EC_StoreRemoved: {
-		int i;
+		unsigned int i;
 
 		/* FIXME: if we just remove 1 out of many storages, we do not need to invalidate/reload the entire tree? */
 
@@ -5080,7 +5080,7 @@ ptp_chdk_parse_live_data (PTPParams* params, unsigned char *data, unsigned int d
 	 * so the actual number of bytes would be either one and a half times
 	 * or (for Digic 6 cameras) twice so large */
 	byte_w = (vpd->fb_type == LV_FB_YUV8) ? vpd->buffer_width * 1.5 : vpd->buffer_width * 2;
-	if (data_size < (vpd->data_start + (byte_w * vpd->visible_height)))
+	if ((int)data_size < (vpd->data_start + (byte_w * vpd->visible_height)))
 		return PTP_ERROR_IO;
 	return PTP_RC_OK;
 }
@@ -5155,7 +5155,7 @@ ptp_fuji_getevents (PTPParams* params, uint16_t** events, uint16_t* count)
                 *count = dtoh16a(data);
                 ptp_debug(params, "event count: %d", *count);
                 *events = calloc(*count, sizeof(uint16_t));
-                if(size >= 2 + *count * 6)
+                if((int)size >= 2 + *count * 6)
                 {
 			uint16_t	param;
 			uint32_t	value;
@@ -8224,7 +8224,7 @@ ptp_object_want (PTPParams *params, uint32_t handle, unsigned int want, PTPObjec
 			ob->oi.ParentObject = 0;
 
 		/* Apple iOS X does that for the root folder. */
-		if ((ob->oi.ParentObject == ob->oi.StorageID)) {
+		if (ob->oi.ParentObject == ob->oi.StorageID) {
 			PTPObject *parentob;
 
 			if (ptp_object_find (params, ob->oi.ParentObject, &parentob) != PTP_RC_OK) {

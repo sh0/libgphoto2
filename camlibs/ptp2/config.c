@@ -755,17 +755,17 @@ _get_Generic##bits##Table(CONFIG_GET_ARGS, struct deviceproptable##bits * tbl, i
 	} \
 	if (dpd->FormFlag & PTP_DPFF_Range) { \
 		for (	i = dpd->FORM.Range.MinimumValue.bits; \
-			i<=dpd->FORM.Range.MaximumValue.bits; \
+			i<= (int)dpd->FORM.Range.MaximumValue.bits; \
 			i+= dpd->FORM.Range.StepSize.bits \
 		) { \
 			isset = FALSE; \
 			for (j=0;j<tblsize;j++) { \
-				if ((tbl[j].value == i) && \
+				if (((int)tbl[j].value == i) && \
 				    ((tbl[j].vendor_id == 0) || \
 				     (tbl[j].vendor_id == camera->pl->params.deviceinfo.VendorExtensionID)) \
 				) { \
 					gp_widget_add_choice (*widget, _(tbl[j].label)); \
-					if (i == dpd->CurrentValue.bits) { \
+					if (i == (int)dpd->CurrentValue.bits) { \
 						isset2 = TRUE; \
 						gp_widget_set_value (*widget, _(tbl[j].label)); \
 					} \
@@ -777,7 +777,7 @@ _get_Generic##bits##Table(CONFIG_GET_ARGS, struct deviceproptable##bits * tbl, i
 				char buf[200]; \
 				sprintf(buf, _("Unknown value %04x"), i); \
 				gp_widget_add_choice (*widget, buf); \
-				if (i == dpd->CurrentValue.bits) { \
+				if (i == (int)dpd->CurrentValue.bits) { \
 					isset2 = TRUE; \
 					gp_widget_set_value (*widget, buf); \
 				} \
@@ -3035,9 +3035,9 @@ _put_ExpTime(CONFIG_PUT_ARGS)
 	/* match the closest value */
 	for (i=0;i<dpd->FORM.Enum.NumberOfValues; i++) {
 		/*GP_LOG_D ("delta is currently %d, val is %f, supval is %u, abs is %u",delta,val,dpd->FORM.Enum.SupportedValue[i].u32,abs(val - dpd->FORM.Enum.SupportedValue[i].u32));*/
-		if (abs(val - dpd->FORM.Enum.SupportedValue[i].u32)<delta) {
+		if ((unsigned int)abs((int)(val - dpd->FORM.Enum.SupportedValue[i].u32))<delta) {
 			xval = dpd->FORM.Enum.SupportedValue[i].u32;
-			delta = abs(val - dpd->FORM.Enum.SupportedValue[i].u32);
+			delta = abs((int)(val - dpd->FORM.Enum.SupportedValue[i].u32));
 		}
 	}
 	GP_LOG_D ("value %s is %f, closest match was %d",value,val,xval);
@@ -3736,8 +3736,8 @@ static struct deviceproptableu16 canon_orientation[] = {
 
 static int
 _get_Canon_CameraOrientation(CONFIG_GET_ARGS) {
-	char	orient[50]; /* needs also to fit the translated string */
-	int	i;
+	char		orient[50]; /* needs also to fit the translated string */
+	unsigned int	i;
 
 	if (dpd->DataType != PTP_DTC_UINT16)
 		return (GP_ERROR);
@@ -3891,7 +3891,7 @@ _put_FocalLength(CONFIG_PUT_ARGS) {
 	curdiff = 10000;
 	newval = propval->u32;
 	for (i = 0; i<dpd->FORM.Enum.NumberOfValues; i++) {
-		uint32_t diff = abs(dpd->FORM.Enum.SupportedValue[i].u32  - propval->u32);
+		uint32_t diff = abs((int)(dpd->FORM.Enum.SupportedValue[i].u32  - propval->u32));
 
 		if (diff < curdiff) {
 			newval = dpd->FORM.Enum.SupportedValue[i].u32;
@@ -4419,7 +4419,7 @@ _put_Sony_ShutterSpeed(CONFIG_PUT_ARGS) {
 	PTPParams		*params = &(camera->pl->params);
 	GPContext 		*context = ((PTPData *) params->data)->context;
 	time_t			start,end;
-	unsigned int		i;
+	int			i;
 
 	CR (gp_widget_get_value (widget, &val));
 
@@ -4464,7 +4464,7 @@ _put_Sony_ShutterSpeed(CONFIG_PUT_ARGS) {
 	}
 
 	if (direction == 1) {
-		for (i=0;i<sizeof(sony_shuttertable)/sizeof(sony_shuttertable[0]);i++) {
+		for (i=0;i<(int)(sizeof(sony_shuttertable)/sizeof(sony_shuttertable[0]));i++) {
 			a = sony_shuttertable[i].dividend;
 			b = sony_shuttertable[i].divisor;
 			position_new = i;
@@ -4486,7 +4486,7 @@ _put_Sony_ShutterSpeed(CONFIG_PUT_ARGS) {
 		if (old == new)
 			break;
 
-		for (i=0;i<sizeof(sony_shuttertable)/sizeof(sony_shuttertable[0]);i++) {
+		for (i=0;i<(int)(sizeof(sony_shuttertable)/sizeof(sony_shuttertable[0]));i++) {
 			a = sony_shuttertable[i].dividend;
 			b = sony_shuttertable[i].divisor;
 			position_current = i;
@@ -7867,7 +7867,8 @@ _put_Panasonic_Whitebalance(CONFIG_PUT_ARGS)
 	uint32_t currentVal;
 	uint32_t listCount;
 	uint32_t *list;
-	int i,ival;
+	uint32_t i;
+	int ival;
 
 	CR (gp_widget_get_value(widget, &xval));
 
@@ -7877,7 +7878,7 @@ _put_Panasonic_Whitebalance(CONFIG_PUT_ARGS)
 		val = ival;
 
 	for (i = 0; i < listCount; i++) {
-		int j;
+		unsigned int j;
 
 		for (j=0;j<sizeof(panasonic_wbtable)/sizeof(panasonic_wbtable[0]);j++) {
 			if (!strcmp(xval,_(panasonic_wbtable[j].str))) {
@@ -8240,7 +8241,7 @@ static struct {
 
 static int
 _get_CaptureTarget(CONFIG_GET_ARGS) {
-	int i;
+	unsigned int i;
 	char buf[1024];
 
 	gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
@@ -8258,7 +8259,7 @@ _get_CaptureTarget(CONFIG_GET_ARGS) {
 
 static int
 _put_CaptureTarget(CONFIG_PUT_ARGS) {
-	int		i;
+	unsigned int	i;
 	char		*val;
 	PTPParams	*params = &(camera->pl->params);
 	GPContext	*context = ((PTPData *) params->data)->context;
@@ -8349,7 +8350,7 @@ static struct {
 
 static int
 _get_CHDK(CONFIG_GET_ARGS) {
-	int i;
+	unsigned int i;
 	char buf[1024];
 
 	gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
@@ -8366,7 +8367,7 @@ _get_CHDK(CONFIG_GET_ARGS) {
 
 static int
 _put_CHDK(CONFIG_PUT_ARGS) {
-	int i;
+	unsigned int i;
 	char *val;
 
 	CR (gp_widget_get_value(widget, &val));
@@ -8389,7 +8390,7 @@ static struct {
 
 static int
 _get_Autofocus(CONFIG_GET_ARGS) {
-	int i;
+	unsigned int i;
 	char buf[1024];
 
 	gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
@@ -8406,7 +8407,7 @@ _get_Autofocus(CONFIG_GET_ARGS) {
 
 static int
 _put_Autofocus(CONFIG_PUT_ARGS) {
-	int i;
+	unsigned int i;
 	char *val;
 
 	CR (gp_widget_get_value(widget, &val));
@@ -9515,7 +9516,8 @@ _get_config (Camera *camera, const char *confname, CameraWidget **outwidget, Cam
 	unsigned int	menuno, submenuno;
 	int 		ret;
 	uint16_t	*setprops = NULL;
-	int		i, nrofsetprops = 0;
+	unsigned int	i;
+	int		nrofsetprops = 0;
 	PTPParams	*params = &camera->pl->params;
 	CameraAbilities	ab;
 
@@ -9801,28 +9803,28 @@ _get_config (Camera *camera, const char *confname, CameraWidget **outwidget, Cam
 		case PTP_DPFF_None: break;
 		case PTP_DPFF_Range:
 			switch (dpd.DataType) {
-#define X(dtc,val) 										\
+#define X(dtc,val,fmt,dtd) 										\
 			case dtc: 								\
 				if (type == GP_WIDGET_RANGE) {					\
 					gp_widget_set_range ( widget, (float) dpd.FORM.Range.MinimumValue.val, (float) dpd.FORM.Range.MaximumValue.val, (float) dpd.FORM.Range.StepSize.val);\
 				} else {							\
-					long k;							\
+					dtd k;							\
 					for (k=dpd.FORM.Range.MinimumValue.val;k<=dpd.FORM.Range.MaximumValue.val;k+=dpd.FORM.Range.StepSize.val) { \
-						sprintf (buf, "%ld", k); 			\
+						sprintf (buf, fmt, k); 			\
 						gp_widget_add_choice (widget, buf);		\
 						if (dpd.FORM.Range.StepSize.val == 0) break;	\
 					}							\
 				} 								\
 				break;
 
-		X(PTP_DTC_INT8,i8)
-		X(PTP_DTC_UINT8,u8)
-		X(PTP_DTC_INT16,i16)
-		X(PTP_DTC_UINT16,u16)
-		X(PTP_DTC_INT32,i32)
-		X(PTP_DTC_UINT32,u32)
-		X(PTP_DTC_INT64,i64)
-		X(PTP_DTC_UINT64,u64)
+		X(PTP_DTC_INT8,i8,"%ld",long)
+		X(PTP_DTC_UINT8,u8,"%lu",unsigned long)
+		X(PTP_DTC_INT16,i16,"%ld",long)
+		X(PTP_DTC_UINT16,u16,"%lu",unsigned long)
+		X(PTP_DTC_INT32,i32,"%ld",long)
+		X(PTP_DTC_UINT32,u32,"%lu",unsigned long)
+		X(PTP_DTC_INT64,i64,"%ld",long)
+		X(PTP_DTC_UINT64,u64,"%lu",unsigned long)
 #undef X
 			default:break;
 			}

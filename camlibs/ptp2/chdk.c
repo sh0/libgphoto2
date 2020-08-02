@@ -1005,7 +1005,7 @@ static struct {
 
 static int
 chdk_get_onoff(CONFIG_GET_ARGS) {
-        int i;
+        unsigned int i;
         char buf[1024];
 
         gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
@@ -1022,7 +1022,7 @@ chdk_get_onoff(CONFIG_GET_ARGS) {
 
 static int
 chdk_put_onoff(CONFIG_PUT_ARGS) {
-        int i;
+        unsigned int i;
         char *val;
 
         CR (gp_widget_get_value(widget, &val));
@@ -1214,7 +1214,7 @@ static void yuv_live_to_jpeg(unsigned char *p_yuv,
 		/* offset to the correct row */
 		unsigned int offset = cinfo.next_scanline * row_inc;
 
-		for (x = 0, i = 0, j = 0; x < width; i += sshift, j += dshift, x += xshift) {
+		for (x = 0, i = 0, j = 0; (int)x < width; i += sshift, j += dshift, x += xshift) {
 			int8_t u = (int8_t) p_yuv[offset + i + 0];
 			int8_t v = (int8_t) p_yuv[offset + i + 2];
 			if (fb_type == LV_FB_YUV8) {

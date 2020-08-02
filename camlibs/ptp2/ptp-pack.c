@@ -146,7 +146,7 @@ ptp_unpack_string(PTPParams *params, unsigned char* data, uint16_t offset, uint3
 	*len = 0;
 	*retstr = NULL;
 
-	if (offset + 1 > total)
+	if ((uint32_t)offset + 1 > total)
 		return 0;
 
 	length = dtoh8a(&data[offset]);	/* PTP_MAXSTRLEN == 255, 8 bit len */
@@ -1954,7 +1954,7 @@ _lookup_or_allocate_canon_prop(PTPParams *params, uint16_t proptype)
 
 
 static inline int
-ptp_unpack_CANON_changes (PTPParams *params, unsigned char* data, int datasize, PTPCanon_changes_entry **pce)
+ptp_unpack_CANON_changes (PTPParams *params, unsigned char* data, unsigned int datasize, PTPCanon_changes_entry **pce)
 {
 	int	i = 0, entries = 0;
 	unsigned char	*curdata = data;
@@ -2168,294 +2168,296 @@ ptp_unpack_CANON_changes (PTPParams *params, unsigned char* data, int datasize, 
 			}
 			break;
 		}
-		case PTP_EC_CANON_EOS_PropValueChanged:
-			if (size >= 0xc) {	/* property info */
-				unsigned int j;
-				uint32_t	proptype = dtoh32a(&curdata[PTP_ece_Prop_Subtype]);
-				unsigned char	*xdata = &curdata[PTP_ece_Prop_Val_Data];
-				PTPDevicePropDesc	*dpd;
-
-				if (size < PTP_ece_Prop_Val_Data) {
-					ptp_debug (params, "size %d is smaller than %d", size, PTP_ece_Prop_Val_Data);
-					break;
-				}
-				ptp_debug (params, "event %d: EOS prop %04x info record, datasize is %d", i, proptype, size-PTP_ece_Prop_Val_Data);
-				for (j=0;j<params->nrofcanon_props;j++)
-					if (params->canon_props[j].proptype == proptype)
-						break;
-				if (j<params->nrofcanon_props) {
-					if (	(params->canon_props[j].size != size) ||
-						(memcmp(params->canon_props[j].data,xdata,size-PTP_ece_Prop_Val_Data))) {
-						params->canon_props[j].data = realloc(params->canon_props[j].data,size-PTP_ece_Prop_Val_Data);
-						params->canon_props[j].size = size;
-						memcpy (params->canon_props[j].data,xdata,size-PTP_ece_Prop_Val_Data);
-					}
-				} else {
-					if (j)
-						params->canon_props = realloc(params->canon_props, sizeof(params->canon_props[0])*(j+1));
-					else
-						params->canon_props = malloc(sizeof(params->canon_props[0]));
-					params->canon_props[j].proptype = proptype;
-					params->canon_props[j].size = size;
-					params->canon_props[j].data = malloc(size-PTP_ece_Prop_Val_Data);
-					memcpy(params->canon_props[j].data, xdata, size-PTP_ece_Prop_Val_Data);
-					memset (&params->canon_props[j].dpd,0,sizeof(params->canon_props[j].dpd));
-					params->canon_props[j].dpd.GetSet = 1;
-					params->canon_props[j].dpd.FormFlag = PTP_DPFF_None;
-					params->nrofcanon_props = j+1;
-				}
-				dpd = &params->canon_props[j].dpd;
-
-				ce[i].type = PTP_CANON_EOS_CHANGES_TYPE_PROPERTY;
-				ce[i].u.propid = proptype;
-
-				/* fix GetSet value */
-				switch (proptype) {
-#define XX(x) case PTP_DPC_CANON_##x:
-					XX(EOS_FocusMode)
-					XX(EOS_BatteryPower)
-					XX(EOS_BatterySelect)
-					XX(EOS_ModelID)
-					XX(EOS_PTPExtensionVersion)
-					XX(EOS_DPOFVersion)
-					XX(EOS_AvailableShots)
-					XX(EOS_CurrentStorage)
-					XX(EOS_CurrentFolder)
-					XX(EOS_MyMenu)
-					XX(EOS_MyMenuList)
-					XX(EOS_HDDirectoryStructure)
-					XX(EOS_BatteryInfo)
-					XX(EOS_AdapterInfo)
-					XX(EOS_LensStatus)
-					XX(EOS_CardExtension)
-					XX(EOS_TempStatus)
-					XX(EOS_ShutterCounter)
-					XX(EOS_SerialNumber)
-					XX(EOS_DepthOfFieldPreview)
-					XX(EOS_EVFRecordStatus)
-					XX(EOS_LvAfSystem)
-					XX(EOS_FocusInfoEx)
-					XX(EOS_DepthOfField)
-					XX(EOS_Brightness)
-					XX(EOS_EFComp)
-					XX(EOS_LensName)
-					XX(EOS_LensID)
-#undef XX
-						dpd->GetSet = PTP_DPGS_Get;
-						break;
-				}
-
-				/* set DataType */
-				switch (proptype) {
-				case PTP_DPC_CANON_EOS_CameraTime:
-				case PTP_DPC_CANON_EOS_UTCTime:
-				case PTP_DPC_CANON_EOS_Summertime: /* basical the DST flag */
-				case PTP_DPC_CANON_EOS_AvailableShots:
-				case PTP_DPC_CANON_EOS_CaptureDestination:
-				case PTP_DPC_CANON_EOS_WhiteBalanceXA:
-				case PTP_DPC_CANON_EOS_WhiteBalanceXB:
-				case PTP_DPC_CANON_EOS_CurrentStorage:
-				case PTP_DPC_CANON_EOS_CurrentFolder:
-				case PTP_DPC_CANON_EOS_ShutterCounter:
-				case PTP_DPC_CANON_EOS_ModelID:
-				case PTP_DPC_CANON_EOS_LensID:
-				case PTP_DPC_CANON_EOS_StroboFiring:
-				case PTP_DPC_CANON_EOS_AFSelectFocusArea:
-				case PTP_DPC_CANON_EOS_ContinousAFMode:
-				case PTP_DPC_CANON_EOS_MirrorUpSetting:
-				case PTP_DPC_CANON_EOS_OLCInfoVersion:
-				case PTP_DPC_CANON_EOS_PowerZoomPosition:
-				case PTP_DPC_CANON_EOS_PowerZoomSpeed:
-				case PTP_DPC_CANON_EOS_BuiltinStroboMode:
-				case PTP_DPC_CANON_EOS_StroboETTL2Metering:
-				case PTP_DPC_CANON_EOS_ColorTemperature:
-					dpd->DataType = PTP_DTC_UINT32;
-					break;
-				/* enumeration for AEM is never provided, but is available to set */
-				case PTP_DPC_CANON_EOS_AutoExposureMode:
-					dpd->DataType = PTP_DTC_UINT16;
-					dpd->FormFlag = PTP_DPFF_Enumeration;
-					dpd->FORM.Enum.NumberOfValues = 0;
-					break;
-				case PTP_DPC_CANON_EOS_Aperture:
-				case PTP_DPC_CANON_EOS_ShutterSpeed:
-				case PTP_DPC_CANON_EOS_ISOSpeed:
-				case PTP_DPC_CANON_EOS_FocusMode:
-				case PTP_DPC_CANON_EOS_ColorSpace:
-				case PTP_DPC_CANON_EOS_BatteryPower:
-				case PTP_DPC_CANON_EOS_BatterySelect:
-				case PTP_DPC_CANON_EOS_PTPExtensionVersion:
-				case PTP_DPC_CANON_EOS_DriveMode:
-				case PTP_DPC_CANON_EOS_AEB:
-				case PTP_DPC_CANON_EOS_BracketMode:
-				case PTP_DPC_CANON_EOS_QuickReviewTime:
-				case PTP_DPC_CANON_EOS_EVFMode:
-				case PTP_DPC_CANON_EOS_EVFOutputDevice:
-				case PTP_DPC_CANON_EOS_AutoPowerOff:
-				case PTP_DPC_CANON_EOS_EVFRecordStatus:
-				case PTP_DPC_CANON_EOS_HighISOSettingNoiseReduction:
-				case PTP_DPC_CANON_EOS_MultiAspect: /* actually a 32bit value, but lets try it for easyness */
-					dpd->DataType = PTP_DTC_UINT16;
-					break;
-				case PTP_DPC_CANON_EOS_PictureStyle:
-				case PTP_DPC_CANON_EOS_WhiteBalance:
-				case PTP_DPC_CANON_EOS_MeteringMode:
-				case PTP_DPC_CANON_EOS_ExpCompensation:
-					dpd->DataType = PTP_DTC_UINT8;
-					break;
-				case PTP_DPC_CANON_EOS_Owner:
-				case PTP_DPC_CANON_EOS_Artist:
-				case PTP_DPC_CANON_EOS_Copyright:
-				case PTP_DPC_CANON_EOS_SerialNumber:
-				case PTP_DPC_CANON_EOS_LensName:
-					dpd->DataType = PTP_DTC_STR;
-					break;
-				case PTP_DPC_CANON_EOS_WhiteBalanceAdjustA:
-				case PTP_DPC_CANON_EOS_WhiteBalanceAdjustB:
-					dpd->DataType = PTP_DTC_INT32;
-					break;
-				/* unknown props, listed from dump.... all 16 bit, but vals might be smaller */
-				case PTP_DPC_CANON_EOS_DPOFVersion:
-					dpd->DataType = PTP_DTC_UINT16;
-					ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint16", i ,proptype, size-PTP_ece_Prop_Val_Data);
-					for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
-						ptp_debug (params, "    %d: %02x", j, xdata[j]);
-					break;
-				case PTP_DPC_CANON_EOS_CustomFunc1:
-				case PTP_DPC_CANON_EOS_CustomFunc2:
-				case PTP_DPC_CANON_EOS_CustomFunc3:
-				case PTP_DPC_CANON_EOS_CustomFunc4:
-				case PTP_DPC_CANON_EOS_CustomFunc5:
-				case PTP_DPC_CANON_EOS_CustomFunc6:
-				case PTP_DPC_CANON_EOS_CustomFunc7:
-				case PTP_DPC_CANON_EOS_CustomFunc8:
-				case PTP_DPC_CANON_EOS_CustomFunc9:
-				case PTP_DPC_CANON_EOS_CustomFunc10:
-				case PTP_DPC_CANON_EOS_CustomFunc11:
-					dpd->DataType = PTP_DTC_UINT8;
-					ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint8", i ,proptype, size-PTP_ece_Prop_Val_Data);
-					for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
-						ptp_debug (params, "    %d: %02x", j, xdata[j]);
-					/* custom func entries look like this on the 400D: '5 0 0 0 ?' = 4 bytes size + 1 byte data */
-					xdata += 4;
-					break;
-				/* yet unknown 32bit props */
-				case PTP_DPC_CANON_EOS_WftStatus:
-				case PTP_DPC_CANON_EOS_LensStatus:
-				case PTP_DPC_CANON_EOS_CardExtension:
-				case PTP_DPC_CANON_EOS_TempStatus:
-				case PTP_DPC_CANON_EOS_PhotoStudioMode:
-				case PTP_DPC_CANON_EOS_DepthOfFieldPreview:
-				case PTP_DPC_CANON_EOS_EVFSharpness:
-				case PTP_DPC_CANON_EOS_EVFWBMode:
-				case PTP_DPC_CANON_EOS_EVFClickWBCoeffs:
-				case PTP_DPC_CANON_EOS_EVFColorTemp:
-				case PTP_DPC_CANON_EOS_ExposureSimMode:
-				case PTP_DPC_CANON_EOS_LvAfSystem:
-				case PTP_DPC_CANON_EOS_MovSize:
-				case PTP_DPC_CANON_EOS_DepthOfField:
-				case PTP_DPC_CANON_EOS_LvViewTypeSelect:
-				case PTP_DPC_CANON_EOS_AloMode:
-				case PTP_DPC_CANON_EOS_Brightness:
-				case PTP_DPC_CANON_EOS_GPSLogCtrl:
-				case PTP_DPC_CANON_EOS_GPSDeviceActive:
-					dpd->DataType = PTP_DTC_UINT32;
-					ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint32", i ,proptype, size-PTP_ece_Prop_Val_Data);
-					if ((size-PTP_ece_Prop_Val_Data) % sizeof(uint32_t) != 0)
-						ptp_debug (params, "event %d: Warning: datasize modulo sizeof(uint32) is not 0: ", i, (size-PTP_ece_Prop_Val_Data) % sizeof(uint32_t) );
-					for (j=0;j<(size-PTP_ece_Prop_Val_Data)/sizeof(uint32_t);j++)
-						ptp_debug (params, "    %d: 0x%8x", j, dtoh32a(xdata+j*4));
-					break;
-				/* ImageFormat properties have to be ignored here, see special handling below */
-				case PTP_DPC_CANON_EOS_ImageFormat:
-				case PTP_DPC_CANON_EOS_ImageFormatCF:
-				case PTP_DPC_CANON_EOS_ImageFormatSD:
-				case PTP_DPC_CANON_EOS_ImageFormatExtHD:
-				case PTP_DPC_CANON_EOS_CustomFuncEx:
-				case PTP_DPC_CANON_EOS_FocusInfoEx:
-					break;
-				default:
-					ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d", i ,proptype, size-PTP_ece_Prop_Val_Data);
-					for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
-						ptp_debug (params, "    %d: %02x", j, xdata[j]);
-					break;
-				}
-				switch (dpd->DataType) {
-				case PTP_DTC_UINT32:
-					dpd->FactoryDefaultValue.u32	= dtoh32a(xdata);
-					dpd->CurrentValue.u32		= dtoh32a(xdata);
-					ptp_debug (params ,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u32);
-					break;
-				case PTP_DTC_INT16:
-					dpd->FactoryDefaultValue.i16	= dtoh16a(xdata);
-					dpd->CurrentValue.i16		= dtoh16a(xdata);
-					ptp_debug (params,"event %d: currentvalue of %x is %d", i, proptype, dpd->CurrentValue.i16);
-					break;
-				case PTP_DTC_UINT16:
-					dpd->FactoryDefaultValue.u16	= dtoh16a(xdata);
-					dpd->CurrentValue.u16		= dtoh16a(xdata);
-					ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u16);
-					break;
-				case PTP_DTC_UINT8:
-					dpd->FactoryDefaultValue.u8	= dtoh8a(xdata);
-					dpd->CurrentValue.u8		= dtoh8a(xdata);
-					ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u8);
-					break;
-				case PTP_DTC_INT8:
-					dpd->FactoryDefaultValue.i8	= dtoh8a(xdata);
-					dpd->CurrentValue.i8		= dtoh8a(xdata);
-					ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.i8);
-					break;
-				case PTP_DTC_STR: {
-#if 0 /* 5D MII and 400D aktually store plain ASCII in their string properties */
-					uint8_t len = 0;
-					dpd->FactoryDefaultValue.str	= ptp_unpack_string(params, data, 0, &len);
-					dpd->CurrentValue.str		= ptp_unpack_string(params, data, 0, &len);
-#else
-					free (dpd->FactoryDefaultValue.str);
-					dpd->FactoryDefaultValue.str	= strdup( (char*)xdata );
-
-					free (dpd->CurrentValue.str);
-					dpd->CurrentValue.str		= strdup( (char*)xdata );
-#endif
-					ptp_debug (params,"event %d: currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
-					break;
-				}
-				default:
-					/* debug is printed in switch above this one */
-					break;
-				}
-
-				/* ImageFormat and customFuncEx special handling (WARNING: dont move this in front of the dpd->DataType switch!) */
-				switch (proptype) {
-				case PTP_DPC_CANON_EOS_ImageFormat:
-				case PTP_DPC_CANON_EOS_ImageFormatCF:
-				case PTP_DPC_CANON_EOS_ImageFormatSD:
-				case PTP_DPC_CANON_EOS_ImageFormatExtHD:
-					dpd->DataType = PTP_DTC_UINT16;
-					dpd->FactoryDefaultValue.u16	= ptp_unpack_EOS_ImageFormat( params, &xdata );
-					dpd->CurrentValue.u16		= dpd->FactoryDefaultValue.u16;
-					ptp_debug (params,"event %d: decoded imageformat, currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u16);
-					break;
-				case PTP_DPC_CANON_EOS_CustomFuncEx:
-					dpd->DataType = PTP_DTC_STR;
-					free (dpd->FactoryDefaultValue.str);
-					free (dpd->CurrentValue.str);
-					dpd->FactoryDefaultValue.str	= ptp_unpack_EOS_CustomFuncEx( params, &xdata );
-					dpd->CurrentValue.str		= strdup( (char*)dpd->FactoryDefaultValue.str );
-					ptp_debug (params,"event %d: decoded custom function, currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
-					break;
-				case PTP_DPC_CANON_EOS_FocusInfoEx:
-					dpd->DataType = PTP_DTC_STR;
-					free (dpd->FactoryDefaultValue.str);
-					free (dpd->CurrentValue.str);
-					dpd->FactoryDefaultValue.str	= ptp_unpack_EOS_FocusInfoEx( params, &xdata, size );
-					dpd->CurrentValue.str		= strdup( (char*)dpd->FactoryDefaultValue.str );
-					ptp_debug (params,"event %d: decoded focus info, currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
-					break;
-				}
-
+		case PTP_EC_CANON_EOS_PropValueChanged: {
+			/* property info */
+			if (size < 0xc)
 				break;
+			unsigned int j;
+			uint32_t	proptype = dtoh32a(&curdata[PTP_ece_Prop_Subtype]);
+			unsigned char	*xdata = &curdata[PTP_ece_Prop_Val_Data];
+			PTPDevicePropDesc	*dpd;
+
+			if (size < PTP_ece_Prop_Val_Data) {
+				ptp_debug (params, "size %d is smaller than %d", size, PTP_ece_Prop_Val_Data);
+				break;
+			}
+			ptp_debug (params, "event %d: EOS prop %04x info record, datasize is %d", i, proptype, size-PTP_ece_Prop_Val_Data);
+			for (j=0;j<params->nrofcanon_props;j++)
+				if (params->canon_props[j].proptype == proptype)
+					break;
+			if (j<params->nrofcanon_props) {
+				if (	(params->canon_props[j].size != size) ||
+					(memcmp(params->canon_props[j].data,xdata,size-PTP_ece_Prop_Val_Data))) {
+					params->canon_props[j].data = realloc(params->canon_props[j].data,size-PTP_ece_Prop_Val_Data);
+					params->canon_props[j].size = size;
+					memcpy (params->canon_props[j].data,xdata,size-PTP_ece_Prop_Val_Data);
+				}
+			} else {
+				if (j)
+					params->canon_props = realloc(params->canon_props, sizeof(params->canon_props[0])*(j+1));
+				else
+					params->canon_props = malloc(sizeof(params->canon_props[0]));
+				params->canon_props[j].proptype = proptype;
+				params->canon_props[j].size = size;
+				params->canon_props[j].data = malloc(size-PTP_ece_Prop_Val_Data);
+				memcpy(params->canon_props[j].data, xdata, size-PTP_ece_Prop_Val_Data);
+				memset (&params->canon_props[j].dpd,0,sizeof(params->canon_props[j].dpd));
+				params->canon_props[j].dpd.GetSet = 1;
+				params->canon_props[j].dpd.FormFlag = PTP_DPFF_None;
+				params->nrofcanon_props = j+1;
+			}
+			dpd = &params->canon_props[j].dpd;
+
+			ce[i].type = PTP_CANON_EOS_CHANGES_TYPE_PROPERTY;
+			ce[i].u.propid = proptype;
+
+			/* fix GetSet value */
+			switch (proptype) {
+#define XX(x) case PTP_DPC_CANON_##x:
+				XX(EOS_FocusMode)
+				XX(EOS_BatteryPower)
+				XX(EOS_BatterySelect)
+				XX(EOS_ModelID)
+				XX(EOS_PTPExtensionVersion)
+				XX(EOS_DPOFVersion)
+				XX(EOS_AvailableShots)
+				XX(EOS_CurrentStorage)
+				XX(EOS_CurrentFolder)
+				XX(EOS_MyMenu)
+				XX(EOS_MyMenuList)
+				XX(EOS_HDDirectoryStructure)
+				XX(EOS_BatteryInfo)
+				XX(EOS_AdapterInfo)
+				XX(EOS_LensStatus)
+				XX(EOS_CardExtension)
+				XX(EOS_TempStatus)
+				XX(EOS_ShutterCounter)
+				XX(EOS_SerialNumber)
+				XX(EOS_DepthOfFieldPreview)
+				XX(EOS_EVFRecordStatus)
+				XX(EOS_LvAfSystem)
+				XX(EOS_FocusInfoEx)
+				XX(EOS_DepthOfField)
+				XX(EOS_Brightness)
+				XX(EOS_EFComp)
+				XX(EOS_LensName)
+				XX(EOS_LensID)
+#undef XX
+					dpd->GetSet = PTP_DPGS_Get;
+					break;
+			}
+
+			/* set DataType */
+			switch (proptype) {
+			case PTP_DPC_CANON_EOS_CameraTime:
+			case PTP_DPC_CANON_EOS_UTCTime:
+			case PTP_DPC_CANON_EOS_Summertime: /* basical the DST flag */
+			case PTP_DPC_CANON_EOS_AvailableShots:
+			case PTP_DPC_CANON_EOS_CaptureDestination:
+			case PTP_DPC_CANON_EOS_WhiteBalanceXA:
+			case PTP_DPC_CANON_EOS_WhiteBalanceXB:
+			case PTP_DPC_CANON_EOS_CurrentStorage:
+			case PTP_DPC_CANON_EOS_CurrentFolder:
+			case PTP_DPC_CANON_EOS_ShutterCounter:
+			case PTP_DPC_CANON_EOS_ModelID:
+			case PTP_DPC_CANON_EOS_LensID:
+			case PTP_DPC_CANON_EOS_StroboFiring:
+			case PTP_DPC_CANON_EOS_AFSelectFocusArea:
+			case PTP_DPC_CANON_EOS_ContinousAFMode:
+			case PTP_DPC_CANON_EOS_MirrorUpSetting:
+			case PTP_DPC_CANON_EOS_OLCInfoVersion:
+			case PTP_DPC_CANON_EOS_PowerZoomPosition:
+			case PTP_DPC_CANON_EOS_PowerZoomSpeed:
+			case PTP_DPC_CANON_EOS_BuiltinStroboMode:
+			case PTP_DPC_CANON_EOS_StroboETTL2Metering:
+			case PTP_DPC_CANON_EOS_ColorTemperature:
+				dpd->DataType = PTP_DTC_UINT32;
+				break;
+			/* enumeration for AEM is never provided, but is available to set */
+			case PTP_DPC_CANON_EOS_AutoExposureMode:
+				dpd->DataType = PTP_DTC_UINT16;
+				dpd->FormFlag = PTP_DPFF_Enumeration;
+				dpd->FORM.Enum.NumberOfValues = 0;
+				break;
+			case PTP_DPC_CANON_EOS_Aperture:
+			case PTP_DPC_CANON_EOS_ShutterSpeed:
+			case PTP_DPC_CANON_EOS_ISOSpeed:
+			case PTP_DPC_CANON_EOS_FocusMode:
+			case PTP_DPC_CANON_EOS_ColorSpace:
+			case PTP_DPC_CANON_EOS_BatteryPower:
+			case PTP_DPC_CANON_EOS_BatterySelect:
+			case PTP_DPC_CANON_EOS_PTPExtensionVersion:
+			case PTP_DPC_CANON_EOS_DriveMode:
+			case PTP_DPC_CANON_EOS_AEB:
+			case PTP_DPC_CANON_EOS_BracketMode:
+			case PTP_DPC_CANON_EOS_QuickReviewTime:
+			case PTP_DPC_CANON_EOS_EVFMode:
+			case PTP_DPC_CANON_EOS_EVFOutputDevice:
+			case PTP_DPC_CANON_EOS_AutoPowerOff:
+			case PTP_DPC_CANON_EOS_EVFRecordStatus:
+			case PTP_DPC_CANON_EOS_HighISOSettingNoiseReduction:
+			case PTP_DPC_CANON_EOS_MultiAspect: /* actually a 32bit value, but lets try it for easyness */
+				dpd->DataType = PTP_DTC_UINT16;
+				break;
+			case PTP_DPC_CANON_EOS_PictureStyle:
+			case PTP_DPC_CANON_EOS_WhiteBalance:
+			case PTP_DPC_CANON_EOS_MeteringMode:
+			case PTP_DPC_CANON_EOS_ExpCompensation:
+				dpd->DataType = PTP_DTC_UINT8;
+				break;
+			case PTP_DPC_CANON_EOS_Owner:
+			case PTP_DPC_CANON_EOS_Artist:
+			case PTP_DPC_CANON_EOS_Copyright:
+			case PTP_DPC_CANON_EOS_SerialNumber:
+			case PTP_DPC_CANON_EOS_LensName:
+				dpd->DataType = PTP_DTC_STR;
+				break;
+			case PTP_DPC_CANON_EOS_WhiteBalanceAdjustA:
+			case PTP_DPC_CANON_EOS_WhiteBalanceAdjustB:
+				dpd->DataType = PTP_DTC_INT32;
+				break;
+			/* unknown props, listed from dump.... all 16 bit, but vals might be smaller */
+			case PTP_DPC_CANON_EOS_DPOFVersion:
+				dpd->DataType = PTP_DTC_UINT16;
+				ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint16", i ,proptype, size-PTP_ece_Prop_Val_Data);
+				for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
+					ptp_debug (params, "    %d: %02x", j, xdata[j]);
+				break;
+			case PTP_DPC_CANON_EOS_CustomFunc1:
+			case PTP_DPC_CANON_EOS_CustomFunc2:
+			case PTP_DPC_CANON_EOS_CustomFunc3:
+			case PTP_DPC_CANON_EOS_CustomFunc4:
+			case PTP_DPC_CANON_EOS_CustomFunc5:
+			case PTP_DPC_CANON_EOS_CustomFunc6:
+			case PTP_DPC_CANON_EOS_CustomFunc7:
+			case PTP_DPC_CANON_EOS_CustomFunc8:
+			case PTP_DPC_CANON_EOS_CustomFunc9:
+			case PTP_DPC_CANON_EOS_CustomFunc10:
+			case PTP_DPC_CANON_EOS_CustomFunc11:
+				dpd->DataType = PTP_DTC_UINT8;
+				ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint8", i ,proptype, size-PTP_ece_Prop_Val_Data);
+				for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
+					ptp_debug (params, "    %d: %02x", j, xdata[j]);
+				/* custom func entries look like this on the 400D: '5 0 0 0 ?' = 4 bytes size + 1 byte data */
+				xdata += 4;
+				break;
+			/* yet unknown 32bit props */
+			case PTP_DPC_CANON_EOS_WftStatus:
+			case PTP_DPC_CANON_EOS_LensStatus:
+			case PTP_DPC_CANON_EOS_CardExtension:
+			case PTP_DPC_CANON_EOS_TempStatus:
+			case PTP_DPC_CANON_EOS_PhotoStudioMode:
+			case PTP_DPC_CANON_EOS_DepthOfFieldPreview:
+			case PTP_DPC_CANON_EOS_EVFSharpness:
+			case PTP_DPC_CANON_EOS_EVFWBMode:
+			case PTP_DPC_CANON_EOS_EVFClickWBCoeffs:
+			case PTP_DPC_CANON_EOS_EVFColorTemp:
+			case PTP_DPC_CANON_EOS_ExposureSimMode:
+			case PTP_DPC_CANON_EOS_LvAfSystem:
+			case PTP_DPC_CANON_EOS_MovSize:
+			case PTP_DPC_CANON_EOS_DepthOfField:
+			case PTP_DPC_CANON_EOS_LvViewTypeSelect:
+			case PTP_DPC_CANON_EOS_AloMode:
+			case PTP_DPC_CANON_EOS_Brightness:
+			case PTP_DPC_CANON_EOS_GPSLogCtrl:
+			case PTP_DPC_CANON_EOS_GPSDeviceActive:
+				dpd->DataType = PTP_DTC_UINT32;
+				ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d, using uint32", i ,proptype, size-PTP_ece_Prop_Val_Data);
+				if ((size-PTP_ece_Prop_Val_Data) % sizeof(uint32_t) != 0)
+					ptp_debug (params, "event %d: Warning: datasize modulo sizeof(uint32) is not 0: ", i, (size-PTP_ece_Prop_Val_Data) % sizeof(uint32_t) );
+				for (j=0;j<(size-PTP_ece_Prop_Val_Data)/sizeof(uint32_t);j++)
+					ptp_debug (params, "    %d: 0x%8x", j, dtoh32a(xdata+j*4));
+				break;
+			/* ImageFormat properties have to be ignored here, see special handling below */
+			case PTP_DPC_CANON_EOS_ImageFormat:
+			case PTP_DPC_CANON_EOS_ImageFormatCF:
+			case PTP_DPC_CANON_EOS_ImageFormatSD:
+			case PTP_DPC_CANON_EOS_ImageFormatExtHD:
+			case PTP_DPC_CANON_EOS_CustomFuncEx:
+			case PTP_DPC_CANON_EOS_FocusInfoEx:
+				break;
+			default:
+				ptp_debug (params, "event %d: Unknown EOS property %04x, datasize is %d", i ,proptype, size-PTP_ece_Prop_Val_Data);
+				for (j=0;j<size-PTP_ece_Prop_Val_Data;j++)
+					ptp_debug (params, "    %d: %02x", j, xdata[j]);
+				break;
+			}
+			switch (dpd->DataType) {
+			case PTP_DTC_UINT32:
+				dpd->FactoryDefaultValue.u32	= dtoh32a(xdata);
+				dpd->CurrentValue.u32		= dtoh32a(xdata);
+				ptp_debug (params ,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u32);
+				break;
+			case PTP_DTC_INT16:
+				dpd->FactoryDefaultValue.i16	= dtoh16a(xdata);
+				dpd->CurrentValue.i16		= dtoh16a(xdata);
+				ptp_debug (params,"event %d: currentvalue of %x is %d", i, proptype, dpd->CurrentValue.i16);
+				break;
+			case PTP_DTC_UINT16:
+				dpd->FactoryDefaultValue.u16	= dtoh16a(xdata);
+				dpd->CurrentValue.u16		= dtoh16a(xdata);
+				ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u16);
+				break;
+			case PTP_DTC_UINT8:
+				dpd->FactoryDefaultValue.u8	= dtoh8a(xdata);
+				dpd->CurrentValue.u8		= dtoh8a(xdata);
+				ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u8);
+				break;
+			case PTP_DTC_INT8:
+				dpd->FactoryDefaultValue.i8	= dtoh8a(xdata);
+				dpd->CurrentValue.i8		= dtoh8a(xdata);
+				ptp_debug (params,"event %d: currentvalue of %x is %x", i, proptype, dpd->CurrentValue.i8);
+				break;
+			case PTP_DTC_STR: {
+#if 0 /* 5D MII and 400D aktually store plain ASCII in their string properties */
+				uint8_t len = 0;
+				dpd->FactoryDefaultValue.str	= ptp_unpack_string(params, data, 0, &len);
+				dpd->CurrentValue.str		= ptp_unpack_string(params, data, 0, &len);
+#else
+				free (dpd->FactoryDefaultValue.str);
+				dpd->FactoryDefaultValue.str	= strdup( (char*)xdata );
+
+				free (dpd->CurrentValue.str);
+				dpd->CurrentValue.str		= strdup( (char*)xdata );
+#endif
+				ptp_debug (params,"event %d: currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
+				break;
+			}
+			default:
+				/* debug is printed in switch above this one */
+				break;
+			}
+
+			/* ImageFormat and customFuncEx special handling (WARNING: dont move this in front of the dpd->DataType switch!) */
+			switch (proptype) {
+			case PTP_DPC_CANON_EOS_ImageFormat:
+			case PTP_DPC_CANON_EOS_ImageFormatCF:
+			case PTP_DPC_CANON_EOS_ImageFormatSD:
+			case PTP_DPC_CANON_EOS_ImageFormatExtHD:
+				dpd->DataType = PTP_DTC_UINT16;
+				dpd->FactoryDefaultValue.u16	= ptp_unpack_EOS_ImageFormat( params, &xdata );
+				dpd->CurrentValue.u16		= dpd->FactoryDefaultValue.u16;
+				ptp_debug (params,"event %d: decoded imageformat, currentvalue of %x is %x", i, proptype, dpd->CurrentValue.u16);
+				break;
+			case PTP_DPC_CANON_EOS_CustomFuncEx:
+				dpd->DataType = PTP_DTC_STR;
+				free (dpd->FactoryDefaultValue.str);
+				free (dpd->CurrentValue.str);
+				dpd->FactoryDefaultValue.str	= ptp_unpack_EOS_CustomFuncEx( params, &xdata );
+				dpd->CurrentValue.str		= strdup( (char*)dpd->FactoryDefaultValue.str );
+				ptp_debug (params,"event %d: decoded custom function, currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
+				break;
+			case PTP_DPC_CANON_EOS_FocusInfoEx:
+				dpd->DataType = PTP_DTC_STR;
+				free (dpd->FactoryDefaultValue.str);
+				free (dpd->CurrentValue.str);
+				dpd->FactoryDefaultValue.str	= ptp_unpack_EOS_FocusInfoEx( params, &xdata, size );
+				dpd->CurrentValue.str		= strdup( (char*)dpd->FactoryDefaultValue.str );
+				ptp_debug (params,"event %d: decoded focus info, currentvalue of %x is %s", i, proptype, dpd->CurrentValue.str);
+				break;
+			}
+
+			break;
 		}
 		/* one more information record handed to us */
 		/* Versions seen: (d199)

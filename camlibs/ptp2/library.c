@@ -4353,29 +4353,29 @@ camera_canon_capture (Camera *camera, CameraCaptureType type, CameraFilePath *pa
 			ptp_remove_object_from_cache(params, event.Param1);
 			gp_filesystem_reset (camera->fs);
 			break;
-		case PTP_EC_ObjectAdded: {
-			/* add newly created object to internal structures. this hopefully just is a new folder */
-			PTPObject	*ob;
-
-			GP_LOG_D ("Event ObjectAdded, object handle=0x%X.", newobject);
-
-			ret = ptp_object_want (params, event.Param1, PTPOBJECT_OBJECTINFO_LOADED, &ob);
-			if (ret != PTP_RC_OK)
-				break;
-			/* this might be just the folder add, ignore that. */
-			if (ob->oi.ObjectFormat == PTP_OFC_Association) {
-				/* new directory ... mark fs as to be refreshed */
-				gp_filesystem_reset (camera->fs); /* FIXME: implement more lightweight folder add */
-				break;
-			} else {
-				/* new file */
-				newobject = event.Param1;
-				/* FALLTHROUGH */
-			}
-			/* FALLTHROUGH */
-		}
+		case PTP_EC_ObjectAdded:
 		case PTP_EC_CANON_RequestObjectTransfer: {
 			int j;
+
+			if (event.Code == PTP_EC_ObjectAdded) {
+				/* add newly created object to internal structures. this hopefully just is a new folder */
+				PTPObject	*ob;
+
+				GP_LOG_D ("Event ObjectAdded, object handle=0x%X.", newobject);
+
+				ret = ptp_object_want (params, event.Param1, PTPOBJECT_OBJECTINFO_LOADED, &ob);
+				if (ret != PTP_RC_OK)
+					break;
+				/* this might be just the folder add, ignore that. */
+				if (ob->oi.ObjectFormat == PTP_OFC_Association) {
+					/* new directory ... mark fs as to be refreshed */
+					gp_filesystem_reset (camera->fs); /* FIXME: implement more lightweight folder add */
+					break;
+				} else {
+					/* new file */
+					newobject = event.Param1;
+				}
+			}
 
 			newobject = event.Param1;
 			GP_LOG_D ("Event PTP_EC_CANON_RequestObjectTransfer, object handle=0x%X.", newobject);
@@ -7016,7 +7016,7 @@ camera_summary (Camera* camera, CameraText* summary, GPContext *context)
 					APPEND_TXT ("\n\t");
 				for (j = 0; j<dpd.FORM.Enum.NumberOfValues; j++) {
 					txt += snprintf_ptp_property (txt, SPACE_LEFT, dpd.FORM.Enum.SupportedValue+j, dpd.DataType);
-					if (j != dpd.FORM.Enum.NumberOfValues-1) {
+					if ((int)j != dpd.FORM.Enum.NumberOfValues-1) {
 						APPEND_TXT (",");
 						if ((dpd.DataType & PTP_DTC_ARRAY_MASK) == PTP_DTC_ARRAY_MASK)
 							APPEND_TXT ("\n\t");
@@ -7207,7 +7207,7 @@ retry:
     }
 
     /* Did we change the object tree list during our traversal? if yes, redo the scan. */
-    if (params->nrofobjects != lastnrofobjects) {
+    if ((int)params->nrofobjects != lastnrofobjects) {
 	if (redoneonce++) {
 		GP_LOG_E("list changed again on second pass, returning anyway");
 		return GP_OK;
@@ -7316,7 +7316,7 @@ retry:
 		}
 		CR (gp_list_append (list, ob->oi.Filename, NULL));
 	}
-	if (lastnrofobjects != params->nrofobjects) {
+	if (lastnrofobjects != (int)params->nrofobjects) {
 		if (redoneonce++) {
 			GP_LOG_E("list changed again on second pass, returning anyway");
 			return GP_OK;
@@ -8649,15 +8649,15 @@ storage_info_func (CameraFilesystem *fs,
 			sif->fstype = GP_STORAGEINFO_FST_DCF;
 			break;
 		}
-		if (si.MaxCapability != -1) {
+		if (si.MaxCapability != (uint64_t)(-1)) {
 			sif->fields |= GP_STORAGEINFO_MAXCAPACITY;
 			sif->capacitykbytes = si.MaxCapability / 1024;
 		}
-		if (si.FreeSpaceInBytes != -1) {
+		if (si.FreeSpaceInBytes != (uint64_t)(-1)) {
 			sif->fields |= GP_STORAGEINFO_FREESPACEKBYTES;
 			sif->freekbytes = si.FreeSpaceInBytes / 1024;
 		}
-		if (si.FreeSpaceInImages != -1) {
+		if (si.FreeSpaceInImages != (uint32_t)(-1)) {
 			sif->fields |= GP_STORAGEINFO_FREESPACEIMAGES;
 			sif->freeimages = si.FreeSpaceInImages;
 		}
