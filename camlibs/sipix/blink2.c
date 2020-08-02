@@ -95,8 +95,8 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 		void *data, GPContext *context)
 {
 	Camera		*camera = data;
-	int		i, ret;
-	unsigned int	bytes, numpics;
+	int		i, ret, bytes;
+	unsigned int	numpics;
 	unsigned char	*xbuf, buf[8];
 
 	ret = blink2_getnumpics( camera->port, context, &numpics );
@@ -116,7 +116,7 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 		return ret;
 	}
 	if (ret < bytes) return GP_ERROR_IO_READ;
-	for ( i=0; i < numpics; i++) {
+	for ( i=0; i < (int)numpics; i++) {
 		char name[20];
 		if (xbuf[8*(i+1)])
 			sprintf( name, "image%04d.avi", i);
@@ -135,8 +135,8 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 {
 	Camera *camera = data;
         int image_no, result;
-	int	i, ret;
-	unsigned int numpics, bytes;
+	int	i, ret, bytes;
+	unsigned int numpics;
 	unsigned char	*xbuf, buf[8];
 
 	struct xaddr {
@@ -169,7 +169,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		return ret;
 	}
 	if (ret < bytes) return GP_ERROR_IO_READ;
-	for ( i=0; i < numpics; i++) {
+	for ( i=0; i < (int)numpics; i++) {
 		int end, start;
 
 		start = (xbuf[8*i+ 5] << 16) |
@@ -194,7 +194,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		free(addrs);
                 return image_no;
 	}
-	if (image_no >= numpics) {
+	if (image_no >= (int)numpics) {
 		free(addrs);
 		gp_log(GP_LOG_DEBUG, "blink2","image %d requested, but only %d pics on camera?", image_no, numpics);
                 return GP_ERROR;
@@ -283,7 +283,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 			sprintf(foo,"P6\n%d %d 255\n",dinfo.output_width, dinfo.output_height*2);
 			gp_file_append (file, foo, strlen(foo));
 		}
-		for (i = 0; i < dinfo.output_height ; i++ ) {
+		for (i = 0; i < (int)dinfo.output_height ; i++ ) {
 			int j;
 			JSAMPROW row[1];
 			JSAMPARRAY arr = row;
@@ -293,13 +293,13 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 
 			memcpy(convline+((dinfo.output_width/16-1)*16+8)*3, rawline+((dinfo.output_width/16-1)*16+8)*3, 8*3);
 			memcpy(convline+pitch/2, rawline, 8*3);
-			for (j=0;j<(dinfo.output_width/16-1);j++) {
+			for (j=0;j<(int)(dinfo.output_width/16-1);j++) {
 				if ((j&1) == 0)
 					memcpy(convline+((j/2)*16)*3,rawline+(j*16+8)*3,16*3);
 				else
 					memcpy(convline+pitch/2+((j/2)*16+8)*3,rawline+(j*16+8)*3,16*3);
 			}
-			for (j=0;j<dinfo.output_width*2;j++) {
+			for (j=0;j<(int)(dinfo.output_width*2);j++) {
 				memcpy(convline2+ j*2*3   , convline+j*3,3);
 				memcpy(convline2+(j*2+1)*3, convline+j*3,3);
 			}
@@ -343,7 +343,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		len = len*8;
 		do {
 			curread = 4096;
-			if (curread > len) curread = len;
+			if (curread > (int)len) curread = len;
 			curread = gp_port_read( camera->port, buf2, curread);
 			if (curread < GP_OK) {
 				result = GP_OK;
