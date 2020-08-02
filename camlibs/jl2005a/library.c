@@ -164,7 +164,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 {
 	Camera *camera = user_data;
 	int status = GP_OK;
-	unsigned int w, h = 0;
+	int w, h = 0;
 	int i,j,k;
 	int b = 0;
 	int compressed = 0;
@@ -192,7 +192,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	GP_DEBUG ("height is %i\n", h);
 
 	/* sanity check against bad usb devices */
-	if ((w ==0) || (w > 1024) || (h == 0) || (h > 1024)) {
+	if ((w <=0) || (w > 1024) || (h <= 0) || (h > 1024)) {
 		GP_DEBUG ("width / height not within sensible range");
 		return GP_ERROR_CORRUPTED_DATA;
 	}
