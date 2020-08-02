@@ -143,7 +143,7 @@ static int find_folder( Camera *camera, const char *folder,
     for( i = 0; i<gp_list_count( albums ); i++ )
     {
 	gp_list_get_name( albums, i, &album_name );
-	if( strlen( album_name ) == folder_len &&
+	if( (int)strlen( album_name ) == folder_len &&
 	    strncmp( album_name, folder, folder_len ) == 0 )
 	{
 	    *folder_nr = i+1;
