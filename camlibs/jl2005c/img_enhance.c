@@ -63,7 +63,7 @@ int
 histogram (unsigned char *data, unsigned int size, int *htable_r,
 						int *htable_g, int *htable_b)
 {
-	int x;
+	unsigned int x;
 	/* Initializations */
 	for (x = 0; x < 0x100; x++) {
 		htable_r[x] = 0;
@@ -155,7 +155,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 	GP_DEBUG("r=%1d, g=%1d, b=%1d, fr=%1.3f, fg=%1.3f, fb=%1.3f\n",
 			r, g, b, r_factor, g_factor, b_factor);
 	if (max_factor <= 1.4) {
-		for (x = 0; x < (size * 3); x += 3)
+		for (x = 0; x < ((int)size * 3); x += 3)
 		{
 			d = (data[x + 0] << 8) * r_factor + 8;
 			d >>= 8;
@@ -193,7 +193,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 	GP_DEBUG("r=%1d, g=%1d, b=%1d, fr=%1.3f, fg=%1.3f, fb=%1.3f\n",
 			r, g, b, r_factor, g_factor, b_factor);
 
-	for (x = 0; x < (size * 3); x += 3)
+	for (x = 0; x < ((int)size * 3); x += 3)
 	{
 		d = (int) 0xff08 - (((0xff - data[x + 0]) << 8) * r_factor);
 		d >>= 8;
@@ -215,7 +215,7 @@ white_balance (unsigned char *data, unsigned int size, float saturation)
 	/* ------------------ COLOR ENHANCE ------------------ */
 
 	if(saturation > 0.0) {
-		for (x = 0; x < (size * 3); x += 3)
+		for (x = 0; x < ((int)size * 3); x += 3)
 		{
 			r = data[x + 0]; g = data[x + 1]; b = data[x + 2];
 			d = (int) (r + g + b) / 3.;
