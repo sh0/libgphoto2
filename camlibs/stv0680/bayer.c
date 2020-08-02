@@ -99,7 +99,7 @@ static const rgbgamma gampar[6][3] = {
 void light_enhance(int vw, int vh, int coarse, int fine,
 		   unsigned char avg_pix, unsigned char *output)
 {
-    unsigned long int i;
+    long int i;
     int lt=3; /* 3 is auto */
     /* float wb[3][3]; */
     unsigned char trans[3][256];
