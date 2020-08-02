@@ -358,8 +358,8 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 {
 	Camera *camera = data;
 	char *buf = NULL, *reply = NULL, *cmd =NULL, *msg = NULL;
-	unsigned int len, bytes, seek;
-	int ret, channel;
+	unsigned int len, bytes;
+	int ret, channel, seek;
 
 	ret = g3_cwd_command (camera->port, folder);
 	if (ret < GP_OK) goto out;
@@ -758,7 +758,7 @@ folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 	free(cmd);cmd = NULL;
 	if (ret < GP_OK) goto out;
 	if (buf[0] == '1') { /* 1xx means another reply follows */
-		int n = 0;
+		unsigned int n = 0;
 
 		ret = g3_channel_read(camera->port, &channel, &buf, &len); /* data. */
 		if (ret < GP_OK) goto out;
@@ -805,7 +805,8 @@ file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 	free(cmd); cmd = NULL;
 	if (ret < GP_OK) goto out;
 	if (buf[0] == '1') { /* 1xx means another reply follows */
-		int n = 0, channel;
+		unsigned int n = 0;
+		int channel;
 		unsigned int len, rlen;
 		ret = g3_channel_read(camera->port, &channel, &buf, &len); /* data. */
 		if (ret < GP_OK) goto out;
