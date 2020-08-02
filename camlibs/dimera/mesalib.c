@@ -370,7 +370,7 @@ mesa_read_row( GPPort *port, uint8_t *r, struct mesa_image_arg *s )	/*GDB*/
 	CHECK (mesa_send_command( port, b, sizeof( b ), 10 ));
 
 /*	return ( mesa_read( port, r, n, 10, 0 ));			  GDB*/
-	if ( mesa_read( port, r, bytes, 10, 0 ) != bytes )		/*GDB*/
+	if ( mesa_read( port, r, bytes, 10, 0 ) != (int)bytes )		/*GDB*/
 	{								/*GDB*/
 		return GP_ERROR_TIMEOUT;
 	}								/*GDB*/
@@ -501,7 +501,7 @@ mesa_snap_view( GPPort *port, uint8_t *r, unsigned int hi_res,
 
 	if ( bytes != 0 )
 	{
-		if ( mesa_read( port, r, bytes, 10, 0 ) != bytes )
+		if ( mesa_read( port, r, bytes, 10, 0 ) != (int)bytes )
 		{
 			return GP_ERROR_TIMEOUT;
 		}
@@ -577,7 +577,7 @@ mesa_download_view( GPPort *port, uint8_t *r, uint8_t download )
 
 	if ( bytes != 0 )
 	{
-		if ( mesa_read( port, r, bytes, 10, 0 ) != bytes )
+		if ( mesa_read( port, r, bytes, 10, 0 ) != (int)bytes )
 		{
 			return GP_ERROR_TIMEOUT;
 		}
@@ -717,7 +717,7 @@ mesa_read_image( GPPort *port, uint8_t *r, struct mesa_image_arg *s )
 
 	CHECK (mesa_send_command( port, b, sizeof( b ), 10 ));
 
-	if ( mesa_read( port, r, bytes, 10, 0 ) != bytes )
+	if ( mesa_read( port, r, bytes, 10, 0 ) != (int)bytes )
 	{
 		return GP_ERROR_TIMEOUT;
 	}

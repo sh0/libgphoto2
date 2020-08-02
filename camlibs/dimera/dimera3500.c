@@ -217,8 +217,8 @@ conversion_chuck (const unsigned int width, const unsigned int height,
 	 * the +1 cells.
 	 */
 
-	for (y = 0;y < height; y++)
-		for (x = 0;x < width; x++) {
+	for (y = 0;y < (int)height; y++)
+		for (x = 0;x < (int)width; x++) {
 			p1 = ((y==0?y+1:y-1)*width) + (x==0?x+1:x-1);
 			p2 = ((y==0?y+1:y-1)*width) +  x;
 			p3 = ( y            *width) + (x==0?x+1:x-1);
