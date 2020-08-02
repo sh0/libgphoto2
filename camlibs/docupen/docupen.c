@@ -41,7 +41,7 @@
 #  define N_(String) (String)
 #endif
 
-
+#if 0
 static const struct {
 	char *model;
 	int usb_vendor;
@@ -50,6 +50,7 @@ static const struct {
 	{ "Planon DocuPen RC800", 0x18dd, 0x1000 },
 	{ NULL, 0, 0 }
 };
+#endif
 
 #define DP_ACK 0xD1
 #define DP_CMD_LEN 8
@@ -91,10 +92,6 @@ static bool inquiry_read(Camera *camera)
 {
 	if (gp_port_read(camera->port, (void *)&camera->pl->info, 4) != 4) {	/* read header */
 		GP_LOG_E("error reading info header");
-		return false;
-	}
-	if (camera->pl->info.len > sizeof(struct dp_info)) {
-		GP_LOG_E("camera info too long: %d bytes", camera->pl->info.len);
 		return false;
 	}
 	int ret = gp_port_read(camera->port, (void *)&camera->pl->info + 4, camera->pl->info.len - 4);
@@ -456,7 +453,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	fseek(camera->pl->cache, 0, SEEK_SET);
 	do {
 		ret = fread(&header, 1, sizeof(header), camera->pl->cache);
-		if (ret < sizeof(header)) {
+		if (ret < (int)sizeof(header)) {
 			GP_LOG_E("error reading image header");
 			return GP_ERROR;
 		}
@@ -474,7 +471,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		return GP_ERROR_NO_MEMORY;
 
 	ret = fread(file_data, 1, le32toh(header.payloadlen), camera->pl->cache);
-	if (ret < le32toh(header.payloadlen)) {
+	if (ret < (int)le32toh(header.payloadlen)) {
 		perror("fread");
 		GP_LOG_E("error reading image data");
 		free(file_data);
@@ -658,7 +655,6 @@ CameraFilesystemFuncs fsfuncs = {
 int
 camera_init (Camera *camera, GPContext *context)
 {
-	GPPortSettings settings;
 	char buf[64];
 
         camera->functions->exit                 = camera_exit;
